@@ -48,7 +48,7 @@ static void	test2()
 	try
 	{
 		Privmsg			out("PRIVMSG #channel #channel2 :Hola");
-		std::cout << "you must throw error when multiple channels are specified";
+		std::cerr << "you must throw error when multiple channels are specified";
 		printError("test_Privmsg", 2);
 	}
 	catch (std::exception& e) {}
@@ -59,7 +59,7 @@ static void	test3()
 	try
 	{
 		Privmsg			out("PRIVMSG user user2 :Hola");
-		std::cout << "you must throw error when multiple users are specified";
+		std::cerr << "you must throw error when multiple users are specified";
 		printError("test_Privmsg", 3);
 	}
 	catch (std::exception& e) {}
@@ -70,7 +70,7 @@ static void	test4()
 	try
 	{
 		Privmsg			out("PRIVMSG !user :Hola");
-		std::cout << "invalid syntax in user name";
+		std::cerr << "invalid syntax in user name";
 		printError("test_Privmsg", 4);
 	}
 	catch (std::exception& e) {}
@@ -81,7 +81,7 @@ static void	test5()
 	try
 	{
 		Privmsg			out("PRIVMSG #!user :Hola");
-		std::cout << "invalid syntax in channel name";
+		std::cerr << "invalid syntax in channel name";
 		printError("test_Privmsg", 5);
 	}
 	catch (std::exception& e) {}
@@ -92,7 +92,7 @@ static void	test6()
 	try
 	{
 		Privmsg			out("PRIVMSG user1 user2 :Hola");
-		std::cout << "too many users";
+		std::cerr << "too many users";
 		printError("test_Privmsg", 6);
 	}
 	catch (std::exception& e) {}
@@ -103,7 +103,7 @@ static void	test7()
 	try
 	{
 		Privmsg			out("PRIVMSG #channel1 #channel2 :Hola");
-		std::cout << "too many channels";
+		std::cerr << "too many channels";
 		printError("test_Privmsg", 7);
 	}
 	catch (std::exception& e) {}
