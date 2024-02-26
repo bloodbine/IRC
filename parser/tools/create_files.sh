@@ -19,6 +19,8 @@ if [ "$#" -eq "2" ] && [ "$1" -eq "1" ]; then
 	echo "{" >> ../includes/$2.hpp
 	echo "private:" >> ../includes/$2.hpp
 	echo "public:" >> ../includes/$2.hpp
+	echo -e "\t$2();" >> ../includes/$2.hpp
+	echo -e "\t~$2();" >> ../includes/$2.hpp
 	echo "};" >> ../includes/$2.hpp
 	# create cpp file
 	echo "#include \"$2.hpp\"" >> ../srcs/$2.cpp
