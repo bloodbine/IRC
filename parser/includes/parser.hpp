@@ -4,8 +4,13 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
+#include "Privmsg.hpp"
 
 std::vector<std::string>	split(const std::string& text);
+
+// Validation
+bool	isValidPrivmsg(const std::string& text);
 
 // Utils
 template <typename T>

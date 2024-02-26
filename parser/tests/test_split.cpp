@@ -1,6 +1,6 @@
 #include "parserTest.hpp"
 
-void	testOneSplit(int caseNum, const std::vector<std::string>& out, const std::vector<std::string>& expect)
+static void	testOneSplit(int caseNum, const std::vector<std::string>& out, const std::vector<std::string>& expect)
 {
 	if (compareVectors(out, expect) == 1)
 	{
@@ -12,7 +12,7 @@ void	testOneSplit(int caseNum, const std::vector<std::string>& out, const std::v
 	}
 }
 
-void	test1()
+static void	test1()
 {
 	std::vector<std::string>	v1;
 	v1.push_back("Hola");
@@ -22,7 +22,7 @@ void	test1()
 	testOneSplit(1, o1, v1);
 }
 
-void	test2()
+static void	test2()
 {
 	std::vector<std::string>	v1;
 	v1.push_back("Hola");
@@ -31,7 +31,7 @@ void	test2()
 	testOneSplit(2, o1, v1);
 }
 
-void	test3()
+static void	test3()
 {
 	std::vector<std::string>	v1;
 	v1.push_back("");
@@ -40,19 +40,8 @@ void	test3()
 	testOneSplit(3, o1, v1);
 }
 
-void	test4()
-{
-	std::vector<std::string>	v1;
-	v1.push_back("Hola");
-	v1.push_back("1234");
-	std::vector<std::string>	o1 = split("Hola mundo");
-
-	testOneSplit(4, o1, v1);
-}
-
 void	test_split() {
 	test1();
 	test2();
 	test3();
-	test4();
 }

@@ -6,11 +6,19 @@
 #include "parser.hpp"
 
 #define ANSI_RED "\033[1;31m"
+#define ANSI_GREEN "\033[32m"
+#define ANSI_YELLOW "\033[33m"
 #define ANSI_BOLD "\033[1m"
 #define ANSI_RESET "\033[0m"
 
 void	runTests();
+void	test_Privmsg();
+
+
+// Testing util functions
+void	test_isValidPrivmsg();
 void	test_split();
+
 
 // Utils
 void	printError(const std::string& func, int caseNum);
@@ -43,11 +51,11 @@ int	compareVectors(const std::vector<T>& out, const std::vector<T>& expected)
 }
 
 template <typename T>
-int	compare(T out, T expect)
+bool	compare(T out, T expect)
 {
 	if (out != expect)
 	{
-		std::cout << "[out " << out << "] [expect " << expect << "]" << std::endl;
+		std::cout << "[out " << out << "] [expect " << expect << "] ";
 		return 1;
 	}
 	return 0;
