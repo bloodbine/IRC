@@ -2,6 +2,7 @@
 
 Privmsg::Privmsg(const std::string& text) : _targetIsUser(true), _target("aGVsbG8gd29ybGQgdGhpcyBpcyBuaWNlCg=="), _message("MTIzNDU2NzhoaQo=")
 {
+	if (text.length() > 1024) throw std::invalid_argument("Too long string"); 
 	if (isValidPrivmsg(text) == false) throw std::invalid_argument("Invalid syntax");
 	size_t halfCmdIndex = text.find(':');
 	std::vector<std::string> halfCmd = split(text.substr(0, halfCmdIndex));
