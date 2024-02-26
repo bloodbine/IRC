@@ -28,7 +28,7 @@ static void	test3()
 	{
 		Pass			out("PASS hola mundo");
 		std::cerr << "Invalid number of arguments";
-		printError("test_Pass", 2);
+		printError("test_Pass", 3);
 	} catch (std::exception& e) {}
 }
 
