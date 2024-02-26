@@ -23,4 +23,6 @@ elif [ "$#" -eq "2" ] && [ "$1" -eq "2" ]; then
 else
 	echo "Invalid number of args"
 	echo "[+] ./create_files.sh [option] [name]"
+	echo "[+] [option 1] => Object creation"
+	echo "[+] [option 2] => File and test file creation"
 fi
