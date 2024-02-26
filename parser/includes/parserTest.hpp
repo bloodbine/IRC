@@ -12,6 +12,8 @@
 void	runTests();
 void	test_split();
 
+// Utils
+void	printError(const std::string& func, int caseNum);
 
 // Compartions utils
 template <typename T>
@@ -50,3 +52,4 @@ int	compare(T out, T expect)
 	}
 	return 0;
 }
+
