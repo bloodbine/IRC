@@ -1,5 +1,7 @@
 NAME	=	parser
 SRC		=	$(wildcard srcs/*.cpp)
+SRC		+=	$(wildcard srcs/commands/*.cpp)
+SRC		+=	$(wildcard srcs/utils/*.cpp)
 SRC		+=	$(wildcard tests/*.cpp)
 OBJ		=	$(SRC:.cpp=.o)
 CFLAGS	=	-Wall -Werror -Wextra -std=c++98
