@@ -8,7 +8,7 @@ typedef struct s_test_privmsg
 } t_test_privmsg;
 
 
-static void	compare(int caseNum, Privmsg& out, t_test_privmsg expect)
+static void	comparePrivmsg(int caseNum, Privmsg& out, t_test_privmsg expect)
 {
 	bool		targetIsUser = out.getTargetIsUser();
 	std::string	target = out.getTarget();
@@ -39,7 +39,7 @@ static void	test1()
 	expect.targetIsUser = false;
 	expect.target = "channel";
 	expect.message = "Hola";
-	compare(1, out, expect);
+	comparePrivmsg(1, out, expect);
 }
 
 
@@ -102,8 +102,8 @@ static void	test7()
 {
 	try
 	{
-		Privmsg			out("PRIVMSG #channel1 #channel2 :Hola");
-		std::cerr << "too many channels";
+		Privmsg			out("PRIVMSG :Hola");
+		std::cerr << "Invalid number of arguments";
 		printError("test_Privmsg", 7);
 	}
 	catch (std::exception& e) {}
@@ -117,7 +117,18 @@ static void	test8()
 	expect.targetIsUser = true;
 	expect.target = "user";
 	expect.message = "Hola";
-	compare(8, out, expect);
+	comparePrivmsg(8, out, expect);
+}
+
+static void	test9()
+{
+	Privmsg			out("PRIVMSG user :Hello how are u doing?");
+	t_test_privmsg	expect;
+
+	expect.targetIsUser = true;
+	expect.target = "user";
+	expect.message = "Hello how are u doing?";
+	comparePrivmsg(9, out, expect);
 }
 
 void	test_Privmsg()
@@ -130,4 +141,5 @@ void	test_Privmsg()
 	test6();
 	test7();
 	test8();
+	test9();
 }
