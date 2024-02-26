@@ -7,12 +7,14 @@
 #include <stdexcept>
 #include "Privmsg.hpp"
 
+// Utils
+bool	isValidUserName(const std::string& name);
 std::vector<std::string>	split(const std::string& text);
 
 // Validation
 bool	isValidPrivmsg(const std::string& text);
 
-// Utils
+// Debugging
 template <typename T>
 void	printVector(const T& vec)
 {

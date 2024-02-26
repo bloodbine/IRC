@@ -1,8 +1,15 @@
 #include "Privmsg.hpp"
 
-Privmsg::Privmsg(const std::string& text) : _targetIsUser(false), _target("default"), _message("bad message")
+Privmsg::Privmsg(const std::string& text) : _targetIsUser(true), _target("aGVsbG8gd29ybGQgdGhpcyBpcyBuaWNlCg=="), _message("MTIzNDU2NzhoaQo=")
 {
-	(void)text;
+	if (isValidPrivmsg(text) == false) throw std::invalid_argument("Invalid syntax");
+	size_t halfCmdIndex = text.find(':');
+	std::vector<std::string> halfCmd = split(text.substr(0, halfCmdIndex));
+
+	_targetIsUser = isValidUserName(halfCmd[1]);
+	if (_targetIsUser) _target = halfCmd[1];
+	else _target = halfCmd[1].substr(1);
+	_message = text.substr(halfCmdIndex + 1);
 }
 Privmsg::~Privmsg() {}
 
