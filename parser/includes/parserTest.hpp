@@ -13,6 +13,7 @@
 
 void	runTests();
 void	test_Privmsg();
+void	test_Pass();
 
 
 // Testing util functions
@@ -56,8 +57,7 @@ bool	compare(T out, T expect)
 	if (out != expect)
 	{
 		std::cout << "[out " << out << "] [expect " << expect << "] ";
-		return 1;
+		return false;
 	}
-	return 0;
+	return true;
 }
-
