@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdexcept>
 #include "Privmsg.hpp"
+#include "Pass.hpp"
 
 // Utils
 bool	isValidUserName(const std::string& name);

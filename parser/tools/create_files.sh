@@ -23,10 +23,10 @@ if [ "$#" -eq "2" ] && [ "$1" -eq "1" ]; then
 	echo -e "\t~$2();" >> ../includes/$2.hpp
 	echo "};" >> ../includes/$2.hpp
 	# create cpp file
-	echo "#include \"$2.hpp\"" >> ../srcs/$2.cpp
-	echo "" >> ../srcs/$2.cpp
-	echo "$2::$2() :" >> ../srcs/$2.cpp
-	echo "$2::~$2()" >> ../srcs/$2.cpp
+	echo "#include \"$2.hpp\"" >> ../srcs/commands/$2.cpp
+	echo "" >> ../srcs/commands/$2.cpp
+	echo "$2::$2() :" >> ../srcs/commands/$2.cpp
+	echo "$2::~$2()" >> ../srcs/commands/$2.cpp
 
 elif [ "$#" -eq "2" ] && [ "$1" -eq "2" ]; then
 	# create the test file file
