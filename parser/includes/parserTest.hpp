@@ -8,7 +8,7 @@ void	runTests();
 
 // Compartions utils
 template <typename T>
-void	compareVectors(const std::vector<T>& out, const std::vector<T>& expected)
+int	compareVectors(const std::vector<T>& out, const std::vector<T>& expected)
 {
 	if (out.size() != expected.size())
 	{
@@ -21,9 +21,24 @@ void	compareVectors(const std::vector<T>& out, const std::vector<T>& expected)
 		int							index = 0;
 		for (; i < end; ++i)
 		{
-			if (out[index] != expected[index]) std::cout << "Vector out != expected" << std::endl;
-			return ;
+			if (out[index] != expected[index])
+			{
+				std::cout << "Vector [out != expected]" << std::endl;
+				return 1;
+			}
 			index++;
 		}
 	}
+	return 0;
+}
+
+template <typename T>
+int	compare(T out, T expect)
+{
+	if (out != expect)
+	{
+		std::cout << "[out " << out << "] [expect " << expect << "]" << std::endl;
+		return 1;
+	}
+	return 0;
 }
