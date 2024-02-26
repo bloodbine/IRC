@@ -10,7 +10,22 @@ ex:
 '
 
 if [ "$#" -eq "2" ] && [ "$1" -eq "1" ]; then
-	echo "Build Obj"
+	# create hpp file
+	echo "#pragma once" > ../includes/$2.hpp
+	echo "" >> ../includes/$2.hpp
+	echo "#include \"parser.hpp\"" >> ../includes/$2.hpp
+	echo "" >> ../includes/$2.hpp
+	echo "class $2" >> ../includes/$2.hpp
+	echo "{" >> ../includes/$2.hpp
+	echo "private:" >> ../includes/$2.hpp
+	echo "public:" >> ../includes/$2.hpp
+	echo "};" >> ../includes/$2.hpp
+	# create cpp file
+	echo "#include \"$2.hpp\"" >> ../srcs/$2.cpp
+	echo "" >> ../srcs/$2.cpp
+	echo "$2::$2() :" >> ../srcs/$2.cpp
+	echo "$2::~$2()" >> ../srcs/$2.cpp
+
 elif [ "$#" -eq "2" ] && [ "$1" -eq "2" ]; then
 	# create the test file file
 	echo "#include \"parserTest.hpp\"" > ../tests/test_$2.cpp
