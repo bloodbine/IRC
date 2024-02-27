@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include "Privmsg.hpp"
 #include "Pass.hpp"
+#include "Whois.hpp"
 
 // Utils
 bool	isValidUserName(const std::string& name);

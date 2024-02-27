@@ -14,6 +14,7 @@
 void	runTests();
 void	test_Privmsg();
 void	test_Pass();
+void	test_Whois();
 
 
 // Testing util functions

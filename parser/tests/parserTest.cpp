@@ -7,4 +7,5 @@ void	runTests()
 	test_isValidPrivmsg();
 	test_Privmsg();
 	test_Pass();
+	test_Whois();
 }
