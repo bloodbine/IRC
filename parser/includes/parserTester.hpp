@@ -13,24 +13,25 @@
 #define ASSERT(condition, message) \
 	if (!condition) \
 	{ \
-		std::cout << BOLD_ON << RED_COLOR; \
-		std::cout << "[ASSERT ERROR]: " << BOLD_OFF << RESET_COLOR  << message << std::endl; \
+		std::cerr << BOLD_ON << RED_COLOR; \
+		std::cerr << "[ASSERT ERROR]: " << BOLD_OFF << RESET_COLOR  << message << std::endl; \
 	} \
 
 #define ASSERT_EQUAL(actual, expected, message) \
 	if (actual != expected) \
 	{ \
-		std::cout << BOLD_ON << RED_COLOR; \
-		std::cout << "[ASSERT EQUAL ERROR]: " << BOLD_OFF << RESET_COLOR  << message << std::endl; \
+		std::cerr << BOLD_ON << RED_COLOR; \
+		std::cerr << "[ASSERT EQUAL ERROR]: " << BOLD_OFF << RESET_COLOR  << message << std::endl; \
 	} \
 
 #define ASSERT_NOT_EQUAL(condition, message) \
 	if (actual == expected) \
 	{ \
-		std::cout << BOLD_ON << RED_COLOR; \
-		std::cout << "[ASSERT NOT EQUAL ERROR]: " << BOLD_OFF << RESET_COLOR  << message << std::endl; \
+		std::cerr << BOLD_ON << RED_COLOR; \
+		std::cerr << "[ASSERT NOT EQUAL ERROR]: " << BOLD_OFF << RESET_COLOR  << message << std::endl; \
 	} \
 
 
 void	test_main();
+void	test_split();
 
