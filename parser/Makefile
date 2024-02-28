@@ -1,4 +1,4 @@
-NAME	=	parser
+NAME	=	parser_exe
 SRC		=	$(wildcard srcs/*.cpp)
 SRC		+=	$(wildcard srcs/commands/*.cpp)
 SRC		+=	$(wildcard srcs/utils/*.cpp)
