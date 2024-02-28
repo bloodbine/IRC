@@ -24,7 +24,7 @@
 		std::cerr << "[ASSERT EQUAL ERROR]: " << BOLD_OFF << RESET_COLOR  << message << std::endl; \
 	} \
 
-#define ASSERT_NOT_EQUAL(condition, message) \
+#define ASSERT_NOT_EQUAL(condition, expected, message) \
 	if (actual == expected) \
 	{ \
 		std::cerr << BOLD_ON << RED_COLOR; \
