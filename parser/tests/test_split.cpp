@@ -5,7 +5,6 @@ void	testEmptySplit()
 	std::vector<std::string>	actual = split("");
 	std::vector<std::string>	expected;
 
-	// std::cout << actual.size() << " " << expected.size() << std::endl;
 	ASSERT_EQUAL(actual.size(), expected.size(), "testEmptySplit() => The sizes of the vectors are different!");
 }
 
