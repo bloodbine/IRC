@@ -34,4 +34,5 @@ void	test_split()
 {
 	testEmptySplit();
 	testOneItemSplit();
+	testTwoItemSplit();
 }
