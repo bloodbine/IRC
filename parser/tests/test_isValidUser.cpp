@@ -13,8 +13,8 @@ static void	testUserTooLong()
 
 static void	testUserTooShort()
 {
-	bool	out = isValidUserName("holamundoestoesunusuariomuylargoholamundoestoesunusuariomuylargo");
-	ASSERT_EQUAL(out, false, "testUserTooShort() should be false")
+	bool	out = isValidUserName("ho");
+	ASSERT_EQUAL(out, false, "tests/test_isValidUser.cpp:17:0 => should be false")
 }
 
 static void	testUserStartWithDigit()
