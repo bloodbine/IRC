@@ -2,6 +2,7 @@
 
 /*
 Returns -1 when the first word of the text is not a valid CMD.
+Otherwise returns the int value representing the CMD.
 */
 int	isValidCmd(const std::string& text)
 {
