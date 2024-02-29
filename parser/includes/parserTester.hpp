@@ -38,3 +38,4 @@ void	test_Pass();
 void	test_Nick();
 void	test_Whois();
 void	test_Who();
+void	test_Ping();

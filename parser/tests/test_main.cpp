@@ -11,4 +11,5 @@ void	test_main()
 	test_Nick();
 	test_Whois();
 	test_Who();
+	test_Ping();
 }

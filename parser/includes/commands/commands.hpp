@@ -5,3 +5,4 @@
 #include "Nick.hpp"
 #include "Whois.hpp"
 #include "Who.hpp"
+#include "Ping.hpp"
