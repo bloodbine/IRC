@@ -7,4 +7,5 @@ void	test_main()
 	test_Privmsg();
 	test_isValidUser();
 	test_isValidChannel();
+	test_Pass();
 }

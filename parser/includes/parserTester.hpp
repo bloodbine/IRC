@@ -26,7 +26,12 @@
 
 void	test_main();
 void	test_split();
-void	test_isValidCmd();
-void	test_Privmsg();
 void	test_isValidUser();
 void	test_isValidChannel();
+void	test_isValidCmd();
+
+/*
+Testing commands
+*/
+void	test_Privmsg();
+void	test_Pass();

@@ -11,6 +11,12 @@ static void	testUserTooLong()
 	ASSERT_EQUAL(out, false, "testUserTooLong() should be false")
 }
 
+static void	testUserTooShort()
+{
+	bool	out = isValidUserName("holamundoestoesunusuariomuylargoholamundoestoesunusuariomuylargo");
+	ASSERT_EQUAL(out, false, "testUserTooShort() should be false")
+}
+
 static void	testUserStartWithDigit()
 {
 	bool	out = isValidUserName("1hola");
@@ -43,4 +49,5 @@ void	test_isValidUser()
 	testUserContainsDigitButNotAtStart();
 	testNormalUser();
 	testWrongUser();
+	testUserTooShort();
 }

@@ -11,6 +11,12 @@ static void	testChannelTooLong()
 	ASSERT_EQUAL(out, false, "testChannelTooLong() should be false")
 }
 
+static void	testChannelTooShort()
+{
+	bool	out = isValidUserName("#ab");
+	ASSERT_EQUAL(out, false, "testChannelTooShort() should be false")
+}
+
 static void	testChannelStartWithDigit()
 {
 	bool	out = isValidChannelName("#1hola");
@@ -43,4 +49,5 @@ void	test_isValidChannel()
 	testChannelContainsDigitButNotAtStart();
 	testNormalChannel();
 	testWrongChannel();
+	testChannelTooShort();
 }
