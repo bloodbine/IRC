@@ -3,5 +3,5 @@
 void	test_main()
 {
 	test_split();
-
+	test_isValidCmd();
 }

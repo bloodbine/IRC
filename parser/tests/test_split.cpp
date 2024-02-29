@@ -1,6 +1,6 @@
 #include "parserTester.hpp"
 
-void	testEmptySplit()
+static void	testEmptySplit()
 {
 	std::vector<std::string>	actual = split("");
 	std::vector<std::string>	expected;
@@ -8,7 +8,7 @@ void	testEmptySplit()
 	ASSERT_EQUAL(actual.size(), expected.size(), "testEmptySplit() => The sizes of the vectors are different!");
 }
 
-void	testOneItemSplit()
+static void	testOneItemSplit()
 {
 	std::vector<std::string>	actual = split("Hola");
 	std::vector<std::string>	expected;
@@ -18,7 +18,7 @@ void	testOneItemSplit()
 	ASSERT_EQUAL(actual[0], expected[0], "testOneItemSplit() => The element 0 is different!");
 }
 
-void	testTwoItemSplit()
+static void	testTwoItemSplit()
 {
 	std::vector<std::string>	actual = split("Hola mundo");
 	std::vector<std::string>	expected;

@@ -34,4 +34,4 @@
 
 void	test_main();
 void	test_split();
-
+void	test_isValidCmd();
