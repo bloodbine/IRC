@@ -8,4 +8,5 @@ void	test_main()
 	test_isValidUser();
 	test_isValidChannel();
 	test_Pass();
+	test_Nick();
 }
