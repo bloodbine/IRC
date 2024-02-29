@@ -1,6 +1,6 @@
 #include "parserTester.hpp"
 
-void	testSingleCommand()
+static void	testSingleCommand()
 {
 	try
 	{
@@ -14,7 +14,7 @@ void	testSingleCommand()
 	}
 }
 
-void	testWithValidUser()
+static void	testWithValidUser()
 {
 	try
 	{
@@ -28,7 +28,7 @@ void	testWithValidUser()
 	}
 }
 
-void	testWithInvalidUser()
+static void	testWithInvalidUser()
 {
 	try
 	{
@@ -38,7 +38,7 @@ void	testWithInvalidUser()
 	} catch (std::exception& e) {}
 }
 
-void	testWithValidMode()
+static void	testWithValidMode()
 {
 	try
 	{
@@ -52,7 +52,7 @@ void	testWithValidMode()
 	}
 }
 
-void	testWithInvalidLengthMode()
+static void	testWithInvalidLengthMode()
 {
 	try
 	{
@@ -62,7 +62,7 @@ void	testWithInvalidLengthMode()
 	} catch (std::exception& e) {}
 }
 
-void	testWithInvalidMode()
+static void	testWithInvalidMode()
 {
 	try
 	{
@@ -72,7 +72,7 @@ void	testWithInvalidMode()
 	} catch (std::exception& e) {}
 }
 
-void	testWithInvalidArguments()
+static void	testWithInvalidArguments()
 {
 	try
 	{

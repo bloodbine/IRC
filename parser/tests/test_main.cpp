@@ -10,4 +10,5 @@ void	test_main()
 	test_Pass();
 	test_Nick();
 	test_Whois();
+	test_Who();
 }

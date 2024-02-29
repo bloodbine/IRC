@@ -37,3 +37,4 @@ void	test_Privmsg();
 void	test_Pass();
 void	test_Nick();
 void	test_Whois();
+void	test_Who();
