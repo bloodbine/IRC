@@ -9,4 +9,5 @@ void	test_main()
 	test_isValidChannel();
 	test_Pass();
 	test_Nick();
+	test_Whois();
 }
