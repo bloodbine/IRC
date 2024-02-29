@@ -29,6 +29,12 @@ static void	testNormalUser()
 	ASSERT_EQUAL(out, true, "testNormalUser() should be true")
 }
 
+static void	testWrongUser()
+{
+	bool	out = isValidUserName(":hola");
+	ASSERT_EQUAL(out, false, "testWrongUser() should be false")
+}
+
 void	test_isValidUser()
 {
 	testWrongBecauseIsChannel();
@@ -36,4 +42,5 @@ void	test_isValidUser()
 	testUserStartWithDigit();
 	testUserContainsDigitButNotAtStart();
 	testNormalUser();
+	testWrongUser();
 }

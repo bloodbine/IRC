@@ -29,6 +29,12 @@ static void	testNormalChannel()
 	ASSERT_EQUAL(out, true, "testNormalChannel() should be true")
 }
 
+static void	testWrongChannel()
+{
+	bool	out = isValidChannelName(":hola");
+	ASSERT_EQUAL(out, false, "testWrongChannel() should be false")
+}
+
 void	test_isValidChannel()
 {
 	testWrongBecauseIsUser();
@@ -36,4 +42,5 @@ void	test_isValidChannel()
 	testChannelStartWithDigit();
 	testChannelContainsDigitButNotAtStart();
 	testNormalChannel();
+	testWrongChannel();
 }

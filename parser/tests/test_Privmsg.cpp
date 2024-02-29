@@ -82,10 +82,10 @@ static void	testEmptyMessage()
 	try
 	{
 		Privmsg	cmd(in);
+		printError("testEmptyMessage() showld throw throw an exception");
 	}
 	catch(std::exception& e)
 	{
-		printError("testEmptyMessage() showld throw not throw an exception");
 	}
 }
 
