@@ -6,4 +6,5 @@ void	test_main()
 	test_isValidCmd();
 	test_Privmsg();
 	test_isValidUser();
+	test_isValidChannel();
 }
