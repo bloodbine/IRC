@@ -35,6 +35,8 @@ CMD codes
 # define MOTD 12
 # define TOPIC 13
 
+void						printError(const std::string& msg);
 std::vector<std::string>	split(const std::string& text);
 int							isValidCmd(const std::string& text);
-void						printError(const std::string& msg);
+bool						isValidUserName(const std::string& name);
+bool						isValidChannelName(const std::string& name);
