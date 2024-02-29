@@ -17,6 +17,12 @@ static void	testChannelTooShort()
 	ASSERT_EQUAL(out, false, "testChannelTooShort() should be false")
 }
 
+static void	testValidChannel()
+{
+	bool	out = isValidChannelName("#abcdeff");
+	ASSERT_EQUAL(out, true, "tests/isValidChannel.cpp:23:0 => should be true")
+}
+
 static void	testChannelStartWithDigit()
 {
 	bool	out = isValidChannelName("#1hola");
@@ -50,4 +56,5 @@ void	test_isValidChannel()
 	testNormalChannel();
 	testWrongChannel();
 	testChannelTooShort();
+	testValidChannel();
 }
