@@ -12,4 +12,5 @@ void	test_main()
 	test_Whois();
 	test_Who();
 	test_Ping();
+	test_Part();
 }
