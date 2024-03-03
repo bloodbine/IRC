@@ -13,4 +13,5 @@ void	test_main()
 	test_Who();
 	test_Ping();
 	test_Part();
+	test_List();
 }
