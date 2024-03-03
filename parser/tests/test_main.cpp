@@ -15,4 +15,5 @@ void	test_main()
 	test_Part();
 	test_List();
 	test_Join();
+	test_Quit();
 }
