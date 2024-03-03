@@ -41,3 +41,4 @@ void	test_Who();
 void	test_Ping();
 void	test_Part();
 void	test_List();
+void	test_Join();

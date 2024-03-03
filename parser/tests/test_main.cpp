@@ -14,4 +14,5 @@ void	test_main()
 	test_Ping();
 	test_Part();
 	test_List();
+	test_Join();
 }
