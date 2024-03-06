@@ -43,3 +43,4 @@ void	test_Part();
 void	test_List();
 void	test_Join();
 void	test_Quit();
+void	test_Topic();

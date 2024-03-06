@@ -6,7 +6,7 @@ static void	testOnlyCmd()
 	try
 	{
 		Privmsg	cmd(in);
-		printError("testOnlyCmd() showld throw an exception");
+		printError("testOnlyCmd() should an exception");
 	}
 	catch(std::exception& e) {}
 }
@@ -17,7 +17,7 @@ static void	testCmdAndUser()
 	try
 	{
 		Privmsg	cmd(in);
-		printError("testCmdAndUser() showld throw an exception");
+		printError("testCmdAndUser() should an exception");
 	}
 	catch(std::exception& e) {}
 }
@@ -28,7 +28,7 @@ static void	testCmdAndChannel()
 	try
 	{
 		Privmsg	cmd(in);
-		printError("testCmdAndChannel() showld throw an exception");
+		printError("testCmdAndChannel() should an exception");
 	}
 	catch(std::exception& e) {}
 }
@@ -39,7 +39,7 @@ static void	testCmdAndMessage()
 	try
 	{
 		Privmsg	cmd(in);
-		printError("testCmdAndMessage() showld throw an exception");
+		printError("testCmdAndMessage() should an exception");
 	}
 	catch(std::exception& e) {}
 }
@@ -56,7 +56,7 @@ static void	testValidCmdAndUserTrue()
 	}
 	catch(std::exception& e)
 	{
-		printError("testValidCmdAndUserTrue() showld throw not throw an exception");
+		printError("testValidCmdAndUserTrue() should not throw an exception");
 	}
 }
 
@@ -72,7 +72,7 @@ static void	testValidCmdAndChannelTrue()
 	}
 	catch(std::exception& e)
 	{
-		printError("testValidCmdAndChannelTrue() showld throw not throw an exception");
+		printError("testValidCmdAndChannelTrue() should not throw an exception");
 	}
 }
 
@@ -82,7 +82,7 @@ static void	testEmptyMessage()
 	try
 	{
 		Privmsg	cmd(in);
-		printError("testEmptyMessage() showld throw throw an exception");
+		printError("testEmptyMessage() should throw an exception");
 	}
 	catch(std::exception& e)
 	{

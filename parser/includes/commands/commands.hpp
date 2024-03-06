@@ -10,3 +10,4 @@
 #include "List.hpp"
 #include "Join.hpp"
 #include "Quit.hpp"
+#include "Topic.hpp"
