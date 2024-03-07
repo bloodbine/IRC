@@ -11,3 +11,4 @@
 #include "Join.hpp"
 #include "Quit.hpp"
 #include "Topic.hpp"
+#include "Motd.hpp"
