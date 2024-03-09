@@ -12,3 +12,4 @@
 #include "Quit.hpp"
 #include "Topic.hpp"
 #include "Motd.hpp"
+#include "Kick.hpp"

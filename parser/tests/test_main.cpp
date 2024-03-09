@@ -18,4 +18,5 @@ void	test_main()
 	test_Quit();
 	test_Topic();
 	test_Motd();
+	test_Kick();
 }
