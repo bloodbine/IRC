@@ -19,4 +19,5 @@ void	test_main()
 	test_Topic();
 	test_Motd();
 	test_Kick();
+	test_Invite();
 }

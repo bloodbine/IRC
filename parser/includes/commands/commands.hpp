@@ -13,3 +13,4 @@
 #include "Topic.hpp"
 #include "Motd.hpp"
 #include "Kick.hpp"
+#include "Invite.hpp"

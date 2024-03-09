@@ -46,3 +46,4 @@ void	test_Quit();
 void	test_Topic();
 void	test_Motd();
 void	test_Kick();
+void	test_Invite();
