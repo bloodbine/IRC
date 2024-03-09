@@ -1,6 +1,6 @@
 #include "parserTester.hpp"
 
-void	test_onlyCmd()
+static void	test_onlyCmd()
 {
 	try
 	{
@@ -10,7 +10,7 @@ void	test_onlyCmd()
 	} catch (std::exception& e) {}
 }
 
-void	test_cmdAndChannel()
+static void	test_cmdAndChannel()
 {
 	try
 	{
@@ -23,7 +23,7 @@ void	test_cmdAndChannel()
 	}
 }
 
-void	test_cmdAndNotValidChannel()
+static void	test_cmdAndNotValidChannel()
 {
 	try
 	{
@@ -33,7 +33,7 @@ void	test_cmdAndNotValidChannel()
 	} catch (std::exception& e) {}
 }
 
-void	test_cmdChannelAndPassword()
+static void	test_cmdChannelAndPassword()
 {
 	try
 	{
@@ -47,7 +47,7 @@ void	test_cmdChannelAndPassword()
 	}
 }
 
-void	test_invalidArgs()
+static void	test_invalidArgs()
 {
 	try
 	{
@@ -57,14 +57,13 @@ void	test_invalidArgs()
 	} catch (std::exception& e) {}
 }
 
-void	test_invalidPassword()
+static void	test_invalidPassword()
 {
 	try
 	{
-		std::vector<std::string>	in = split("JOIN #channel thisisaverylongpasswordthisisaverylongpasswordthisisaverylongpassword");
+		std::vector<std::string>	in = split("JOIN #channel thisisaverylongpasswordthisisaverylongpasswordthisisaverylongpasswordthisisaverylongpasswordthisisaverylongpasswordthisisaverylongpassword");
 		Join	cmd(in);
-		printError("tests/test_Join.cpp:68:0 => should throw an exception");
-
+		printError("tests/test_Join.cpp:66:0 => should throw an exception");
 	} catch (std::exception& e) {}
 }
 
@@ -74,5 +73,6 @@ void	test_Join()
 	test_cmdAndChannel();
 	test_cmdAndNotValidChannel();
 	test_cmdChannelAndPassword();
-	test_invalidArgs(); 
+	test_invalidArgs();
+	test_invalidPassword();
 }

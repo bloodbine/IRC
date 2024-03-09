@@ -9,7 +9,7 @@ Join::Join(const std::vector<std::string>& cmd) : _channel(""), _password("")
 		else throw std::invalid_argument("Invalid syntax");
 		if (cmd.size() == 3)
 		{
-			 if (cmd[2].length() > 50) std::invalid_argument("Invalid syntax");
+			if (cmd[2].length() > 40) throw std::invalid_argument("Invalid syntax");
 			else _password = cmd[2];
 		}
 	}
