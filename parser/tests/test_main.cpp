@@ -20,4 +20,5 @@ void	test_main()
 	test_Motd();
 	test_Kick();
 	test_Invite();
+	test_Mode();
 }

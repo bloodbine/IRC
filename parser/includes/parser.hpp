@@ -40,3 +40,4 @@ std::vector<std::string>	split(const std::string& text);
 int							isValidCmd(const std::string& text);
 bool						isValidUserName(const std::string& name);
 bool						isValidChannelName(const std::string& name);
+bool						isValidModeCmd(const std::vector<std::string>& vec);

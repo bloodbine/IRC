@@ -14,3 +14,4 @@
 #include "Motd.hpp"
 #include "Kick.hpp"
 #include "Invite.hpp"
+#include "Mode.hpp"
