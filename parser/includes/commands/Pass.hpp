@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iostream>
-#include <string>
+#include "commands.hpp"
+#include "Cmd.hpp"
 
-class Pass
+class Pass : public Cmd
 {
 private:
 	std::string	_password;
