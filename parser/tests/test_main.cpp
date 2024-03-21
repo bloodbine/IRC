@@ -21,4 +21,5 @@ void	test_main()
 	test_Kick();
 	test_Invite();
 	test_Mode();
+	test_Cmd();
 }

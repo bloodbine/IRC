@@ -34,3 +34,4 @@ void	test_Motd();
 void	test_Kick();
 void	test_Invite();
 void	test_Mode();
+void	test_Cmd();

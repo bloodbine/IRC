@@ -15,3 +15,5 @@
 #include "Kick.hpp"
 #include "Invite.hpp"
 #include "Mode.hpp"
+#include <iostream>
+#include <string>
