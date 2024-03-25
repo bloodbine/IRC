@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: ./server
+    container_name: server
+    restart: always
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./server:/server
+  irssi:
+    build:
+      context: ./irssi
+    container_name: irssi
+    stdin_open: true
+    tty: true
+
+networks:
+  default:
+    name: my-network
