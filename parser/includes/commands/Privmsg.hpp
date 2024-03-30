@@ -1,9 +1,8 @@
 #pragma once
 
 #include "commands.hpp"
-#include "Cmd.hpp"
 
-class Privmsg : public Cmd
+class Privmsg
 {
 private:
 	std::string	_target;

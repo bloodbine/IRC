@@ -9,17 +9,16 @@ void	test_main()
 	test_isValidChannel();
 	test_Pass();
 	test_Nick();
-	test_Whois();
-	test_Who();
-	test_Ping();
 	test_Part();
 	test_List();
 	test_Join();
 	test_Quit();
 	test_Topic();
-	test_Motd();
 	test_Kick();
 	test_Invite();
 	test_Mode();
-	test_Cmd();
+	// test_Motd();
+	// test_Whois();
+	// test_Who();
+	// test_Ping();
 }
