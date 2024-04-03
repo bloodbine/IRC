@@ -6,13 +6,14 @@
 /*   By: rdragan <rdragan@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 14:11:54 by rdragan           #+#    #+#             */
-/*   Updated: 2024/04/03 14:27:37 by rdragan          ###   ########.fr       */
+/*   Updated: 2024/04/03 15:41:24 by rdragan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include "Command.hpp"
 
 int	convertPort(char* param)
 {
