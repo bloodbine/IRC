@@ -6,11 +6,11 @@
 #    By: rdragan <rdragan@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/03 14:10:51 by rdragan           #+#    #+#              #
-#    Updated: 2024/04/03 14:11:26 by rdragan          ###   ########.fr        #
+#    Updated: 2024/04/03 14:13:49 by rdragan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	=	parser_exe
+NAME	=	ircserv
 SRC		=	$(wildcard srcs/*.cpp)
 OBJ		=	$(SRC:.cpp=.o)
 CFLAGS	=	-Wall -Werror -Wextra -std=c++98
