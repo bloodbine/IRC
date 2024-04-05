@@ -38,6 +38,8 @@ void server::handle_client()
 	socklen_t			client_len;
 	struct sockaddr_in	client_address;
 	char				buffer[256];
+	std::string			tmp;
+	// char				response[1024];
 
 
 	listen(this->_socketfd, 1);
@@ -45,8 +47,16 @@ void server::handle_client()
 	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
 	if (!client_socketfd)
 		throw std::logic_error("Failed to create Client socket");
-	recv(client_socketfd, buffer, 256, 0);
-	std::cout << "Message Received: " << buffer << std::endl;
-	send(client_socketfd, buffer, std::strlen(buffer), 0);
+	while (true)
+	{
+		recv(client_socketfd, buffer, 256, 0);
+		std::cout << "Message Received: " << buffer << std::endl;
+		if (strncmp(buffer, "CAP LS", 6))
+		{
+			tmp = "PONG 127.0.0.1";
+		}
+		send(client_socketfd, tmp.c_str(), std::strlen(buffer), 0);
+		bzero(buffer, sizeof(buffer));
+	}
 	close(client_socketfd);
 };
