@@ -51,9 +51,14 @@ void server::handle_client()
 		std::vector<std::string> vec = getVector(buffer);
 		if (vec.size() == 0) break;
 		Command* cmd = getCommand(vec);
+		if (cmd == NULL) 
+		{
+			bzero(buffer, sizeof(buffer));
+			continue;
+		}
 		tmp = cmd->execute();
 		delete cmd;
-		int sendStatus = send(client_socketfd, tmp, std::strlen(buffer), 0);
+		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)
 		{
 			delete tmp;
