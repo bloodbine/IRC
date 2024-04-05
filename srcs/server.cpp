@@ -34,14 +34,14 @@ int			server::get_port() {return this->_port;};
 void server::handle_client()
 {
 	int					client_socketfd;
-	int					client_len;
+	socklen_t			client_len;
 	struct sockaddr_in	client_address;
 	char				buffer[256];
 
 
-	listen(this->_socketfd);
+	listen(this->_socketfd, 1);
 	client_len = sizeof(client_address);
-	client_socketfd = accept(this->_socketfd, (struct sockaddr_in *)&client_address, &client_len);
+	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
 	if (!client_socketfd)
 		throw std::logic_error("Failed to create Client socket");
 	recv(client_socketfd, buffer, 256, 0);
