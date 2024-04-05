@@ -15,8 +15,14 @@ int	convertPort(char* param)
 	return port;
 }
 
+// void	check()
+// {
+// 	system("leaks ircserv");
+// }
+
 int	main(int argc, char **argv)
 {
+	// atexit(&check);
 	if (argc != 3) 
 	{
 		std::cerr << "[ERROR]: You must run ./ircserv <port> <password>" << std::endl;

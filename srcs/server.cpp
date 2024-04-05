@@ -39,7 +39,6 @@ void server::handle_client()
 	struct sockaddr_in	client_address;
 	char				buffer[256];
 	std::string			tmp;
-	// char				response[1024];
 
 
 	listen(this->_socketfd, 1);
@@ -51,10 +50,8 @@ void server::handle_client()
 	{
 		recv(client_socketfd, buffer, 256, 0);
 		std::cout << "Message Received: " << buffer << std::endl;
-		if (strncmp(buffer, "CAP LS", 6))
-		{
-			tmp = "PONG 127.0.0.1";
-		}
+		if (strncmp(buffer, "CAP LS", 6) == 0) tmp = "PONG 127.0.0.1";
+		else if (strlen(buffer) == 0) break ;
 		send(client_socketfd, tmp.c_str(), std::strlen(buffer), 0);
 		bzero(buffer, sizeof(buffer));
 	}
