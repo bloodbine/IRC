@@ -1,6 +1,4 @@
 #include "server.hpp"
-#include <cstring>
-#include <stdexcept>
 #include <sys/socket.h>
 
 server::server(int port, std::string pass)
@@ -38,7 +36,7 @@ void server::handle_client()
 	socklen_t			client_len;
 	struct sockaddr_in	client_address;
 	char				buffer[256];
-	std::string			tmp;
+	char*				tmp;
 
 
 	listen(this->_socketfd, 1);
@@ -50,9 +48,18 @@ void server::handle_client()
 	{
 		recv(client_socketfd, buffer, 256, 0);
 		std::cout << "Message Received: " << buffer << std::endl;
-		if (strncmp(buffer, "CAP LS", 6) == 0) tmp = "PONG 127.0.0.1";
-		else if (strlen(buffer) == 0) break ;
-		send(client_socketfd, tmp.c_str(), std::strlen(buffer), 0);
+		std::vector<std::string> vec = getVector(buffer);
+		if (vec.size() == 0) break;
+		Command* cmd = getCommand(vec);
+		tmp = cmd->execute();
+		delete cmd;
+		int sendStatus = send(client_socketfd, tmp, std::strlen(buffer), 0);
+		if (sendStatus == -1)
+		{
+			delete tmp;
+			break;
+		}
+		delete tmp;
 		bzero(buffer, sizeof(buffer));
 	}
 	close(client_socketfd);

@@ -7,6 +7,11 @@
 #include <netinet/in.h>
 #include <stdexcept>
 #include <iostream>
+#include <cstring>
+#include <stdexcept>
+#include "Command.hpp"
+#include "utils.hpp"
+
 
 class server
 {
