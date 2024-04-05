@@ -16,7 +16,7 @@ server::server(int port, std::string pass)
 	this->_address.sin_addr.s_addr = INADDR_ANY;
 	this->_address.sin_port = htons(this->_port);
 	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (!this->_socketfd)
+	if (this->_socketfd != -1)
 		throw std::logic_error("Failed to create Server socket");
 	if (!bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)))
 		throw std::logic_error("Failed to bind Socket");
