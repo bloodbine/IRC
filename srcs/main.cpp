@@ -1,19 +1,11 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rdragan <rdragan@student.42heilbronn.de    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/03 14:11:54 by rdragan           #+#    #+#             */
-/*   Updated: 2024/04/03 15:41:24 by rdragan          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
 #include "Command.hpp"
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+#include "server.hpp"
 
 int	convertPort(char* param)
 {
@@ -27,8 +19,14 @@ int	convertPort(char* param)
 	return port;
 }
 
+// void	check()
+// {
+// 	system("leaks ircserv");
+// }
+
 int	main(int argc, char **argv)
 {
+	// atexit(&check);
 	if (argc != 3) 
 	{
 		std::cerr << "[ERROR]: You must run ./ircserv <port> <password>" << std::endl;
@@ -38,5 +36,7 @@ int	main(int argc, char **argv)
 	if (port < 0) std::cerr << "[ERROR]: Invalid port" << std::endl;
 	else std::cout << "> You want to run the server in port: " << argv[1] << std::endl;
 	std::cout << "> The password for the server is: " << argv[2] << std::endl;
+	server serv = server(atoi(argv[1]), argv[2]);
+	serv.handle_client();
 	return (0);
 }
