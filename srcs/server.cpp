@@ -58,7 +58,7 @@ void server::handle_client()
 		}
 		tmp = cmd->execute();
 		delete cmd;
-		int sendStatus = send(client_socketfd, tmp, std::strlen(buffer), 0);
+		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)
 		{
 			delete tmp;
