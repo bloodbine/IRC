@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdragan <rdragan@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: gpasztor <gpasztor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 14:11:54 by rdragan           #+#    #+#             */
-/*   Updated: 2024/04/03 14:27:37 by rdragan          ###   ########.fr       */
+/*   Updated: 2024/04/05 16:15:28 by gpasztor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include "server.hpp"
 
 int	convertPort(char* param)
 {
@@ -37,5 +38,7 @@ int	main(int argc, char **argv)
 	if (port < 0) std::cerr << "[ERROR]: Invalid port" << std::endl;
 	else std::cout << "> You want to run the server in port: " << argv[1] << std::endl;
 	std::cout << "> The password for the server is: " << argv[2] << std::endl;
+	server serv = server(atoi(argv[1]), argv[2]);
+	serv.handle_client();
 	return (0);
 }
