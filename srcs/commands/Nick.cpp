@@ -9,8 +9,7 @@ char* Nick::ERR_NONICKNAMEGIVEN(const std::string& serverIp) const
 	std::strcpy(out, tmp.c_str());
 	return (out);
 }
-//            ERR_ERRONEUSNICKNAME
-//            ERR_NICKNAMEINUSE               
+//            ERR_NICKNAMEINUSE
 //            ERR_RESTRICTED
 
 char*	Nick::ERR_ERRONEUSNICKNAME(const std::string& serverIp) const
@@ -56,7 +55,7 @@ char*	Nick::execute(server& Server) const
 		if (validNick() == false) out = ERR_ERRONEUSNICKNAME(serverIp);
 		else
 		{
-			std::string tmp = "ERROR:\n";
+			std::string tmp = "Nick set to: " + _vec[1] + "\n";
 			out = new char[tmp.size() + 1];
 			std::strcpy(out, tmp.c_str());
 		}
