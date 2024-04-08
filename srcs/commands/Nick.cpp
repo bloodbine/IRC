@@ -14,9 +14,8 @@ char* Nick::ERR_NONICKNAMEGIVEN(const std::string& serverIp) const
 
 char*	Nick::ERR_ERRONEUSNICKNAME(const std::string& serverIp) const
 {
-	std::string tmp = serverIp + " ";
-	tmp += _vec[1];
-	tmp += "\t431 :No nickname given\n";
+	std::string tmp = serverIp;
+	tmp += " 431 :No nickname given\n";
 	char	*out = new char[tmp.size() + 1];
 	std::strcpy(out, tmp.c_str());
 	return (out);
