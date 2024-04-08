@@ -17,3 +17,10 @@ Command	*getCommand(const std::vector<std::string>& vec)
 	if (vec[0] == "NICK") return (new Nick(vec));
 	return NULL;
 }
+
+bool	isSpecialChar(char c)
+{
+	std::string special =  "[]\\`_^{|}";
+	if (special.find(c) != std::string::npos) return true;
+	return false;
+}
