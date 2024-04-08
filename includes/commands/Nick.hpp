@@ -7,13 +7,13 @@
 
 class server;
 
-class Cap : public Command
+class Nick	 : public Command
 {
 private:
-	std::string	_serverAddress;
 	size_t	_size;
 public:
-	Cap(const std::vector<std::string>& vec);
+	Nick	(const std::vector<std::string>& vec);
 	char*	execute(server& Server) const;
-	~Cap();
+	char*	ERR_NONICKNAMEGIVEN(const std::string& serverIp) const;
+	~Nick	();
 };

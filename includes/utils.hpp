@@ -2,6 +2,7 @@
 
 #include "Command.hpp"
 #include "commands/Cap.hpp"
+#include "commands/Nick.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);

@@ -1,7 +1,7 @@
 #include "server.hpp"
 #include <sys/socket.h>
 
-server::server(int port, std::string pass)
+server::server(int port, std::string pass) : _serverIp("")
 {
 	if (!port || port <= 0)
 		throw std::logic_error("Missing or Invalid Port");
@@ -57,7 +57,7 @@ void server::handleClient()
 			bzero(buffer, sizeof(buffer));
 			continue;
 		}
-		tmp = cmd->execute();
+		tmp = cmd->execute(*this);
 		delete cmd;
 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)
@@ -69,3 +69,10 @@ void server::handleClient()
 	}
 	close(client_socketfd);
 };
+
+void	server::setServerIp(const std::string& ip) 
+{
+	_serverIp = ip;
+}
+
+const std::string&	server::getServerIp() const { return _serverIp; }
