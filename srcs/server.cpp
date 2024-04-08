@@ -1,7 +1,7 @@
 #include "server.hpp"
 #include <sys/socket.h>
 
-server::server(int port, std::string pass)
+server::server(int port, std::string pass) : _serverIp("")
 {
 	if (!port || port <= 0)
 		throw std::logic_error("Missing or Invalid Port");
@@ -26,11 +26,11 @@ server::~server()
 	close(this->_socketfd);
 };
 
-std::string	server::get_pass() {return this->_pass;};
-int			server::get_socketfd() {return this->_socketfd;};
-int			server::get_port() {return this->_port;};
+std::string	server::getPass() {return this->_pass;};
+int			server::getSocketfd() {return this->_socketfd;};
+int			server::getPort() {return this->_port;};
 
-void server::handle_client()
+void server::handleClient()
 {
 	int					client_socketfd;
 	socklen_t			client_len;
@@ -46,6 +46,7 @@ void server::handle_client()
 		throw std::logic_error("Failed to create Client socket");
 	while (true)
 	{
+		bzero(buffer, sizeof(buffer));
 		recv(client_socketfd, buffer, 256, 0);
 		std::cout << "Message Received: " << buffer << std::endl;
 		std::vector<std::string> vec = getVector(buffer);
@@ -56,7 +57,7 @@ void server::handle_client()
 			bzero(buffer, sizeof(buffer));
 			continue;
 		}
-		tmp = cmd->execute();
+		tmp = cmd->execute(*this);
 		delete cmd;
 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)
@@ -65,7 +66,13 @@ void server::handle_client()
 			break;
 		}
 		delete tmp;
-		bzero(buffer, sizeof(buffer));
 	}
 	close(client_socketfd);
 };
+
+void	server::setServerIp(const std::string& ip) 
+{
+	_serverIp = ip;
+}
+
+const std::string&	server::getServerIp() const { return _serverIp; }

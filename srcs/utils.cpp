@@ -14,5 +14,6 @@ std::vector<std::string> getVector(char *in)
 Command	*getCommand(const std::vector<std::string>& vec)
 {
 	if (vec[0] == "CAP") return (new Cap(vec));
+	if (vec[0] == "NICK") return (new Nick(vec));
 	return NULL;
 }

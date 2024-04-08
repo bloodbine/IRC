@@ -1,9 +1,11 @@
 #pragma once
 
+class server;
+
 class Command
 {
 public:
 	Command();
-	virtual char* execute() const = 0;
+	virtual char* execute(server& Server) const = 0;
 	virtual ~Command();
 };
