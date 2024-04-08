@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include "Command.hpp"
 #include "utils.hpp"
+#include "Client.hpp"
 
 
 class server

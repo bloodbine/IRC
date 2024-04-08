@@ -4,7 +4,7 @@
 char* Nick::ERR_NONICKNAMEGIVEN(const std::string& serverIp) const
 {
 	std::string tmp = serverIp;
-	tmp += "\t431 :No nickname given\n";
+	tmp += " 431 :No nickname given\n";
 	char	*out = new char[tmp.size() + 1];
 	std::strcpy(out, tmp.c_str());
 	return (out);
@@ -15,7 +15,18 @@ char* Nick::ERR_NONICKNAMEGIVEN(const std::string& serverIp) const
 char*	Nick::ERR_ERRONEUSNICKNAME(const std::string& serverIp) const
 {
 	std::string tmp = serverIp;
-	tmp += " 431 :No nickname given\n";
+	tmp += _vec[1];
+	tmp += " 432 :Erroneous nickname\n";
+	char	*out = new char[tmp.size() + 1];
+	std::strcpy(out, tmp.c_str());
+	return (out);
+}
+
+char*	Nick::ERR_NICKNAMEINUSE(const std::string& serverIp) const
+{
+	std::string tmp = serverIp;
+	tmp += _vec[1];
+	tmp += " 433 :Nickname is already in use\n";
 	char	*out = new char[tmp.size() + 1];
 	std::strcpy(out, tmp.c_str());
 	return (out);
@@ -44,16 +55,24 @@ bool	Nick::validNick() const
 	return false;
 }
 
-char*	Nick::execute(server& Server) const
+char*	Nick::execute(server& server, Client& client) const
 {
 	char	*out;
-	const std::string serverIp = Server.getServerIp();
+	const std::string serverIp = server.getServerIp();
 
-	if (_size == 1) out = ERR_NONICKNAMEGIVEN(serverIp);
+	if (client.getIsValidatedPassword() == false)
+	{
+		std::string tmp = "You need to add run first PASS!\n";
+		out = new char[tmp.size() + 1];
+		std::strcpy(out, tmp.c_str());
+	}
+	else if (_size == 1) out = ERR_NONICKNAMEGIVEN(serverIp);
 	else if (_size == 2) {
-		if (validNick() == false) out = ERR_ERRONEUSNICKNAME(serverIp);
+		if (client.GetNickName() == _vec[1]) out = ERR_NICKNAMEINUSE(serverIp);
+		else if (validNick() == false) out = ERR_ERRONEUSNICKNAME(serverIp);
 		else
 		{
+			client.setNickName(_vec[1]);
 			std::string tmp = "Nick set to: " + _vec[1] + "\n";
 			out = new char[tmp.size() + 1];
 			std::strcpy(out, tmp.c_str());

@@ -14,6 +14,6 @@ private:
 	size_t	_size;
 public:
 	Cap(const std::vector<std::string>& vec);
-	char*	execute(server& Server) const;
+	char*	execute(server& server, Client& client) const;
 	~Cap();
 };

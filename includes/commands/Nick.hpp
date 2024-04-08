@@ -16,9 +16,10 @@ private:
 	std::vector<std::string> _vec;
 	char*	ERR_NONICKNAMEGIVEN(const std::string& serverIp) const;
 	char*	ERR_ERRONEUSNICKNAME(const std::string& serverIp) const;
+	char*	ERR_NICKNAMEINUSE(const std::string& serverIp) const;
 public:
 	Nick	(const std::vector<std::string>& vec);
-	char*	execute(server& Server) const;
+	char*	execute(server& server, Client& client) const;
 	bool	validNick() const;
 	~Nick	();
 };

@@ -44,6 +44,7 @@ void server::handleClient()
 	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
 	if (!client_socketfd)
 		throw std::logic_error("Failed to create Client socket");
+	Client client;
 	while (true)
 	{
 		bzero(buffer, sizeof(buffer));
@@ -57,7 +58,8 @@ void server::handleClient()
 			bzero(buffer, sizeof(buffer));
 			continue;
 		}
-		tmp = cmd->execute(*this);
+		tmp = cmd->execute(*this, client);
+		std::cout << "client nickname: " << client.GetNickName() << std::endl;
 		delete cmd;
 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)

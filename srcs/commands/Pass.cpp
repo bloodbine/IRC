@@ -6,7 +6,8 @@ Pass::Pass(const std::vector<std::string>& vec) : _password(vec.size() > 1 ? vec
 
 Pass::~Pass() {}
 
-char* Pass::execute(server& Server) const {
+char* Pass::execute(server& server, Client& client) const {
+  (void)client;
   if (_password.empty()) {
     std::string tmp = ":You need to specify a password after PASS\n";
     char* out = new char[tmp.size() + 1];
@@ -14,7 +15,7 @@ char* Pass::execute(server& Server) const {
     return out;
   }
 
-  if (Server.getPass() == _password) 
+  if (server.getPass() == _password) 
   {
       std::string tmp = "true\n";
       char* out = new char[tmp.size() + 1];
