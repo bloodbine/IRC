@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-class User
+class Client
 {
 private:
     /* data */
@@ -11,14 +11,14 @@ private:
     std::string _userName;
     bool _isRegistered; // Flag to track registration status
 public:
-    User(/* args */);
+    Client(/* args */);
     void Register();
     bool GetIsRegistered() const;
     const std::string& GetNickName() const;
     const std::string& GetUserName() const;
     void setNickName(const std::string& newNickname);
-    void setUserName(const std::string& newUsername);
-    std::string GetIdenUser() const;
-    ~User();
+    void setUserName(const std::string& newClientname);
+    std::string GetIdenClient() const;
+    ~Client();
 };
 
