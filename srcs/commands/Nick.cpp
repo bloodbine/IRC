@@ -10,8 +10,8 @@ char* Nick::ERR_NONICKNAMEGIVEN(const std::string& serverIp) const
 	return (out);
 }
 //            ERR_ERRONEUSNICKNAME
-//            ERR_NICKNAMEINUSE               ERR_NICKCOLLISION
-//            ERR_UNAVAILRESOURCE             ERR_RESTRICTED
+//            ERR_NICKNAMEINUSE               
+//            ERR_RESTRICTED
 
 Nick::Nick(const std::vector<std::string>& vec) : _size(vec.size()) {}
 
