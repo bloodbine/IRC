@@ -37,6 +37,6 @@ int	main(int argc, char **argv)
 	else std::cout << "> You want to run the server in port: " << argv[1] << std::endl;
 	std::cout << "> The password for the server is: " << argv[2] << std::endl;
 	server serv = server(atoi(argv[1]), argv[2]);
-	serv.handle_client();
+	serv.handleClient();
 	return (0);
 }
