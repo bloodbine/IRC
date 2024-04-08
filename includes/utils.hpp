@@ -8,3 +8,4 @@
 
 std::vector<std::string> getVector(char *in);
 Command	*getCommand(const std::vector<std::string>& vec);
+bool	isSpecialChar(char c);
