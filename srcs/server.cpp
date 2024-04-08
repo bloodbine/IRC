@@ -26,11 +26,11 @@ server::~server()
 	close(this->_socketfd);
 };
 
-std::string	server::get_pass() {return this->_pass;};
-int			server::get_socketfd() {return this->_socketfd;};
-int			server::get_port() {return this->_port;};
+std::string	server::getPass() {return this->_pass;};
+int			server::getSocketfd() {return this->_socketfd;};
+int			server::getPort() {return this->_port;};
 
-void server::handle_client()
+void server::handleClient()
 {
 	int					client_socketfd;
 	socklen_t			client_len;

@@ -25,9 +25,9 @@ class server
 		server(int port, std::string pass);
 		~server();
 
-		void handle_client();
+		void handleClient();
 
-		std::string		get_pass();
-		int				get_socketfd();
-		int				get_port();
+		std::string		getPass();
+		int				getSocketfd();
+		int				getPort();
 };
