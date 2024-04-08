@@ -46,6 +46,7 @@ void server::handle_client()
 		throw std::logic_error("Failed to create Client socket");
 	while (true)
 	{
+		bzero(buffer, sizeof(buffer));
 		recv(client_socketfd, buffer, 256, 0);
 		std::cout << "Message Received: " << buffer << std::endl;
 		std::vector<std::string> vec = getVector(buffer);
@@ -65,7 +66,6 @@ void server::handle_client()
 			break;
 		}
 		delete tmp;
-		bzero(buffer, sizeof(buffer));
 	}
 	close(client_socketfd);
 };
