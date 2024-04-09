@@ -17,3 +17,4 @@ void Client::setUserName(const std::string& newNickname){ _userName = newNicknam
 void Client::setRealUserName(const std::string& newNickname){ _realUserName = newNickname; }
 bool Client::getIsValidatedPassword() const { return _isValidatedPassword; }
 void Client::setIsValidatePassword() { _isValidatedPassword = true; }
+void Client::setIsRegistered() { _isRegistered = true; }

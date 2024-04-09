@@ -35,15 +35,30 @@ char*	User::execute(server& server, Client& client) const
 		if (validUser() == true)
 		{
 			// set client.setUsername() to username.
-			client.setUserName(_vec[1]);
 			std::string realName = "";
-			for (size_t i = 4; i < _size; i++) realName += _vec[i];
+			for (size_t i = 4; i < _size; i++) 
+			{
+				if (i > 4)
+					realName += " " + _vec[i];
+				else realName += _vec[i];
+			}
+			client.setUserName(_vec[1]);
 			client.setRealUserName(realName);
+			client.setIsRegistered();
 			// set client.setMode() to mode.
 			// set realName
+			std::string tmp = "NOW YOU ARE REGISTERED!\n";
+			out = new char[tmp.size() + 1];
+			std::strcpy(out, tmp.c_str());
+		}
+		else
+		{
+			std::string tmp = "INVALID USER SINTAX!\n";
+			out = new char[tmp.size() + 1];
+			std::strcpy(out, tmp.c_str());
 		}
 	}
-	std::cout << out << std::endl;
+	
 	return out;
 }
 User::~User() {}

@@ -62,6 +62,7 @@ void server::handleClient()
 		std::cout << "client nickname: " << client.GetNickName() << std::endl;
 		std::cout << "client userName: " << client.GetUserName() << std::endl;
 		std::cout << "client realUserName: " << client.GetRealUserName() << std::endl;
+		std::cout << "client isRegistered: " << client.GetIsRegistered() << std::endl;
 		delete cmd;
 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)

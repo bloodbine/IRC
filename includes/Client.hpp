@@ -24,6 +24,7 @@ public:
     void setRealUserName(const std::string& newClientname);
     bool getIsValidatedPassword() const;
     void setIsValidatePassword();
+    void setIsRegistered();
     std::string GetIdenClient() const;
     ~Client();
 };
