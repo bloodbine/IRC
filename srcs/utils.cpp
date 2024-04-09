@@ -16,6 +16,7 @@ Command	*getCommand(const std::vector<std::string>& vec)
 	if (vec[0] == "CAP") return (new Cap(vec));
 	if (vec[0] == "PASS") return (new Pass(vec));
 	if (vec[0] == "NICK") return (new Nick(vec));
+	if (vec[0] == "USER") return (new User(vec));
 	return NULL;
 }
 

@@ -4,6 +4,7 @@
 #include "commands/Cap.hpp"
 #include "commands/Pass.hpp"
 #include "commands/Nick.hpp"
+#include "commands/User.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);

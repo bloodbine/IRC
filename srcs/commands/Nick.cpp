@@ -15,7 +15,7 @@ char* Nick::ERR_NONICKNAMEGIVEN(const std::string& serverIp) const
 char*	Nick::ERR_ERRONEUSNICKNAME(const std::string& serverIp) const
 {
 	std::string tmp = serverIp;
-	tmp += _vec[1];
+	tmp += " " +  _vec[0];
 	tmp += " 432 :Erroneous nickname\n";
 	char	*out = new char[tmp.size() + 1];
 	std::strcpy(out, tmp.c_str());
@@ -25,7 +25,7 @@ char*	Nick::ERR_ERRONEUSNICKNAME(const std::string& serverIp) const
 char*	Nick::ERR_NICKNAMEINUSE(const std::string& serverIp) const
 {
 	std::string tmp = serverIp;
-	tmp += _vec[1];
+	tmp += " " + _vec[0];
 	tmp += " 433 :Nickname is already in use\n";
 	char	*out = new char[tmp.size() + 1];
 	std::strcpy(out, tmp.c_str());

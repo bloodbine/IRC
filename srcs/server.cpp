@@ -1,5 +1,4 @@
 #include "server.hpp"
-#include <sys/socket.h>
 
 server::server(int port, std::string pass) : _serverIp("")
 {
@@ -59,7 +58,10 @@ void server::handleClient()
 			continue;
 		}
 		tmp = cmd->execute(*this, client);
+		std::cout << "client validatePasswd: " << client.getIsValidatedPassword() << std::endl;
 		std::cout << "client nickname: " << client.GetNickName() << std::endl;
+		std::cout << "client userName: " << client.GetUserName() << std::endl;
+		std::cout << "client realUserName: " << client.GetRealUserName() << std::endl;
 		delete cmd;
 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)
