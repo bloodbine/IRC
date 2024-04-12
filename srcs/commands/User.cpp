@@ -15,7 +15,7 @@ bool	User::validUser() const
 	/*
 	Still to implement the mode and the ip.
 	*/
-	if (_vec[3] != "*") return false;
+	if (_vec[3] != "*") return true;
 	return true;
 }
 

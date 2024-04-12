@@ -6,7 +6,16 @@ Client::Client(/* args */): _nickName(""),_userName(""), _isRegistered(false)
 Client::~Client()
 {}
 
-void Client::Register() { _isRegistered = true; }  // Mark Client as registered
+void Client::Register() 
+{
+    _isValidatedPassword = true;
+    _isRegistered = true;
+//     if (password.length() >= 4)
+//     {
+//   } else {
+//     std::cerr << "Error: Password must be at least 6 characters long." << std::endl;
+//   }
+}  // Mark Client as registered
 bool Client::GetIsRegistered() const { return _isRegistered; }
 const std::string& Client::GetNickName() const{ return Client::_nickName;}
 const std::string& Client::GetUserName() const{ return Client::_userName;}
