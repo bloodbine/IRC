@@ -13,7 +13,7 @@ std::vector<std::string> getVector(char *in)
 
 Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 {
-	// if (vec[0] == "CAP") return (new Cap(client, vec));
+	if (vec[0] == "CAP") return (new Cap(client, vec));
 	if (vec[0] == "PASS") return (new Pass(client, vec));
 	if (vec[0] == "NICK") return (new Nick(client, vec));
 	// if (vec[0] == "USER") return (new User(client, vec));

@@ -12,9 +12,10 @@ class Cap : public Command
 {
 private:
 	size_t	_size;
-	Client	_client;
+	Client	*_client;
+	std::string _serverAddress;
 public:
-	Cap(Client& client, const std::vector<std::string>& vec);
+	Cap(Client* client, const std::vector<std::string>& vec);
 	char* execute() const;
 	~Cap();
 };
