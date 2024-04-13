@@ -9,10 +9,14 @@ std::string Pass::errorMessage(int errorCode) const {
     switch (errorCode) {
         case ERR_ALREADYREGISTRED:
             return " 462 :Unauthorized command (already registered)\n";
+            break ;
         case ERR_PASSWDMISMATCH:
-            return " 464 :Password incorrect\n";
+        // With the correct 464 number doesn't work.
+            return " 462 :Password incorrect\n";
+            break ;
         default:
             return ""; // Default case, no error message
+            break;
     }
 }
 
