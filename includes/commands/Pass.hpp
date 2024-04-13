@@ -1,8 +1,5 @@
 #pragma once
 
-#define ERR_ALREADYREGISTRED 462
-#define ERR_PASSWDMISMATCH 464 
-
 #include "Command.hpp"
 #include <iostream>
 #include "server.hpp"

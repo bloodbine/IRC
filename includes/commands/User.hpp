@@ -6,6 +6,7 @@
 #include <iostream>
 #include "server.hpp"
 #include "utils.hpp"
+#include "Client.hpp"
 
 class server;
 
@@ -15,8 +16,9 @@ private:
 	size_t	_size;
 	std::vector<std::string>	_vec;
 	std::string					_userName;
+	Client						*_client;
 public:
-	User	(Client& client, const std::vector<std::string>& vec);
+	User	(Client* client, const std::vector<std::string>& vec);
 	char* execute() const;
 	bool	validUser() const;
 	~User	();

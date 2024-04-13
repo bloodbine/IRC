@@ -3,7 +3,7 @@
 
 Pass::Pass(Client* client, const std::vector<std::string>& vec) : _client(client), _password((vec.size() > 1 || vec.size() > 2) ? vec[1] : "")
 {
-  if (_client->getIsValidatedPassword()) throw std::invalid_argument(" 462 :Unauthorized command (already registered)\n");
+  if (_client->getIsValidatedPassword()) ERR_ALREADYREGISTRED();
   if (_password.empty()) throw std::invalid_argument("462 :Password incorrect\n");
 }
 

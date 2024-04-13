@@ -3,7 +3,7 @@
 
 Nick::Nick(Client* client, const std::vector<std::string>& vec) : _client(client), _size(vec.size())
 {
-	if (_client->getIsValidatedPassword() == false) throw std::invalid_argument(" ERROR: YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\n");
+	if (_client->getIsValidatedPassword() == false) missingPass();
 	if (_size <= 1) throw std::invalid_argument(" 431 :No nickname given\n");
 	if (_size > 2 || (_size == 2 && !validNick(vec[1]))) throw std::invalid_argument(" 432 :Erroneous nickname\n");
 	if (_client->GetNickName() == vec[1]) throw std::invalid_argument(" 433 :Nickname is already in use\n");
