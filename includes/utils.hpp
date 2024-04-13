@@ -3,7 +3,7 @@
 #include "Command.hpp"
 // #include "commands/Cap.hpp"
 #include "commands/Pass.hpp"
-// #include "commands/Nick.hpp"
+#include "commands/Nick.hpp"
 // #include "commands/User.hpp"
 #include <sstream>
 

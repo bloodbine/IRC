@@ -62,27 +62,26 @@ void server::handleClient()
 			else
 			{
 				tmp = cmd->execute();
+				std::cout << "-----" << std::endl;
 				delete cmd;
+				std::cout << "|-----|" << std::endl;
 			}
 			bzero(buffer, sizeof(buffer));
 		}
 		catch (std::exception& e)
 		{
+			std::cout << "|-----|" << std::endl;
 			tmp = strdup(e.what());
 			bzero(buffer, sizeof(buffer));
+			std::cout << "|-----|" << std::endl;
 		}
-		std::cout << "client validatePasswd: " << client.getIsValidatedPassword() << std::endl;
-		std::cout << "client nickname: " << client.GetNickName() << std::endl;
-		std::cout << "client userName: " << client.GetUserName() << std::endl;
-		std::cout << "client realUserName: " << client.GetRealUserName() << std::endl;
-		std::cout << "client isRegistered: " << client.GetIsRegistered() << std::endl;
 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)
 		{
 			delete tmp;
 			break;
 		}
-		delete tmp;
+		else delete tmp;
 	}
 	close(client_socketfd);
 };
