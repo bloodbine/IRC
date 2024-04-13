@@ -1,6 +1,7 @@
 #include "commands/User.hpp"
 #include "server.hpp"
-User::User(const std::vector<std::string>& vec) : _size(vec.size()), _vec(vec), _userName("") {}
+
+User::User(Client& client, const std::vector<std::string>& vec) : _size(vec.size()), _vec(vec), _userName(""), _client(client) {}
 
 bool	User::validUser() const
 {
@@ -19,7 +20,7 @@ bool	User::validUser() const
 	return true;
 }
 
-char*	User::execute(server& server, Client& client) const
+char*	User::execute() const
 {
 	char	*out = NULL;
 	const std::string serverIp = server.getServerIp();

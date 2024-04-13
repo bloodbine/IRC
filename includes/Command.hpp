@@ -7,6 +7,6 @@ class Command
 {
 public:
 	Command();
-	virtual char* execute(server& server, Client& client) const = 0;
+	virtual char* execute() const = 0;
 	virtual ~Command();
 };

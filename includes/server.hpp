@@ -8,11 +8,11 @@
 #include <stdexcept>
 #include <iostream>
 #include <cstring>
+#include <vector>
 #include <stdexcept>
 #include "Command.hpp"
 #include "utils.hpp"
 #include "Client.hpp"
-
 
 class server
 {

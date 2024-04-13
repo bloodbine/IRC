@@ -4,16 +4,17 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "Client.hpp"
 
 class server;
 
 class Cap : public Command
 {
 private:
-	std::string	_serverAddress;
 	size_t	_size;
+	Client	_client;
 public:
-	Cap(const std::vector<std::string>& vec);
-	char*	execute(server& server, Client& client) const;
+	Cap(Client& client, const std::vector<std::string>& vec);
+	char* execute() const;
 	~Cap();
 };

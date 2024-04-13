@@ -11,12 +11,12 @@ std::vector<std::string> getVector(char *in)
 	return out;
 }
 
-Command	*getCommand(const std::vector<std::string>& vec)
+Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 {
-	if (vec[0] == "CAP") return (new Cap(vec));
-	if (vec[0] == "PASS") return (new Pass(vec));
-	if (vec[0] == "NICK") return (new Nick(vec));
-	if (vec[0] == "USER") return (new User(vec));
+	// if (vec[0] == "CAP") return (new Cap(client, vec));
+	if (vec[0] == "PASS") return (new Pass(client, vec));
+	// if (vec[0] == "NICK") return (new Nick(client, vec));
+	// if (vec[0] == "USER") return (new User(client, vec));
 	return NULL;
 }
 

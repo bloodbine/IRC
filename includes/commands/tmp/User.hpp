@@ -16,8 +16,8 @@ private:
 	std::vector<std::string>	_vec;
 	std::string					_userName;
 public:
-	User	(const std::vector<std::string>& vec);
-	char*	execute(server& server, Client& client) const;
+	User	(Client& client, const std::vector<std::string>& vec);
+	char* execute() const;
 	bool	validUser() const;
 	~User	();
 };

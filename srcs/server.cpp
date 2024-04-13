@@ -43,7 +43,7 @@ void server::handleClient()
 	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
 	if (!client_socketfd)
 		throw std::logic_error("Failed to create Client socket");
-	Client client;
+	Client client((*this)._pass);
 	while (true)
 	{
 		bzero(buffer, sizeof(buffer));
@@ -51,19 +51,31 @@ void server::handleClient()
 		std::cout << "Message Received: " << buffer << std::endl;
 		std::vector<std::string> vec = getVector(buffer);
 		if (vec.size() == 0) break;
-		Command* cmd = getCommand(vec);
-		if (cmd == NULL) 
+		try
 		{
+			Command* cmd = getCommand(&client, vec);
+			if (cmd == NULL)
+			{
+				bzero(buffer, sizeof(buffer));
+				tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+			}
+			else
+			{
+				tmp = cmd->execute();
+				delete cmd;
+			}
 			bzero(buffer, sizeof(buffer));
-			continue;
 		}
-		tmp = cmd->execute(*this, client);
+		catch (std::exception& e)
+		{
+			tmp = strdup(e.what());
+			bzero(buffer, sizeof(buffer));
+		}
 		std::cout << "client validatePasswd: " << client.getIsValidatedPassword() << std::endl;
 		std::cout << "client nickname: " << client.GetNickName() << std::endl;
 		std::cout << "client userName: " << client.GetUserName() << std::endl;
 		std::cout << "client realUserName: " << client.GetRealUserName() << std::endl;
 		std::cout << "client isRegistered: " << client.GetIsRegistered() << std::endl;
-		delete cmd;
 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)
 		{

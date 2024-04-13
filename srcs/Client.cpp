@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(/* args */): _nickName(""),_userName(""), _isRegistered(false)
+Client::Client(std::string& serverPassword): _nickName(""),_userName(""), _isRegistered(false), _serverPassword(serverPassword)
 {}
 
 Client::~Client()
@@ -25,5 +25,6 @@ void Client::setNickName(const std::string& newNickname){ _nickName = newNicknam
 void Client::setUserName(const std::string& newNickname){ _userName = newNickname; }
 void Client::setRealUserName(const std::string& newNickname){ _realUserName = newNickname; }
 bool Client::getIsValidatedPassword() const { return _isValidatedPassword; }
+const std::string& Client::getServerPassword() const { return _serverPassword; }
 void Client::setIsValidatePassword() { _isValidatedPassword = true; }
 void Client::setIsRegistered() { _isRegistered = true; }

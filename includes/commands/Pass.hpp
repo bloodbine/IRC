@@ -12,10 +12,10 @@ class server;
 class Pass : public Command
 {
 private:
+    Client      *_client;
     std::string _password;
 public:
-    Pass(const std::vector<std::string>& vec);
-    char* execute(server& server, Client& client) const;
-    std::string errorMessage(int errorCode) const;
+    Pass(Client* client, const std::vector<std::string>& vec);
+    char* execute() const;
     ~Pass();
 };
