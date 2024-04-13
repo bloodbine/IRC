@@ -9,10 +9,12 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <map>
 #include <stdexcept>
 #include "Command.hpp"
 #include "utils.hpp"
 #include "Client.hpp"
+#include "Channel.hpp"
 
 class server
 {
@@ -20,6 +22,7 @@ class server
 		struct sockaddr_in _address;
 		std::string _pass;
 		std::string	_serverIp;
+		std::map<std::string, Channel*>	_channelList;
 		int _socketfd;
 		int _port;
 
@@ -33,5 +36,7 @@ class server
 		int				getSocketfd();
 		int				getPort();
 		void			setServerIp(const std::string& ip);
+		bool			channelExists(const std::string& channelName) const;
+		void			addChannel(Channel *channel);
 		const std::string&			getServerIp() const;
 };

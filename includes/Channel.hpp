@@ -20,8 +20,8 @@ private:
     std::string _mode; // String representing the current channel mode (e.g., "+v" for voice mode)
     std::map<std::string, Client*> _memberLists; // List or set containing User objects currently joined in the channel
 public:
-    Channel();
-    Channel(const std::string& name); // Constructor with channel name
+    Channel(const std::string& name, const std::string& topic, const std::string& mode);
+    // Channel(const std::string& name); // Constructor with channel name
 
     Channel(const Channel& copy); // // Copy constructor and assignment operator (implement proper copying of User objects in the map)
 

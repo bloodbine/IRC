@@ -62,18 +62,18 @@ void server::handleClient()
 			else
 			{
 				tmp = cmd->execute();
-				std::cout << "-----" << std::endl;
 				delete cmd;
-				std::cout << "|-----|" << std::endl;
 			}
+			Channel tmpChannel("hola", "tmpTopic", "TmpMode");
+			std::cout << "'hola' is in _channelList: " << channelExists(tmpChannel.getName()) << std::endl;
+			std::cout << "Adding 'hola' to _channelList" << std::endl;
+			addChannel(&tmpChannel);
 			bzero(buffer, sizeof(buffer));
 		}
 		catch (std::exception& e)
 		{
-			std::cout << "|-----|" << std::endl;
 			tmp = strdup(e.what());
 			bzero(buffer, sizeof(buffer));
-			std::cout << "|-----|" << std::endl;
 		}
 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
 		if (sendStatus == -1)
@@ -92,3 +92,13 @@ void	server::setServerIp(const std::string& ip)
 }
 
 const std::string&	server::getServerIp() const { return _serverIp; }
+
+bool			server::channelExists(const std::string& channelName) const
+{
+	return (_channelList.find(channelName) != _channelList.end());
+}
+
+void			server::addChannel(Channel *channel)
+{
+	_channelList[channel->getName()] = channel;
+}
