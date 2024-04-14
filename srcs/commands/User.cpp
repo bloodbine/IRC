@@ -42,6 +42,8 @@ char*	User::execute() const
 	_client->setRealUserName(realName);
 	_client->setIsRegistered();
 	// set client.setMode() to mode.
+	std::cout << "Does 'hola' channel exists: " << server::channelExists("hola") << std::endl;
+	std::cout << "Does 'mundo' channel exists: " << server::channelExists("mundo") << std::endl;
 	return strdup("NOW YOU ARE REGISTERED!\n");
 }
 
