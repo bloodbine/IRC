@@ -18,11 +18,11 @@
 
 class server
 {
+	static std::map<std::string, Channel*>	channelList;
 	private:
 		struct sockaddr_in _address;
 		std::string _pass;
 		std::string	_serverIp;
-		std::map<std::string, Channel*>	_channelList;
 		int _socketfd;
 		int _port;
 
@@ -36,7 +36,7 @@ class server
 		int				getSocketfd();
 		int				getPort();
 		void			setServerIp(const std::string& ip);
-		bool			channelExists(const std::string& channelName) const;
-		void			addChannel(Channel *channel);
+		static bool			channelExists(const std::string& channelName);
+		static void			addChannel(Channel *channel);
 		const std::string&			getServerIp() const;
 };

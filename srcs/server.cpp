@@ -1,6 +1,8 @@
 #include "server.hpp"
 #include <utility>
 
+std::map<std::string, Channel*>	server::channelList;
+
 server::server(int port, std::string pass) : _serverIp("")
 {
 	if (!port || port <= 0)
@@ -100,12 +102,12 @@ void	server::setServerIp(const std::string& ip)
 
 const std::string&	server::getServerIp() const { return _serverIp; }
 
-bool			server::channelExists(const std::string& channelName) const
+bool			server::channelExists(const std::string& channelName)
 {
-	return (_channelList.find(channelName) != _channelList.end());
+	return (channelList.find(channelName) != channelList.end());
 }
 
 void			server::addChannel(Channel *channel)
 {
-	_channelList[channel->getName()] = channel;
+	channelList[channel->getName()] = channel;
 }
