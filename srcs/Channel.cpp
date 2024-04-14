@@ -23,3 +23,10 @@ void Channel::setMode(const std::string& mode) { _mode = mode; }
 
 // Get the channel mode
 const std::string& Channel::getMode() const { return _mode; }
+
+bool  Channel::getIsMember(const std::string &name) const { return _memberList.find(name) != _memberList.end(); }
+
+void  Channel::addMember(Client *client)
+{
+	_memberList[client->GetNickName()] = client;
+}

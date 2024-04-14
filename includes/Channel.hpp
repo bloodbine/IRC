@@ -18,7 +18,7 @@ private:
     std::string _name; //String representing the channel name (e.g., "#programming")
     std::string _topic; // String representing the current topic of the channel (optional)
     std::string _mode; // String representing the current channel mode (e.g., "+v" for voice mode)
-    std::map<std::string, Client*> _memberLists; // List or set containing User objects currently joined in the channel
+    std::map<std::string, Client*> _memberList; // List or set containing User objects currently joined in the channel
 public:
     Channel(const std::string& name, const std::string& topic, const std::string& mode);
     // Channel(const std::string& name); // Constructor with channel name
@@ -38,17 +38,19 @@ public:
     const std::string& getName() const;
 
     // Set the channel topic
-  void setTopic(const std::string& topic);
+    void setTopic(const std::string& topic);
 
-    // Get the channel topic
-  const std::string& getTopic() const;
+      // Get the channel topic
+    const std::string& getTopic() const;
 
-  // Set the channel mode
-  void setMode(const std::string& mode);
+    // Set the channel mode
+    void setMode(const std::string& mode);
 
-  // Get the channel mode
-  const std::string& getMode() const;
+    // Get the channel mode
+    const std::string& getMode() const;
 
+    bool  getIsMember(const std::string &name) const;
+    void  addMember(Client *client);
 //     // Get a list of usernames in the channel
 //   std::vector<std::string> getUsernames() const;
     ~Channel();

@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include <utility>
 
 server::server(int port, std::string pass) : _serverIp("")
 {
@@ -68,6 +69,12 @@ void server::handleClient()
 			std::cout << "'hola' is in _channelList: " << channelExists(tmpChannel.getName()) << std::endl;
 			std::cout << "Adding 'hola' to _channelList" << std::endl;
 			addChannel(&tmpChannel);
+			// std::cout << "channel list: \n";
+			// for (std::map<std::string, Channel*>::iterator itr = _channelList.begin(); itr != _channelList.end(); ++itr)
+			// {
+			// 	std::pair<std::string, Channel*> p = *itr;
+			// 	std::cout << p.first<< ": " << p.second->getName() << std::endl;
+			// }
 			bzero(buffer, sizeof(buffer));
 		}
 		catch (std::exception& e)
