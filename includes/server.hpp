@@ -38,5 +38,6 @@ class server
 		void			setServerIp(const std::string& ip);
 		static bool			channelExists(const std::string& channelName);
 		static void			addChannel(Channel *channel);
+		static Channel*			getChannelByName(const std::string& channelName);
 		const std::string&			getServerIp() const;
 };
