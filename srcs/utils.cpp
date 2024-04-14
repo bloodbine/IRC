@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include "Channel.hpp"
 
 std::vector<std::string> getVector(char *in)
 {
@@ -17,6 +18,7 @@ Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 	if (vec[0] == "PASS") return (new Pass(client, vec));
 	if (vec[0] == "NICK") return (new Nick(client, vec));
 	if (vec[0] == "USER") return (new User(client, vec));
+	if (vec[0] == "PART") return (new Part(client, vec));
 	return NULL;
 }
 
@@ -47,4 +49,13 @@ void	ERR_NEEDMOREPARAMS(const std::string& cmdName)
 void	ERR_ALREADYREGISTRED()
 {
 	throw std::invalid_argument(" 462 :Unauthorized command (already registered)\n");
+}
+void	ERR_NOTREGISTERED()
+{
+	throw std::invalid_argument(" 451 :You have not registered\n");
+}
+
+void	ERR_NOSUCHCHANNEL(std::string &channelName , Client& client)
+{
+	throw std::invalid_argument(" 403" + client.GetUserName() + " " + channelName + " :You have not registered\n");
 }
