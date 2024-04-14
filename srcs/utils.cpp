@@ -55,7 +55,11 @@ void	ERR_NOTREGISTERED()
 	throw std::invalid_argument(" 451 :You have not registered\n");
 }
 
-void	ERR_NOSUCHCHANNEL(std::string &channelName , Client& client)
+void	ERR_NOSUCHCHANNEL()
 {
-	throw std::invalid_argument(" 403" + client.GetUserName() + " " + channelName + " :You have not registered\n");
+	throw std::invalid_argument(" 403 :No such channel\n");
+}
+void	ERR_NOTONCHANNEL()
+{
+	throw std::invalid_argument(" 442 :You're not on that channel\n");
 }

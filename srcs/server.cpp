@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include "Channel.hpp"
 #include <utility>
 
 std::map<std::string, Channel*>	server::channelList;
@@ -110,4 +111,9 @@ bool			server::channelExists(const std::string& channelName)
 void			server::addChannel(Channel *channel)
 {
 	channelList[channel->getName()] = channel;
+}
+
+Channel* server::getChannelByName(const std::string& channelName)
+{
+	return channelList[channelName];
 }
