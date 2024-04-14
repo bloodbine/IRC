@@ -9,6 +9,7 @@
 #pragma once
 #include <iostream>
 #include <map>
+#include <string>
 #include "Client.hpp"
 
 class Channel
@@ -50,6 +51,9 @@ public:
     const std::string& getMode() const;
 
     bool  getIsMember(const std::string &name) const;
+    
+    bool hasUser(const Client& client) const;
+
     void  addMember(Client *client);
 //     // Get a list of usernames in the channel
 //   std::vector<std::string> getUsernames() const;
