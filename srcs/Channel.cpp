@@ -4,8 +4,7 @@
 Channel::Channel(const std::string& name, const std::string& topic, const std::string& mode) : _name(name), _topic(topic), _mode(mode) {}
 
 Channel::~Channel()
-{
-}
+{}
 
 void Channel::setName(const std::string& name) { _name = name; }
 
