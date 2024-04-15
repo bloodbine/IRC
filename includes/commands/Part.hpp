@@ -12,6 +12,7 @@ private:
     /* data */
     Client* _client;
     size_t _size;
+    std::string _channelName;
 public:
     Part(Client* client, const std::vector<std::string>& vec);
     char* execute() const;
