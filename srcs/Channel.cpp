@@ -39,6 +39,15 @@ bool Channel::hasUser(const Client& client) const
     return false;
 }
 
+void Channel::removeUser(const Client& client)
+{
+    // Find the client member list using nickname
+    std::map<std::string, Client*>::iterator it = _memberList.find(client.GetNickName());
+    // If client found remove key-value pair from the map
+    if (it != _memberList.end())
+        _memberList.erase(it);
+}
+
 
 bool  Channel::getIsMember(const std::string &name) const { return _memberList.find(name) != _memberList.end(); }
 

@@ -54,6 +54,8 @@ public:
     
     bool hasUser(const Client& client) const;
 
+    void removeUser(const Client& client);
+
     void  addMember(Client *client);
 //     // Get a list of usernames in the channel
 //   std::vector<std::string> getUsernames() const;
