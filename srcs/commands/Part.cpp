@@ -13,11 +13,13 @@ Part::Part(Client* client, const std::vector<std::string>& vec): _client(client)
     // check if channel as user
     Channel* channel = srv->getChannelByName(channelName);
     if (!channel->hasUser(*client)) ERR_NOTONCHANNEL();
+    channel->removeUser(*client);
+    std::cout << ":" << client->GetIdenClient() << " PART " << channelName << std::endl;
 }
 
 char* Part::execute() const
 {
-    return strdup("Bye bye \n");
+    return strdup("Bye Bye \n");
 }
 
 Part::~Part()
