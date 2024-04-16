@@ -19,8 +19,11 @@ char* Join::execute() const
     // check if channel as user
 	Channel* channel = server::getChannelByName(_channelName);
 	if (!channel->hasUser(*_client)) channel->addMember(_client);
-    out += ":server.example.com 332" + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic();
-    std::cout << "SEND TO CLIENT \"e" << out << "\"" << std::endl;
+    out += " 332 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
+    out += " 353 " + _client->GetNickName() + " " + _channelName + ": " + channel->getClientList() + "\n";
+    out += " 366 " + _client->GetNickName() + " " + _channelName + ": End of /NAMES list.\n";
+
+    std::cout << "SEND TO CLIENT \"" << out << "\"" << std::endl;
 	return strdup(out.c_str());
 }
 
