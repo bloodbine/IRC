@@ -6,11 +6,13 @@
 #include "commands/Nick.hpp"
 #include "commands/User.hpp"
 #include "commands/Part.hpp"
+#include "commands/Join.hpp"
 #include "Channel.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);
 Command	*getCommand(Client* client, const std::vector<std::string>& vec);
+bool	isInvalidChannelName(const std::string& str);
 bool	isSpecialChar(char c);
 void	missingPass();
 void	missingNick();

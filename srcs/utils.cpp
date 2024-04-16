@@ -19,7 +19,21 @@ Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 	if (vec[0] == "NICK") return (new Nick(client, vec));
 	if (vec[0] == "USER") return (new User(client, vec));
 	if (vec[0] == "PART") return (new Part(client, vec));
+	if (vec[0] == "JOIN") return (new Join(client, vec));
 	return NULL;
+}
+
+bool	isInvalidChannelName(const std::string& str)
+{
+	std::string::const_iterator	itr = str.begin();
+	std::string::const_iterator	end = str.end();
+	int							i = 0;
+	for (; itr != end; ++itr)
+	{
+		if (i == 0 && str[0] != '#') return true;
+		else if (*itr == '\a' || *itr == ' ' || *itr == ',' || *itr == ':') return true;
+	}
+	return false;
 }
 
 bool	isSpecialChar(char c)
