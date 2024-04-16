@@ -59,5 +59,8 @@ public:
     void  addMember(Client *client);
 //     // Get a list of usernames in the channel
 //   std::vector<std::string> getUsernames() const;
+
+    std::string getClientList() const;
+
     ~Channel();
 };

@@ -54,3 +54,21 @@ void  Channel::addMember(Client *client)
 {
 	_memberList[client->GetNickName()] = client;
 }
+
+std::string Channel::getClientList() const
+{
+    std::string out;
+    std::pair<std::string, Client*>  tmp;
+    std::map<std::string, Client*>::const_iterator itr = _memberList.begin();
+    std::map<std::string, Client*>::const_iterator end = _memberList.end();
+    int i = 0;
+    for (; itr != end; ++itr)
+    {
+        tmp = *itr;
+        if (i > 0)
+            out += " " + tmp.second->GetNickName();
+        else out += tmp.second->GetNickName();
+        i++;
+    }
+    return out;
+}
