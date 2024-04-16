@@ -68,10 +68,10 @@ void server::handleClient()
 				tmp = cmd->execute();
 				delete cmd;
 			}
-			Channel tmpChannel("hola", "tmpTopic", "TmpMode");
-			std::cout << "'hola' is in _channelList: " << channelExists(tmpChannel.getName()) << std::endl;
-			std::cout << "Adding 'hola' to _channelList" << std::endl;
-			addChannel(&tmpChannel);
+			// Channel tmpChannel("hola", "tmpTopic", "TmpMode");
+			// std::cout << "'hola' is in _channelList: " << channelExists(tmpChannel.getName()) << std::endl;
+			// std::cout << "Adding 'hola' to _channelList" << std::endl;
+			// addChannel(&tmpChannel);
 			// std::cout << "channel list: \n";
 			// for (std::map<std::string, Channel*>::iterator itr = _channelList.begin(); itr != _channelList.end(); ++itr)
 			// {
