@@ -44,7 +44,8 @@ char*	User::execute() const
 	// set client.setMode() to mode.
 	std::cout << "Does 'hola' channel exists: " << server::channelExists("hola") << std::endl;
 	std::cout << "Does 'mundo' channel exists: " << server::channelExists("mundo") << std::endl;
-	return strdup("NOW YOU ARE REGISTERED!\n");
+	std::string out = "001 * Welcome to the Internet Relay Network " + _client->GetNickName() + "!" + _client->GetUserName() +"@127.0.0.1\n";
+	return strdup(out.c_str());
 }
 
 User::~User() {}
