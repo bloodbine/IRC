@@ -20,6 +20,7 @@ Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 	if (vec[0] == "USER") return (new User(client, vec));
 	if (vec[0] == "PART") return (new Part(client, vec));
 	if (vec[0] == "JOIN") return (new Join(client, vec));
+	if (vec[0] == "NOTICE") return (new Notice(client, vec));
 	return NULL;
 }
 

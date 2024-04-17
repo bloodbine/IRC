@@ -7,6 +7,7 @@
 #include "commands/User.hpp"
 #include "commands/Part.hpp"
 #include "commands/Join.hpp"
+#include "commands/Notice.hpp"
 #include "Channel.hpp"
 #include <sstream>
 
