@@ -7,6 +7,7 @@
 #include "commands/User.hpp"
 #include "commands/Part.hpp"
 #include "commands/Join.hpp"
+#include "commands/Ping.hpp"
 #include "Channel.hpp"
 #include <sstream>
 
@@ -25,3 +26,5 @@ void	ERR_ALREADYREGISTRED();
 void    ERR_NOTREGISTERED();
 void	ERR_NOSUCHCHANNEL();
 void	ERR_NOTONCHANNEL();
+void	ERR_NOORIGIN();
+void	ERR_NOSUCHSERVER(const std::string& server);
