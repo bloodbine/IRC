@@ -20,6 +20,7 @@ Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 	if (vec[0] == "USER") return (new User(client, vec));
 	if (vec[0] == "PART") return (new Part(client, vec));
 	if (vec[0] == "JOIN") return (new Join(client, vec));
+	if (vec[0] == "PING") return (new Ping(client, vec));
 	if (vec[0] == "NOTICE") return (new Notice(client, vec));
 	return NULL;
 }
@@ -77,4 +78,14 @@ void	ERR_NOSUCHCHANNEL()
 void	ERR_NOTONCHANNEL()
 {
 	throw std::invalid_argument(" 442 :You're not on that channel\n");
+}
+
+void	ERR_NOORIGIN()
+{
+	throw  std::invalid_argument(" 409 :No origin specified\n");
+}
+
+void	ERR_NOSUCHSERVER(const std::string& server)
+{
+	throw  std::invalid_argument(server + " 402 :No such server\n");
 }

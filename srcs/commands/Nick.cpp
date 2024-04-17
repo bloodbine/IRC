@@ -5,20 +5,21 @@ Nick::Nick(Client* client, const std::vector<std::string>& vec) : _client(client
 {
 	if (_client->getIsValidatedPassword() == false) missingPass();
 	if (_size <= 1) throw std::invalid_argument(" 431 :No nickname given\n");
-	if (_size > 2 || (_size == 2 && !validNick(vec[1]))) throw std::invalid_argument(" 432 :Erroneous nickname\n");
+	_nickName = vec[1];
+	if (_size > 2 || (_size == 2 && !validNick())) throw std::invalid_argument(" 432 :Erroneous nickname\n");
 	if (_client->GetNickName() == vec[1]) throw std::invalid_argument(" 433 :Nickname is already in use\n");
 	_nickName = vec[1];
 }
 
-bool	Nick::validNick(const std::string& nick) const
+bool	Nick::validNick() const
 {
-	if (nick.size() > 1 && nick.size() <= 9)
+	if (_nickName.size() > 1 && _nickName.size() <= 9)
 	{
-		if (isSpecialChar(nick[0]) || std::isalpha(nick[0]))
+		if (isSpecialChar(_nickName[0]) || std::isalpha(_nickName[0]))
 		{
-			std::string::const_iterator i = nick.begin();
+			std::string::const_iterator i = _nickName.begin();
 			i++;
-			for (; i != nick.end(); ++i)
+			for (; i != _nickName.end(); ++i)
 			{
 				if (isSpecialChar(*i) || std::isalnum(*i) || *i == '-')
 					continue;
@@ -33,7 +34,9 @@ bool	Nick::validNick(const std::string& nick) const
 
 char*	Nick::execute() const
 {
-	_client->setNickName(_nickName);
-	return strdup("SETUP NICK CORRECTLY!\n");
+	if (validNick()) _client->setNickName(_nickName);
+	else throw std::invalid_argument(" 432 :Erroneous nickname\n");
+	std::string	out = "NICK " + _nickName + "\n";
+	return strdup(out.c_str());
 }
 Nick::~Nick() {}

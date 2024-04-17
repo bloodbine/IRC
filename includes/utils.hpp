@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Command.hpp"
+#include "Channel.hpp"
 #include "commands/Cap.hpp"
 #include "commands/Pass.hpp"
 #include "commands/Nick.hpp"
 #include "commands/User.hpp"
 #include "commands/Part.hpp"
 #include "commands/Join.hpp"
+#include "commands/Ping.hpp"
 #include "commands/Notice.hpp"
-#include "Channel.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);
@@ -26,3 +27,5 @@ void	ERR_ALREADYREGISTRED();
 void    ERR_NOTREGISTERED();
 void	ERR_NOSUCHCHANNEL();
 void	ERR_NOTONCHANNEL();
+void	ERR_NOORIGIN();
+void	ERR_NOSUCHSERVER(const std::string& server);
