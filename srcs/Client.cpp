@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(std::string& serverPassword): _nickName(""),_userName(""), _isRegistered(false), _serverPassword(serverPassword)
+Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _serverPassword(serverPassword), _socketFd(fd)
 {}
 
 Client::~Client()
@@ -21,6 +21,7 @@ const std::string& Client::GetNickName() const{ return Client::_nickName;}
 const std::string& Client::GetUserName() const{ return Client::_userName;}
 const std::string& Client::GetRealUserName() const{ return Client::_realUserName;}
 std::string Client::GetIdenClient() const{return (_nickName + "!" +_userName + "@");}
+int  Client::getScoketFd() const {return _socketFd; }
 void Client::setNickName(const std::string& newNickname){ _nickName = newNickname; }
 void Client::setUserName(const std::string& newNickname){ _userName = newNickname; }
 void Client::setRealUserName(const std::string& newNickname){ _realUserName = newNickname; }

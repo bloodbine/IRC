@@ -49,7 +49,7 @@ void server::handleClient()
 	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
 	if (!client_socketfd)
 		throw std::logic_error("Failed to create Client socket");
-	Client client((*this)._pass);
+	Client client((*this)._pass, client_socketfd);
 	while (true)
 	{
 		bzero(buffer, sizeof(buffer));
