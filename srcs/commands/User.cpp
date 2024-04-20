@@ -41,6 +41,8 @@ char*	User::execute() const
 	_client->setUserName(_vec[1]);
 	_client->setRealUserName(realName);
 	_client->setIsRegistered();
+	if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
+	else server::addClient(_client);
 	// set client.setMode() to mode.
 	std::cout << "Does 'hola' channel exists: " << server::channelExists("hola") << std::endl;
 	std::cout << "Does 'mundo' channel exists: " << server::channelExists("mundo") << std::endl;

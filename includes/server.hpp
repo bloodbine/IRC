@@ -42,6 +42,6 @@ class server
 		static void			addClient(Client *client);
 		static Channel*			getChannelByName(const std::string& channelName);
 		static Client*			getClientByName(const std::string& clientName);
-		static bool				clientExists(const std::string& channelName);
+		static bool				clientExists(const std::string& clientName);
 		const std::string&			getServerIp() const;
 };
