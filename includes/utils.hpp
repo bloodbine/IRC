@@ -11,6 +11,7 @@
 #include "commands/Ping.hpp"
 #include "commands/Notice.hpp"
 #include "commands/Topic.hpp"
+#include "commands/Privmsg.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);
