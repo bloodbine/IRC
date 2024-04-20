@@ -9,7 +9,7 @@ Privmsg::Privmsg(Client* client, const std::vector<std::string>& vec): _client(c
 	if (vec[1][0] == '#') _targetIsChannel = true;
 	if (vec[2][0] == ':' && vec[2].size() > 1) _msg += vec[2].substr(1);
 	else _msg += vec[2];
-	for (size_t i = 3; i < vec.size(); i++) _msg += " " + vec[i];
+	for (size_t i = 3 ; i < _size; i++) _msg += " " + vec[i];
 }
 
 char* Privmsg::execute() const
