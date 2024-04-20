@@ -90,3 +90,8 @@ void	ERR_NOSUCHSERVER(const std::string& server)
 {
 	throw  std::invalid_argument(server + " 402 :No such server\n");
 }
+
+void	ERR_NOSUCHNICK(const std::string& nickName)
+{
+	throw  std::invalid_argument(nickName + " 401 :No such nick/channel\n");
+}

@@ -30,3 +30,4 @@ void	ERR_NOSUCHCHANNEL();
 void	ERR_NOTONCHANNEL();
 void	ERR_NOORIGIN();
 void	ERR_NOSUCHSERVER(const std::string& server);
+void	ERR_NOSUCHNICK(const std::string& nickName);
