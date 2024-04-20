@@ -19,6 +19,7 @@
 class server
 {
 	static std::map<std::string, Channel*>	channelList;
+	static std::map<std::string, Client*>	_clientList;
 	private:
 		struct sockaddr_in _address;
 		std::string _pass;
@@ -38,6 +39,9 @@ class server
 		void			setServerIp(const std::string& ip);
 		static bool			channelExists(const std::string& channelName);
 		static void			addChannel(Channel *channel);
+		static void			addClient(Client *client);
 		static Channel*			getChannelByName(const std::string& channelName);
+		static Client*			getClientByName(const std::string& clientName);
+		static bool				clientExists(const std::string& channelName);
 		const std::string&			getServerIp() const;
 };

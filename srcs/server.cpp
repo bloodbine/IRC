@@ -1,8 +1,10 @@
 #include "server.hpp"
 #include "Channel.hpp"
+#include "Client.hpp"
 #include <utility>
 
 std::map<std::string, Channel*>	server::channelList;
+std::map<std::string, Client*>	server::_clientList;
 
 server::server(int port, std::string pass) : _serverIp("")
 {
@@ -116,4 +118,19 @@ void			server::addChannel(Channel *channel)
 Channel* server::getChannelByName(const std::string& channelName)
 {
 	return channelList[channelName];
+}
+
+void			server::addClient(Client *client)
+{
+	_clientList[client->GetNickName()] = client;
+}
+
+Client* server::getClientByName(const std::string& clientName)
+{
+	return _clientList[clientName];
+}
+
+bool			server::clientExists(const std::string& clientName)
+{
+	return (_clientList.find(clientName) != _clientList.end());
 }
