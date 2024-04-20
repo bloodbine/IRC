@@ -22,6 +22,7 @@ Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 	if (vec[0] == "JOIN") return (new Join(client, vec));
 	if (vec[0] == "PING") return (new Ping(client, vec));
 	if (vec[0] == "NOTICE") return (new Notice(client, vec));
+	if (vec[0] == "TOPIC") return (new Topic(client, vec));
 	return NULL;
 }
 

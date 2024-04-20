@@ -10,6 +10,7 @@
 #include "commands/Join.hpp"
 #include "commands/Ping.hpp"
 #include "commands/Notice.hpp"
+#include "commands/Topic.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);
