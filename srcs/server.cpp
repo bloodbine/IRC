@@ -1,10 +1,13 @@
 #include "server.hpp"
 #include "Channel.hpp"
 #include "Client.hpp"
+#include <fcntl.h>
 #include <utility>
 
 std::map<std::string, Channel*>	server::channelList;
 std::map<std::string, Client*>	server::_clientList;
+std::map<pollfd, std::string>	server::_clientMVLink;
+std::vector<pollfd>				server::_clientFDs;
 
 server::server(int port, std::string pass) : _serverIp("")
 {
@@ -35,41 +38,6 @@ std::string	server::getPass() {return this->_pass;};
 int			server::getSocketfd() {return this->_socketfd;};
 int			server::getPort() {return this->_port;};
 
-void server::handleClient()
-{
-	int					client_socketfd;
-	socklen_t			client_len;
-	struct sockaddr_in	client_address;
-	char				buffer[256];
-	char*				tmp;
-
-
-	listen(this->_socketfd, 1);
-	client_len = sizeof(client_address);
-	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
-	if (!client_socketfd)
-		throw std::logic_error("Failed to create Client socket");
-	Client client((*this)._pass, client_socketfd);
-	while (true)
-	{
-		bzero(buffer, sizeof(buffer));
-		recv(client_socketfd, buffer, 256, 0);
-		std::cout << "Message Received: " << buffer << std::endl;
-		std::vector<std::string> vec = getVector(buffer);
-		if (vec.size() == 0) break;
-		try
-		{
-			Command* cmd = getCommand(&client, vec);
-			if (cmd == NULL)
-			{
-				bzero(buffer, sizeof(buffer));
-				tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-			}
-			else
-			{
-				tmp = cmd->execute();
-				delete cmd;
-			}
 			// Channel tmpChannel("hola", "tmpTopic", "TmpMode");
 			// std::cout << "'hola' is in _channelList: " << channelExists(tmpChannel.getName()) << std::endl;
 			// std::cout << "Adding 'hola' to _channelList" << std::endl;
@@ -80,22 +48,139 @@ void server::handleClient()
 			// 	std::pair<std::string, Channel*> p = *itr;
 			// 	std::cout << p.first<< ": " << p.second->getName() << std::endl;
 			// }
-			bzero(buffer, sizeof(buffer));
-		}
-		catch (std::exception& e)
+
+// void server::handleClient()
+// {
+// 	int					client_socketfd;
+// 	socklen_t			client_len;
+// 	struct sockaddr_in	client_address;
+// 	char				buffer[256];
+// 	char*				tmp;
+
+
+// 	listen(this->_socketfd, 1);
+// 	client_len = sizeof(client_address);
+// 	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
+// 	if (!client_socketfd)
+// 		throw std::logic_error("Failed to create Client socket");
+// 	Client client((*this)._pass, client_socketfd);
+// 	while (true)
+// 	{
+// 		bzero(buffer, sizeof(buffer));
+// 		recv(client_socketfd, buffer, 256, 0);
+// 		std::cout << "Message Received: " << buffer << std::endl;
+// 		std::vector<std::string> vec = getVector(buffer);
+// 		if (vec.size() == 0) break;
+// 		try
+// 		{
+// 			Command* cmd = getCommand(&client, vec);
+// 			if (cmd == NULL)
+// 			{
+// 				bzero(buffer, sizeof(buffer));
+// 				tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+// 			}
+// 			else
+// 			{
+// 				tmp = cmd->execute();
+// 				delete cmd;
+// 			}
+// 			bzero(buffer, sizeof(buffer));
+// 		}
+// 		catch (std::exception& e)
+// 		{
+// 			tmp = strdup(e.what());
+// 			bzero(buffer, sizeof(buffer));
+// 		}
+// 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
+// 		if (sendStatus == -1)
+// 		{
+// 			delete tmp;
+// 			break;
+// 		}
+// 		delete tmp;
+// 	}
+// 	close(client_socketfd);
+// };
+
+void server::handleClient()
+{
+	listen(this->_socketfd, 5);
+	while (42)
+	{
+		int ret = poll(&this->_clientFDs[0], this->_clientFDs.size(), -1);
+		if (ret == -1)
 		{
-			tmp = strdup(e.what());
-			bzero(buffer, sizeof(buffer));
-		}
-		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
-		if (sendStatus == -1)
-		{
-			delete tmp;
+			perror("poll");
 			break;
 		}
-		else delete tmp;
+		if (this->_clientFDs[0].revents & POLLIN)
+		{
+			sockaddr_in incClientAddr;
+			socklen_t incClientAddrLen = sizeof(incClientAddr);
+			int incClientSocket = accept(this->_socketfd,
+			reinterpret_cast<sockaddr*>(&incClientAddr),
+			&incClientAddrLen);
+			if (incClientSocket != -1)
+			{
+				pollfd incClientTemp;
+				incClientTemp.fd = incClientSocket;
+				incClientTemp.revents = POLLIN;
+				fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK);
+				this->_clientFDs.push_back(incClientTemp);
+				std::cout << "New Client " << incClientTemp.fd << " connected : " << inet_ntoa(incClientAddr.sin_addr) << std::endl;
+			}
+		}
+		for (unsigned int i = 1; i < this->_clientFDs.size(); ++i)
+		{
+			if (this->_clientFDs[i].revents & POLLIN)
+			{
+				char buffer[1024];
+				char *tmp = NULL;
+				bzero(buffer, sizeof(buffer));
+				int bytesRead = recv(this->_clientFDs[i].fd, buffer, 1024, 0);
+				switch(bytesRead)
+				{
+					case -1:
+						std::cerr << "Client " << this->_clientFDs[i].fd << " error: ";
+						perror("recv");
+						this->_clientFDs.erase(this->_clientFDs.begin() + i);
+						break;
+					case 0:
+						std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
+						close(this->_clientFDs[i].fd);
+						this->_clientFDs.erase(this->_clientFDs.begin() + i);
+						break;
+					default:
+						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
+						std::cout << std::string(buffer);
+						try
+						{
+							// Command* cmd = getCommand(&client, vec);
+							// if (cmd == NULL)
+							// {
+							// 	bzero(buffer, sizeof(buffer));
+							// 	tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+							// }
+							// else
+							// {
+							// 	tmp = cmd->execute();
+							// 	delete cmd;
+							// }
+							bzero(buffer, sizeof(buffer));
+						}
+						catch (std::exception& e)
+						{
+							tmp = strdup(e.what());
+							bzero(buffer, sizeof(buffer));
+						}
+						int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
+						delete tmp;
+						if (sendStatus == -1)
+							break;
+				}
+			}
+		}
 	}
-	close(client_socketfd);
 };
 
 void	server::setServerIp(const std::string& ip) 
