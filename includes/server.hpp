@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <sys/poll.h>
 #include <unistd.h>
 #include <sys/types.h> 
 #include <sys/socket.h>
@@ -11,6 +12,7 @@
 #include <vector>
 #include <map>
 #include <stdexcept>
+#include <libc.h>
 #include "Command.hpp"
 #include "utils.hpp"
 #include "Client.hpp"
@@ -18,8 +20,10 @@
 
 class server
 {
-	static std::map<std::string, Channel*>	channelList;
-	static std::map<std::string, Client*>	_clientList;
+	static std::map<std::string, Channel*>		channelList;
+	static std::map<std::string, Client*>		_clientList;
+	static std::map<pollfd, std::string>		_clientMVLink;
+	static std::vector<pollfd>					_clientFDs;
 	private:
 		struct sockaddr_in _address;
 		std::string _pass;
@@ -33,15 +37,15 @@ class server
 
 		void handleClient();
 
-		std::string		getPass();
-		int				getSocketfd();
-		int				getPort();
-		void			setServerIp(const std::string& ip);
-		static bool			channelExists(const std::string& channelName);
-		static void			addChannel(Channel *channel);
-		static void			addClient(Client *client);
-		static Channel*			getChannelByName(const std::string& channelName);
-		static Client*			getClientByName(const std::string& clientName);
-		static bool				clientExists(const std::string& clientName);
+		std::string					getPass();
+		int							getSocketfd();
+		int							getPort();
+		void						setServerIp(const std::string& ip);
+		static bool					channelExists(const std::string& channelName);
+		static void					addChannel(Channel *channel);
+		static void					addClient(Client *client);
+		static Channel*				getChannelByName(const std::string& channelName);
+		static Client*				getClientByName(const std::string& clientName);
+		static bool					clientExists(const std::string& clientName);
 		const std::string&			getServerIp() const;
 };
