@@ -119,7 +119,6 @@ void server::handleClient()
 		}
 		if (this->_clientFDs[0].revents == POLLIN)
 		{
-			std::cerr << "HI greg! " << this->_clientFDs[0].revents  << " " << POLLIN << " " << (this->_clientFDs[0].revents & POLLIN) << std::endl;
 			sockaddr_in incClientAddr;
 			socklen_t incClientAddrLen = sizeof(incClientAddr);
 			int incClientSocket = accept(this->_socketfd,
@@ -162,7 +161,6 @@ void server::handleClient()
 						std::cout << std::string(buffer);
 						try
 						{
-							std::cout << "HI greg!\n";
 							std::vector<std::string> vec = getVector(buffer);
 							Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
 							if (cmd == NULL)
@@ -175,8 +173,6 @@ void server::handleClient()
 								tmp = cmd->execute();
 								delete cmd;
 							}
-							std::cout << "Bye greg!\n";
-
 							bzero(buffer, sizeof(buffer));
 						}
 						catch (std::exception& e)
