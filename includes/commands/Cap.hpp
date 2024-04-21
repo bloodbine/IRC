@@ -14,8 +14,10 @@ private:
 	size_t	_size;
 	Client	*_client;
 	std::string _serverAddress;
+	char *_out;
 public:
 	Cap(Client* client, const std::vector<std::string>& vec);
-	char* execute() const;
+	void execute();
+	int sendToClient() const;
 	~Cap();
 };

@@ -17,9 +17,11 @@ private:
 	std::vector<std::string>	_vec;
 	std::string					_userName;
 	Client						*_client;
+	char *_out;
 public:
 	User	(Client* client, const std::vector<std::string>& vec);
-	char* execute() const;
+	void execute();
 	bool	validUser() const;
+	int 	sendToClient() const;
 	~User	();
 };

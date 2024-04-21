@@ -7,10 +7,16 @@ Cap::Cap(Client* client, const std::vector<std::string>& vec) : _size(vec.size()
 	else _serverAddress = vec[3].substr(1);
 }
 
-char*	Cap::execute() const
+void	Cap::execute()
 {
-	(void)_client;
-	std::string tmp = "PONG localhost" + _serverAddress + "\n";
-	return strdup(tmp.c_str());
+	std::string tmp = "PONG " + _serverAddress + "\n";
+	_out = strdup(tmp.c_str());
 }
+
+int Cap::sendToClient() const
+{
+	int	fdToSend = _client->getFd();
+	return (send(fdToSend, _out, std::strlen(_out), 0));
+}
+
 Cap::~Cap() {}

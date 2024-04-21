@@ -7,9 +7,16 @@ Notice::Notice(Client* client, const std::vector<std:: string>& vec): _client(cl
     //     return ;
 }
 
-char* Notice::execute() const
+void Notice::execute()
 {
-    return (strdup(""));
+    std::string out = "";
+    _out = strdup(out.c_str());
+}
+
+int Notice::sendToClient() const
+{
+	int	fdToSend = _client->getFd();
+	return (send(fdToSend, _out, std::strlen(_out), 0));
 }
 
 Notice::~Notice()

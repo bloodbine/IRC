@@ -28,7 +28,7 @@ bool	User::validUser() const
 	return true;
 }
 
-char*	User::execute() const
+void	User::execute()
 {
 
 	std::string realName = "";
@@ -41,13 +41,21 @@ char*	User::execute() const
 	_client->setUserName(_vec[1]);
 	_client->setRealUserName(realName);
 	_client->setIsRegistered();
-	if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
+	if (server::getClientFdByNickName(_vec[1]) == -1) ERR_ALREADYREGISTRED();
 	else server::addClient(_client);
 	// set client.setMode() to mode.
 	std::cout << "Does 'hola' channel exists: " << server::channelExists("hola") << std::endl;
 	std::cout << "Does 'mundo' channel exists: " << server::channelExists("mundo") << std::endl;
 	std::string out = "001 * Welcome to the Internet Relay Network " + _client->GetNickName() + "!" + _client->GetUserName() +"@127.0.0.1\n";
-	return strdup(out.c_str());
+	_out = strdup(out.c_str());
 }
+
+int User::sendToClient() const
+{
+	int	fdToSend = _client->getFd();
+	std::cout << "Sending to the client: " << _out << std::endl;
+	return (send(fdToSend, _out, std::strlen(_out), 0));
+}
+
 
 User::~User() {}

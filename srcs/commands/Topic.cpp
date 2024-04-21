@@ -19,7 +19,7 @@ Topic::Topic(Client* client, const std::vector<std::string>& vec): _client(clien
 
 }
 
-char* Topic::execute() const
+void Topic::execute()
 {
 	std::string	out;
     std::cout << ":" << _client->GetIdenClient() << " Channel " << _channelName << std::endl;
@@ -36,7 +36,13 @@ char* Topic::execute() const
 		channel->setTopic(_topic);
 		out = " 332 RPL_TOPIC " + _channelName + " :" + _topic + "\n";
 	}
-    return strdup(out.c_str());
+    _out = strdup(out.c_str());
+}
+
+int Topic::sendToClient() const
+{
+	int	fdToSend = _client->getFd();
+	return (send(fdToSend, _out, std::strlen(_out), 0));
 }
 
 Topic::~Topic()

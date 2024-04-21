@@ -15,8 +15,10 @@ private:
     std::string _msg;
     std::string _target;
 	bool		_targetIsChannel;
+    char        *_out;
 public:
     Privmsg(Client* client, const std::vector<std::string>& vec);
-    char* execute() const;
+    void execute();
+	int sendToClient() const;
     ~Privmsg();
 };

@@ -13,8 +13,10 @@ private:
     Client* _client;
     size_t _size;
     std::string _channelName;
+	char *_out;
 public:
     Part(Client* client, const std::vector<std::string>& vec);
-    char* execute() const;
+    void execute();
+	int sendToClient() const;
     ~Part();
 };

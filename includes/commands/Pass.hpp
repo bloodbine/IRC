@@ -11,8 +11,10 @@ class Pass : public Command
 private:
     Client      *_client;
     std::string _password;
+	char *_out;
 public:
     Pass(Client* client, const std::vector<std::string>& vec);
-    char* execute() const;
+    void execute();
+	int sendToClient() const;
     ~Pass();
 };

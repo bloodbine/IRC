@@ -32,11 +32,19 @@ bool	Nick::validNick() const
 	return false;
 }
 
-char*	Nick::execute() const
+void	Nick::execute()
 {
 	if (validNick()) _client->setNickName(_nickName);
 	else throw std::invalid_argument(" 432 :Erroneous nickname\n");
 	std::string	out = "NICK " + _nickName + "\n";
-	return strdup(out.c_str());
+	_out = strdup(out.c_str());
 }
+
+int Nick::sendToClient() const
+{
+	int	fdToSend = _client->getFd();
+	return (send(fdToSend, _out, std::strlen(_out), 0));
+}
+
+
 Nick::~Nick() {}

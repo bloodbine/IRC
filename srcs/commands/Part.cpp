@@ -9,7 +9,7 @@ Part::Part(Client* client, const std::vector<std::string>& vec): _client(client)
 
 }
 
-char* Part::execute() const
+void Part::execute()
 {
     std::cout << ":" << _client->GetIdenClient() << " PART " << _channelName << std::endl;
     //check if the channel is exist
@@ -18,8 +18,16 @@ char* Part::execute() const
     Channel* channel = server::getChannelByName(_channelName);
     if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
     channel->removeUser(*_client);
-    return strdup("Bye Bye \n");
+    std::string out = "Bye Bye \n";
+    _out = strdup(out.c_str());
 }
+
+int Part::sendToClient() const
+{
+	int	fdToSend = _client->getFd();
+	return (send(fdToSend, _out, std::strlen(_out), 0));
+}
+
 
 Part::~Part()
 {}

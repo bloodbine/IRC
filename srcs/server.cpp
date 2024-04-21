@@ -170,7 +170,9 @@ void server::handleClient()
 							}
 							else
 							{
-								tmp = cmd->execute();
+								cmd->execute();
+								if (cmd->sendToClient() == -1) throw std::invalid_argument("IDK!\n");
+								std::cout << "HI bro123" << std::endl;
 								delete cmd;
 							}
 							bzero(buffer, sizeof(buffer));
@@ -180,10 +182,8 @@ void server::handleClient()
 							tmp = strdup(e.what());
 							bzero(buffer, sizeof(buffer));
 						}
-						int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
+						// int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
 						delete tmp;
-						if (sendStatus == -1)
-							break;
 				}
 			}
 		}
@@ -222,12 +222,12 @@ Client* server::getClientByFd(int fd)
 	return _clientList[fd];
 }
 
-bool	server::clientExists(const std::string& clientName)
+int	server::getClientFdByNickName(const std::string& clientName)
 {
 	std::map<int, Client*>::iterator itr = _clientList.begin();
 	std::map<int, Client*>::iterator end = _clientList.end();
 	for (; itr != end; ++itr) {
-		if ((*itr).second->GetNickName() == clientName) return true;
+		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
 	}
-	return (false);
+	return (-1);
 }

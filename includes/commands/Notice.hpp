@@ -11,8 +11,10 @@ private:
     /* data */
     Client* _client;
     size_t _size;
+	char *_out;
 public:
     Notice(Client* client, const std::vector<std:: string>& vec);
-    char * execute() const;
+    void    execute();
+	int sendToClient() const;
     ~Notice();
 };

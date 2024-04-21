@@ -15,8 +15,10 @@ private:
     std::string _channelName;
     std::string _topic;
 	bool		_clearTopic;
+	char *_out;
 public:
     Topic(Client* client, const std::vector<std::string>& vec);
-    char* execute() const;
+    void execute();
+	int sendToClient() const;
     ~Topic();
 };

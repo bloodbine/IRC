@@ -10,7 +10,7 @@ Join::Join(Client* client, const std::vector<std::string>& vec): _client(client)
     // Check if the _channelName is valid channel name
 }
 
-char* Join::execute() const
+void Join::execute()
 {
     std::string out = "";
     std::cout << ":" << _client->GetIdenClient() << " Join " << _channelName << std::endl;
@@ -24,8 +24,15 @@ char* Join::execute() const
     out += " 366 " + _client->GetNickName() + " " + _channelName + ": End of /NAMES list.\n";
 
     std::cout << "SEND TO CLIENT \"" << out << "\"" << std::endl;
-	return strdup(out.c_str());
+    _out = strdup(out.c_str());
 }
+
+int Join::sendToClient() const
+{
+	int	fdToSend = _client->getFd();
+	return (send(fdToSend, _out, std::strlen(_out), 0));
+}
+
 
 Join::~Join()
 {}
