@@ -21,8 +21,7 @@
 class server
 {
 	static std::map<std::string, Channel*>		channelList;
-	static std::map<std::string, Client*>		_clientList;
-	static std::map<pollfd, std::string>		_clientMVLink;
+	static std::map<int, Client*>				_clientList;
 	static std::vector<pollfd>					_clientFDs;
 	private:
 		struct sockaddr_in _address;

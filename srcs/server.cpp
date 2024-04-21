@@ -5,8 +5,7 @@
 #include <utility>
 
 std::map<std::string, Channel*>	server::channelList;
-std::map<std::string, Client*>	server::_clientList;
-std::map<pollfd, std::string>	server::_clientMVLink;
+std::map<int, Client*>			server::_clientList;
 std::vector<pollfd>				server::_clientFDs;
 
 server::server(int port, std::string pass) : _serverIp("")
@@ -127,6 +126,7 @@ void server::handleClient()
 				incClientTemp.revents = POLLIN;
 				fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK);
 				this->_clientFDs.push_back(incClientTemp);
+				this->_clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(this->_pass, incClientTemp.fd)));
 				std::cout << "New Client " << incClientTemp.fd << " connected : " << inet_ntoa(incClientAddr.sin_addr) << std::endl;
 			}
 		}
@@ -155,17 +155,17 @@ void server::handleClient()
 						std::cout << std::string(buffer);
 						try
 						{
-							// Command* cmd = getCommand(&client, vec);
-							// if (cmd == NULL)
-							// {
-							// 	bzero(buffer, sizeof(buffer));
-							// 	tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-							// }
-							// else
-							// {
-							// 	tmp = cmd->execute();
-							// 	delete cmd;
-							// }
+							Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
+							if (cmd == NULL)
+							{
+								bzero(buffer, sizeof(buffer));
+								tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+							}
+							else
+							{
+								tmp = cmd->execute();
+								delete cmd;
+							}
 							bzero(buffer, sizeof(buffer));
 						}
 						catch (std::exception& e)
@@ -190,12 +190,12 @@ void	server::setServerIp(const std::string& ip)
 
 const std::string&	server::getServerIp() const { return _serverIp; }
 
-bool			server::channelExists(const std::string& channelName)
+bool	server::channelExists(const std::string& channelName)
 {
 	return (channelList.find(channelName) != channelList.end());
 }
 
-void			server::addChannel(Channel *channel)
+void	server::addChannel(Channel *channel)
 {
 	channelList[channel->getName()] = channel;
 }
@@ -205,7 +205,7 @@ Channel* server::getChannelByName(const std::string& channelName)
 	return channelList[channelName];
 }
 
-void			server::addClient(Client *client)
+void	server::addClient(Client *client)
 {
 	_clientList[client->GetNickName()] = client;
 }
@@ -215,7 +215,7 @@ Client* server::getClientByName(const std::string& clientName)
 	return _clientList[clientName];
 }
 
-bool			server::clientExists(const std::string& clientName)
+bool	server::clientExists(const std::string& clientName)
 {
 	return (_clientList.find(clientName) != _clientList.end());
 }
