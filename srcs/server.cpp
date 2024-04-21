@@ -22,14 +22,14 @@ server::server(int port, std::string pass) : _serverIp("")
 	std::cout << this->_port << std::endl;
 	this->_address.sin_port = htons(this->_port);
 	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
-	fcntl(this->_socketfd, F_SETFL, O_NONBLOCK);
+	// fcntl(this->_socketfd, F_SETFL, O_NONBLOCK);
 	if (this->_socketfd == -1)
 		throw std::logic_error("Failed to create Server socket");
 	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) != 0)
 		throw std::logic_error("Failed to bind Socket");
 	pollfd server;
 	server.fd = this->_socketfd;
-	server.revents = POLLIN;
+	server.events = POLLIN;
 	this->_clientFDs.push_back(server);
 };
 
@@ -130,7 +130,7 @@ void server::handleClient()
 				pollfd incClientTemp;
 				incClientTemp.fd = incClientSocket;
 				incClientTemp.revents = POLLIN;
-				fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK);
+				// fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK);
 				this->_clientFDs.push_back(incClientTemp);
 				this->_clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(this->_pass, incClientTemp.fd)));
 				std::cout << "New Client " << incClientTemp.fd << " connected : " << inet_ntoa(incClientAddr.sin_addr) << std::endl;
