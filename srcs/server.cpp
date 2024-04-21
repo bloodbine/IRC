@@ -22,10 +22,15 @@ server::server(int port, std::string pass) : _serverIp("")
 	std::cout << this->_port << std::endl;
 	this->_address.sin_port = htons(this->_port);
 	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
+	fcntl(this->_socketfd, F_SETFL, O_NONBLOCK);
 	if (this->_socketfd == -1)
 		throw std::logic_error("Failed to create Server socket");
 	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) != 0)
 		throw std::logic_error("Failed to bind Socket");
+	pollfd server;
+	server.fd = this->_socketfd;
+	server.revents = POLLIN;
+	this->_clientFDs.push_back(server);
 };
 
 server::~server()
@@ -112,8 +117,9 @@ void server::handleClient()
 			perror("poll");
 			break;
 		}
-		if (this->_clientFDs[0].revents & POLLIN)
+		if (this->_clientFDs[0].revents == POLLIN)
 		{
+			std::cerr << "HI greg! " << this->_clientFDs[0].revents  << " " << POLLIN << " " << (this->_clientFDs[0].revents & POLLIN) << std::endl;
 			sockaddr_in incClientAddr;
 			socklen_t incClientAddrLen = sizeof(incClientAddr);
 			int incClientSocket = accept(this->_socketfd,
@@ -130,6 +136,7 @@ void server::handleClient()
 				std::cout << "New Client " << incClientTemp.fd << " connected : " << inet_ntoa(incClientAddr.sin_addr) << std::endl;
 			}
 		}
+
 		for (unsigned int i = 1; i < this->_clientFDs.size(); ++i)
 		{
 			if (this->_clientFDs[i].revents & POLLIN)
@@ -155,6 +162,8 @@ void server::handleClient()
 						std::cout << std::string(buffer);
 						try
 						{
+							std::cout << "HI greg!\n";
+							std::vector<std::string> vec = getVector(buffer);
 							Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
 							if (cmd == NULL)
 							{
@@ -166,6 +175,8 @@ void server::handleClient()
 								tmp = cmd->execute();
 								delete cmd;
 							}
+							std::cout << "Bye greg!\n";
+
 							bzero(buffer, sizeof(buffer));
 						}
 						catch (std::exception& e)
@@ -207,15 +218,20 @@ Channel* server::getChannelByName(const std::string& channelName)
 
 void	server::addClient(Client *client)
 {
-	_clientList[client->GetNickName()] = client;
+	_clientList[client->getFd()] = client;
 }
 
-Client* server::getClientByName(const std::string& clientName)
+Client* server::getClientByFd(int fd)
 {
-	return _clientList[clientName];
+	return _clientList[fd];
 }
 
 bool	server::clientExists(const std::string& clientName)
 {
-	return (_clientList.find(clientName) != _clientList.end());
+	std::map<int, Client*>::iterator itr = _clientList.begin();
+	std::map<int, Client*>::iterator end = _clientList.end();
+	for (; itr != end; ++itr) {
+		if ((*itr).second->GetNickName() == clientName) return true;
+	}
+	return (false);
 }
