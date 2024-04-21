@@ -106,6 +106,80 @@ int			server::getPort() {return this->_port;};
 // 	close(client_socketfd);
 // };
 
+int	server::runNormalCommand(std::vector<std::string>& vec, int i)
+{
+	char *tmp;
+	try
+	{
+		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
+		if (cmd == NULL)
+		{
+			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+			return -1;
+		}
+		else
+		{
+			tmp = cmd->execute();
+			delete cmd;
+		}
+	}
+	catch (std::exception& e)
+	{
+		tmp = strdup(e.what());
+	}
+	int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
+	delete tmp;
+	if (sendStatus == -1)
+		return -1;
+	return 0;
+}
+
+int							server::getClientFdByName(const std::string& clientName)
+{
+	std::map<int, Client*>::iterator itr = _clientList.begin();
+	std::map<int, Client*>::iterator end = _clientList.end();
+	for (; itr != end; ++itr) {
+		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
+	}
+	return -1;
+}
+
+
+int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
+{
+	bool	failedToSendMsg = false;
+	char *tmp;
+	try
+	{
+		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
+		if (cmd == NULL)
+		{
+			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+			return -1;
+		}
+		else
+		{
+			tmp = cmd->execute();
+			delete cmd;
+		}
+	}
+	catch (std::exception& e)
+	{
+		tmp = strdup(e.what());
+		failedToSendMsg = true;
+	}
+
+	int	toSendFd;
+	if (failedToSendMsg) toSendFd = this->_clientFDs[i].fd;
+	else toSendFd = getClientFdByName(vec[1]);
+	std::cout << "privmsg to fd: " << toSendFd << std::endl;
+	int	sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+	delete tmp;
+	if (sendStatus == -1)
+		return -1;
+	return 0;
+}
+
 void server::handleClient()
 {
 	listen(this->_socketfd, 5);
@@ -141,7 +215,6 @@ void server::handleClient()
 			if (this->_clientFDs[i].revents & POLLIN)
 			{
 				char buffer[1024];
-				char *tmp = NULL;
 				bzero(buffer, sizeof(buffer));
 				int bytesRead = recv(this->_clientFDs[i].fd, buffer, 1024, 0);
 				switch(bytesRead)
@@ -159,31 +232,9 @@ void server::handleClient()
 					default:
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
 						std::cout << std::string(buffer);
-						try
-						{
-							std::vector<std::string> vec = getVector(buffer);
-							Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
-							if (cmd == NULL)
-							{
-								bzero(buffer, sizeof(buffer));
-								tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-							}
-							else
-							{
-								tmp = cmd->execute();
-								delete cmd;
-							}
-							bzero(buffer, sizeof(buffer));
-						}
-						catch (std::exception& e)
-						{
-							tmp = strdup(e.what());
-							bzero(buffer, sizeof(buffer));
-						}
-						int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
-						delete tmp;
-						if (sendStatus == -1)
-							break;
+					std::vector<std::string> vec = getVector(buffer);
+					if (vec[0] == "PRIVMSG" && runPrivmsgCommand(vec, i) == -1) break;
+					else if (runNormalCommand(vec, i) == -1) break;
 				}
 			}
 		}

@@ -19,6 +19,8 @@ char* Privmsg::execute() const
     else
 	{
 		// std::cout << "> target is a user\n";
+		if (server::clientExists(_target) == false) ERR_NOSUCHNICK(_target);
+		else std::cout << "Client: " << _target << " actually exists\n";
 		out = ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 PRIVMSG " + _target + " " + _msg + "\r\n";
 		std::cout << out << std::endl;
 	}
