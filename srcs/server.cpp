@@ -138,7 +138,7 @@ int							server::getClientFdByName(const std::string& clientName)
 {
 	std::map<int, Client*>::iterator itr = _clientList.begin();
 	std::map<int, Client*>::iterator end = _clientList.end();
-	for (; itr != end; ++itr) {
+	for (; itr != end; itr++) {
 		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
 	}
 	return -1;
@@ -233,8 +233,15 @@ void server::handleClient()
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
 						std::cout << std::string(buffer);
 					std::vector<std::string> vec = getVector(buffer);
-					if (vec[0] == "PRIVMSG" && runPrivmsgCommand(vec, i) == -1) break;
-					else if (runNormalCommand(vec, i) == -1) break;
+					if (vec[0] == "PRIVMSG" ){
+						runPrivmsgCommand(vec, i);
+						break;
+					}
+					else
+					{
+						runNormalCommand(vec, i);
+						break;
+					}
 				}
 			}
 		}
