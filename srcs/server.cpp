@@ -23,12 +23,17 @@ server::server(int port, std::string pass) : _serverIp("")
 	this->_address.sin_port = htons(this->_port);
 	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
 	int enable = 1;
+	linger lin;
+	lin.l_onoff = 0;
+	lin.l_linger = 0;
 	if (this->_socketfd == -1)
 		throw std::logic_error("Failed to create Server socket");
 	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1)
 		throw std::logic_error(std::string((char *)("Failed to set Server socket Address option: ")) + std::string(strerror(errno)));
 	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(enable)) == -1)
-		throw std::logic_error("Failed to set Server socket Port option");
+		throw std::logic_error(std::string((char *)"Failed to set Server socket Port option"));
+	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_LINGER, &lin, sizeof(lin)) == -1)
+		throw std::logic_error(std::string((char *)"Failed to set Server socket Linger option"));
 	if (fcntl(this->_socketfd, F_SETFL, O_NONBLOCK) == -1)
 		throw std::logic_error("Failed to set Server socket Non-Block flag");
 	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) == -1)
@@ -145,7 +150,7 @@ void server::handleClient()
 			perror("poll");
 			break;
 		}
-		if (this->_clientFDs[0].revents == POLLIN)
+		if (this->_clientFDs[0].revents == POLLIN && )
 		{
 			sockaddr_in incClientAddr;
 			socklen_t incClientAddrLen = sizeof(incClientAddr);
