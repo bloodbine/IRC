@@ -24,6 +24,8 @@ server::server(int port, std::string pass) : _serverIp("")
 	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_socketfd == -1)
 		throw std::logic_error("Failed to create Server socket");
+	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEADDR, &1, sizeof(1)) == -1)
+		throw std::logic_error("Failed to set Server socket option");
 	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) != 0)
 		throw std::logic_error("Failed to bind Socket");
 };
@@ -48,59 +50,6 @@ int			server::getPort() {return this->_port;};
 			// 	std::cout << p.first<< ": " << p.second->getName() << std::endl;
 			// }
 
-// void server::handleClient()
-// {
-// 	int					client_socketfd;
-// 	socklen_t			client_len;
-// 	struct sockaddr_in	client_address;
-// 	char				buffer[256];
-// 	char*				tmp;
-
-
-// 	listen(this->_socketfd, 1);
-// 	client_len = sizeof(client_address);
-// 	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
-// 	if (!client_socketfd)
-// 		throw std::logic_error("Failed to create Client socket");
-// 	Client client((*this)._pass, client_socketfd);
-// 	while (true)
-// 	{
-// 		bzero(buffer, sizeof(buffer));
-// 		recv(client_socketfd, buffer, 256, 0);
-// 		std::cout << "Message Received: " << buffer << std::endl;
-// 		std::vector<std::string> vec = getVector(buffer);
-// 		if (vec.size() == 0) break;
-// 		try
-// 		{
-// 			Command* cmd = getCommand(&client, vec);
-// 			if (cmd == NULL)
-// 			{
-// 				bzero(buffer, sizeof(buffer));
-// 				tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-// 			}
-// 			else
-// 			{
-// 				tmp = cmd->execute();
-// 				delete cmd;
-// 			}
-// 			bzero(buffer, sizeof(buffer));
-// 		}
-// 		catch (std::exception& e)
-// 		{
-// 			tmp = strdup(e.what());
-// 			bzero(buffer, sizeof(buffer));
-// 		}
-// 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
-// 		if (sendStatus == -1)
-// 		{
-// 			delete tmp;
-// 			break;
-// 		}
-// 		delete tmp;
-// 	}
-// 	close(client_socketfd);
-// };
-
 void server::handleClient()
 {
 	listen(this->_socketfd, 5);
@@ -123,7 +72,7 @@ void server::handleClient()
 			{
 				pollfd incClientTemp;
 				incClientTemp.fd = incClientSocket;
-				incClientTemp.revents = POLLIN;
+				incClientTemp.events = POLLIN;
 				fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK);
 				this->_clientFDs.push_back(incClientTemp);
 				this->_clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(this->_pass, incClientTemp.fd)));
@@ -143,11 +92,13 @@ void server::handleClient()
 					case -1:
 						std::cerr << "Client " << this->_clientFDs[i].fd << " error: ";
 						perror("recv");
+						this->_clientList.erase(this->_clientFDs[i].fd);
 						this->_clientFDs.erase(this->_clientFDs.begin() + i);
 						break;
 					case 0:
 						std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
 						close(this->_clientFDs[i].fd);
+						this->_clientList.erase(this->_clientFDs[i].fd);
 						this->_clientFDs.erase(this->_clientFDs.begin() + i);
 						break;
 					default:
