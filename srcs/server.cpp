@@ -22,16 +22,21 @@ server::server(int port, std::string pass) : _serverIp("")
 	std::cout << this->_port << std::endl;
 	this->_address.sin_port = htons(this->_port);
 	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
-	fcntl(this->_socketfd, F_SETFL, O_NONBLOCK);
+	int enable = 1;
 	if (this->_socketfd == -1)
 		throw std::logic_error("Failed to create Server socket");
-	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEADDR, &1, sizeof(1)) == -1)
-		throw std::logic_error("Failed to set Server socket option");
-	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) != 0)
+	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1)
+		throw std::logic_error(std::string((char *)("Failed to set Server socket Address option: ")) + std::string(strerror(errno)));
+	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(enable)) == -1)
+		throw std::logic_error("Failed to set Server socket Port option");
+	if (fcntl(this->_socketfd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::logic_error("Failed to set Server socket Non-Block flag");
+	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) == -1)
 		throw std::logic_error("Failed to bind Socket");
 	pollfd server;
 	server.fd = this->_socketfd;
 	server.events = POLLIN;
+	server.revents = 0;
 	this->_clientFDs.push_back(server);
 };
 
@@ -128,6 +133,7 @@ int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 		return -1;
 	return 0;
 }
+
 void server::handleClient()
 {
 	listen(this->_socketfd, 5);
@@ -151,10 +157,13 @@ void server::handleClient()
 				pollfd incClientTemp;
 				incClientTemp.fd = incClientSocket;
 				incClientTemp.events = POLLIN;
-				fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK);
+				incClientTemp.revents = 0;
+				if (fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK) == -1)
+					perror("fcntl");
 				this->_clientFDs.push_back(incClientTemp);
 				this->_clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(this->_pass, incClientTemp.fd)));
 				std::cout << "New Client " << incClientTemp.fd << " connected : " << inet_ntoa(incClientAddr.sin_addr) << std::endl;
+				this->_clientFDs[0].revents = 0;
 			}
 		}
 
@@ -169,6 +178,7 @@ void server::handleClient()
 				{
 					case -1:
 						std::cerr << "Client " << this->_clientFDs[i].fd << " error: ";
+						std::cerr << errno << " ";
 						perror("recv");
 						this->_clientList.erase(this->_clientFDs[i].fd);
 						this->_clientFDs.erase(this->_clientFDs.begin() + i);
@@ -193,6 +203,7 @@ void server::handleClient()
 						break;
 					}
 				}
+				this->_clientFDs[i].revents = 0;
 			}
 		}
 	}
