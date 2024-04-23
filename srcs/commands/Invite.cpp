@@ -9,6 +9,7 @@ Invite::Invite(Client* client, const std::vector<std::string>& vec): _client(cli
 	if (_size != 3) ERR_SYNTAXPROBLEM();
 
 	// Check if is valid nick name
+	if (validNick(vec[1]) == false) ERR_ERRONEUSNICKNAME(vec[1]);
 	_nick = vec[1];
 
 	// Check if valid _channel name

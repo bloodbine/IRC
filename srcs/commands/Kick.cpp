@@ -8,10 +8,11 @@ Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client)
     // More than 3 char throw invalid SYNTAX ERROR.
 
 	// Check if valid _channel name
-	if (isInvalidChannelName(vec[2])) ERR_NOSUCHCHANNEL();
+	if (isInvalidChannelName(vec[1])) ERR_NOSUCHCHANNEL();
 	_channel = vec[1];
-	
+
 	// Check if is valid nick name
+	if (validNick(vec[2]) == false) ERR_ERRONEUSNICKNAME(vec[2]);
 	_nick = vec[2];
 
 }
