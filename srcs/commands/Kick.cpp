@@ -1,7 +1,7 @@
 #include "commands/Kick.hpp"
 #include "server.hpp"
 
-Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick("")
+Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick(""), _reasson("")
 {
     if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
     if (_size < 3) ERR_NEEDMOREPARAMS("KICK");
@@ -15,6 +15,7 @@ Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client)
 	if (validNick(vec[2]) == false) ERR_ERRONEUSNICKNAME(vec[2]);
 	_nick = vec[2];
 
+	// Read reasson
 }
 
 char* Kick::execute() const
