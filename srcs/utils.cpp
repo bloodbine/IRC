@@ -24,6 +24,7 @@ Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 	if (vec[0] == "NOTICE") return (new Notice(client, vec));
 	if (vec[0] == "TOPIC") return (new Topic(client, vec));
 	if (vec[0] == "PRIVMSG") return (new Privmsg(client, vec));
+	if (vec[0] == "INVITE") return (new Invite(client, vec));
 	return NULL;
 }
 

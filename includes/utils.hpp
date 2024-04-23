@@ -12,6 +12,7 @@
 #include "commands/Notice.hpp"
 #include "commands/Topic.hpp"
 #include "commands/Privmsg.hpp"
+#include "commands/Invite.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);
