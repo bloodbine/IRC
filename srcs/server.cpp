@@ -103,6 +103,30 @@ int							server::getClientFdByName(const std::string& clientName)
 	return -1;
 }
 
+int		server::customSend(bool failedToSendMsg, char **tmp, std::string vec, int i)
+{
+	int	toSendFd;
+	if (failedToSendMsg)
+	{
+		toSendFd = this->_clientFDs[i].fd;
+		int	sendStatus = send(toSendFd, *tmp, std::strlen(*tmp), 0);
+		return (sendStatus);
+	}
+	else
+	{
+		Channel *channel = server::getChannelByName(vec);
+		std::map<std::string, Client*>	memberList = channel->getMemberList();
+		std::map<std::string, Client*>::iterator itr = memberList.begin();
+		std::map<std::string, Client*>::iterator end = memberList.end();
+		for (; itr != end; ++itr)
+		{
+			toSendFd = (*itr).second->getFd();
+			send(toSendFd, *tmp, std::strlen(*tmp), 0);
+		}
+	}
+	delete *tmp;
+	return (1);
+}
 
 int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 {
@@ -127,16 +151,7 @@ int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 		tmp = strdup(e.what());
 		failedToSendMsg = true;
 	}
-
-	int	toSendFd;
-	if (failedToSendMsg) toSendFd = this->_clientFDs[i].fd;
-	else toSendFd = getClientFdByName(vec[1]);
-	std::cout << "privmsg to fd: " << toSendFd << std::endl;
-	int	sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
-	delete tmp;
-	if (sendStatus == -1)
-		return -1;
-	return 0;
+	return (customSend(failedToSendMsg, &tmp, vec[1], i));
 }
 
 int	server::runJoinCommand(std::vector<std::string>& vec, int i)
@@ -162,28 +177,7 @@ int	server::runJoinCommand(std::vector<std::string>& vec, int i)
 		tmp = strdup(e.what());
 		failedToSendMsg = true;
 	}
-
-	int	toSendFd;
-	if (failedToSendMsg)
-	{
-		toSendFd = this->_clientFDs[i].fd;
-		int	sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
-		return (sendStatus);
-	}
-	else
-	{
-		Channel *channel = server::getChannelByName(vec[1]);
-		std::map<std::string, Client*>	memberList = channel->getMemberList();
-		std::map<std::string, Client*>::iterator itr = memberList.begin();
-		std::map<std::string, Client*>::iterator end = memberList.end();
-		for (; itr != end; ++itr)
-		{
-			toSendFd = (*itr).second->getFd();
-			send(toSendFd, tmp, std::strlen(tmp), 0);
-		}
-	}
-	delete tmp;
-	return 0;
+	return (customSend(failedToSendMsg, &tmp, vec[1], i));
 }
 
 void server::handleClient()

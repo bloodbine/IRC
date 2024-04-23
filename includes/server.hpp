@@ -39,6 +39,7 @@ class server
 		std::string					getPass();
 		int							getSocketfd();
 		int							getPort();
+		int							customSend(bool failedToSendMsg, char **tmp, std::string vec, int i);
 		void						setServerIp(const std::string& ip);
 		static bool					channelExists(const std::string& channelName);
 		static void					addChannel(Channel *channel);
