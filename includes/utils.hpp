@@ -15,6 +15,7 @@
 #include "commands/Invite.hpp"
 #include "commands/Kick.hpp"
 #include "commands/Quit.hpp"
+#include "commands/Mode.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);
