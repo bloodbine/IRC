@@ -16,12 +16,18 @@ Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client)
 	_nick = vec[2];
 
 	// Read reasson
+	if (_size >= 4)
+	{
+		_reasson += vec[3].substr(1);
+		for (size_t i = 4; i < _size; i++) _reasson += " " + vec[i];
+	}
 }
 
 char* Kick::execute() const
 {
 	std::string	out = "";
 	std::cout << "THX FOR CALLINNG Kick\n";
+	std::cout << "Reasson: " << _reasson << std::endl;
     //check if the channel is exist
 	// std::cout << "> target is a user\n";
 	
