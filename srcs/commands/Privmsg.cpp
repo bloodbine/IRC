@@ -5,8 +5,13 @@ Privmsg::Privmsg(Client* client, const std::vector<std::string>& vec): _client(c
 {
     if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
     if (_size < 3) ERR_NEEDMOREPARAMS("PRIVMSG");
+	if (vec[1][0] == '#')
+	{
+		if (isInvalidChannelName(vec[1]) == false) ERR_NOSUCHCHANNEL();
+		_targetIsChannel = true;
+	}
+	else if (validNick(vec[1]) == false) ERR_ERRONEUSNICKNAME(vec[1]);
 	_target = vec[1];
-	if (vec[1][0] == '#') _targetIsChannel = true;
 	_msg += vec[2];
 	for (size_t i = 3 ; i < _size; i++) _msg += " " + vec[i];
 }
