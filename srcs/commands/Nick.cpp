@@ -13,6 +13,7 @@ Nick::Nick(Client* client, const std::vector<std::string>& vec) : _client(client
 
 char*	Nick::execute() const
 {
+	_client->setNickName(_nickName);
 	std::string	out = "NICK " + _nickName + "\n";
 	return strdup(out.c_str());
 }
