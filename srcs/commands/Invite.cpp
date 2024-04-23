@@ -6,7 +6,7 @@ Invite::Invite(Client* client, const std::vector<std::string>& vec): _client(cli
     if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
     if (_size < 3) ERR_NEEDMOREPARAMS("INVITE");
     // More than 3 char throw invalid SYNTAX ERROR.
-	
+	if (_size != 3) ERR_SYNTAXPROBLEM();
 
 	// Check if is valid nick name
 	_nick = vec[1];
