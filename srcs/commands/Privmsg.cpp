@@ -20,20 +20,13 @@ char* Privmsg::execute() const
 {
 	std::string	out = "";
     //check if the channel is exist
-    if (_targetIsChannel) std::cout << "> target is channel\n";
-    else
-	{
-		// std::cout << "> target is a user\n";
-		if (server::clientExists(_target) == false) ERR_NOSUCHNICK(_target);
-		else std::cout << "Client: " << _target << " actually exists\n";
-		out = ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 PRIVMSG " + _target + " " + _msg + "\r\n";
-		std::cout << out << std::endl;
-	}
+    if (_targetIsChannel &&  server::channelExists(_target) == false) ERR_NOSUCHCHANNEL();
+    else if (server::clientExists(_target) == false) ERR_NOSUCHNICK(_target);
+	out = ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 PRIVMSG " + _target + " " + _msg + "\r\n";
 	// std::cout << "Message to " << _target << std::endl;
 	std::cout << _msg << std::endl;
     return strdup(out.c_str());
 }
 
-Privmsg::~Privmsg()
-{}
+Privmsg::~Privmsg() {}
 
