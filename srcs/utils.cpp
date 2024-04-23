@@ -128,3 +128,8 @@ void	ERR_NICKNAMEINUSE(const std::string& nickName)
 {
 	throw  std::invalid_argument(nickName + " 433 :Nickname is already in use\n");
 }
+
+void	ERR_SYNTAXPROBLEM()
+{
+	throw  std::invalid_argument(" 430 : invalid syntax my friend\n");
+}
