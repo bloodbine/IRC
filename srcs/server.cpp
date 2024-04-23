@@ -198,7 +198,7 @@ void server::handleClient()
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
 						std::cout << std::string(buffer);
 					std::vector<std::string> vec = getVector(buffer);
-					if (vec[0] == "PRIVMSG" ){
+					if (vec.size() > 0 && vec[0] == "PRIVMSG" ){
 						runPrivmsgCommand(vec, i);
 						break;
 					}
