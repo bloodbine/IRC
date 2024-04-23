@@ -48,6 +48,27 @@ bool	isSpecialChar(char c)
 	return false;
 }
 
+bool	validNick(const std::string &nickname)
+{
+	if (nickname.size() > 1 && nickname.size() <= 9)
+	{
+		if (isSpecialChar(nickname[0]) || std::isalpha(nickname[0]))
+		{
+			std::string::const_iterator i = nickname.begin();
+			i++;
+			for (; i != nickname.end(); ++i)
+			{
+				if (isSpecialChar(*i) || std::isalnum(*i) || *i == '-')
+					continue;
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+	return false;
+}
+
 void	missingPass()
 {
 	throw std::invalid_argument(" ERROR: YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\n");

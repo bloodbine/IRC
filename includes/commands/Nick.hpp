@@ -22,6 +22,5 @@ private:
 public:
 	Nick	(Client* client, const std::vector<std::string>& vec);
 	char* execute() const;
-	bool	validNick() const;
 	~Nick	();
 };
