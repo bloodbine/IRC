@@ -13,6 +13,7 @@
 #include "commands/Topic.hpp"
 #include "commands/Privmsg.hpp"
 #include "commands/Invite.hpp"
+#include "commands/Kick.hpp"
 #include <sstream>
 
 std::vector<std::string> getVector(char *in);
