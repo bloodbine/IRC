@@ -25,6 +25,7 @@ bool	isSpecialChar(char c);
 bool	validNick(const std::string &nickname);
 void	missingPass();
 void	missingNick();
+bool	isValidMode(const std::string& mode);
 
 /*
 Error handling

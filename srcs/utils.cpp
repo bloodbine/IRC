@@ -83,6 +83,15 @@ void	missingNick()
 	throw std::invalid_argument("You need to set NICK <nickname>!\n");
 }
 
+bool	isValidMode(const std::string& mode)
+{
+	std::string validModes = "itkol";
+	if (mode.size() != 2 || (mode[0] != '+' && mode[0] != '-')) return false;
+	if (validModes.find(mode[1]) != std::string::npos) return true;
+	return false;
+}
+
+
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName)
 {
 	std::string	text = "461 " + cmdName +  " :Not enough parameters\n";

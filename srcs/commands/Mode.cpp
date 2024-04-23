@@ -9,6 +9,7 @@ Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client
 	_nickname = vec[1];
 
 	// Verify that mode is valid mode
+	if (isValidMode(vec[2]) == false) // ERR_UMODEUNKNOWNFLAG
 	_mode = vec[2];
 }
 
