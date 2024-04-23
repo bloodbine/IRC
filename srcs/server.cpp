@@ -150,7 +150,7 @@ void server::handleClient()
 			perror("poll");
 			break;
 		}
-		if (this->_clientFDs[0].revents == POLLIN && )
+		if (this->_clientFDs[0].revents == POLLIN)
 		{
 			sockaddr_in incClientAddr;
 			socklen_t incClientAddrLen = sizeof(incClientAddr);
