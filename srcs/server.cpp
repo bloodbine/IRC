@@ -139,6 +139,53 @@ int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 	return 0;
 }
 
+int	server::runJoinCommand(std::vector<std::string>& vec, int i)
+{
+	bool	failedToSendMsg = false;
+	char *tmp;
+	try
+	{
+		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
+		if (cmd == NULL)
+		{
+			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+			return -1;
+		}
+		else
+		{
+			tmp = cmd->execute();
+			delete cmd;
+		}
+	}
+	catch (std::exception& e)
+	{
+		tmp = strdup(e.what());
+		failedToSendMsg = true;
+	}
+
+	int	toSendFd;
+	if (failedToSendMsg)
+	{
+		toSendFd = this->_clientFDs[i].fd;
+		int	sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		return (sendStatus);
+	}
+	else
+	{
+		Channel *channel = server::getChannelByName(vec[1]);
+		std::map<std::string, Client*>	memberList = channel->getMemberList();
+		std::map<std::string, Client*>::iterator itr = memberList.begin();
+		std::map<std::string, Client*>::iterator end = memberList.end();
+		for (; itr != end; ++itr)
+		{
+			toSendFd = (*itr).second->getFd();
+			send(toSendFd, tmp, std::strlen(tmp), 0);
+		}
+	}
+	delete tmp;
+	return 0;
+}
+
 void server::handleClient()
 {
 	listen(this->_socketfd, 5);
@@ -200,6 +247,10 @@ void server::handleClient()
 					std::vector<std::string> vec = getVector(buffer);
 					if (vec.size() > 0 && vec[0] == "PRIVMSG" ){
 						runPrivmsgCommand(vec, i);
+						break;
+					}
+					else if (vec.size() > 0 && vec[0] == "JOIN" ){
+						runJoinCommand(vec, i);
 						break;
 					}
 					else

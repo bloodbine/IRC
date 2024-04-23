@@ -62,5 +62,7 @@ public:
 
     std::string getClientList() const;
 
+    std::map<std::string, Client*>  getMemberList() const;
+
     ~Channel();
 };

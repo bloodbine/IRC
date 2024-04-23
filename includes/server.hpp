@@ -50,4 +50,5 @@ class server
 		const std::string&			getServerIp() const;
 		int							runNormalCommand(std::vector<std::string>& vec, int i);
 		int							runPrivmsgCommand(std::vector<std::string>& vec, int i);
+		int							runJoinCommand(std::vector<std::string>& vec, int i);
 };
