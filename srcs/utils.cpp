@@ -118,3 +118,8 @@ void	ERR_NOSUCHNICK(const std::string& nickName)
 {
 	throw  std::invalid_argument(nickName + " 401 :No such nick/channel\n");
 }
+
+void	ERR_ERRONEUSNICKNAME(const std::string& nickName)
+{
+	throw  std::invalid_argument(nickName + " 432 :Erroneous nickname\n");
+}
