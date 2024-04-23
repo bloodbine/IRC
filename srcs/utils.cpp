@@ -146,3 +146,8 @@ void	ERR_SYNTAXPROBLEM()
 {
 	throw  std::invalid_argument(" 430 : invalid syntax my friend\n");
 }
+
+void	ERR_UMODEUNKNOWNFLAG()
+{
+	throw  std::invalid_argument(" 501 :Unknown MODE flag\n");
+}

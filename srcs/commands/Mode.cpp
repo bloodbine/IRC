@@ -9,7 +9,7 @@ Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client
 	_nickname = vec[1];
 
 	// Verify that mode is valid mode
-	if (isValidMode(vec[2]) == false) // ERR_UMODEUNKNOWNFLAG
+	if (isValidMode(vec[2]) == false) ERR_UMODEUNKNOWNFLAG();
 	_mode = vec[2];
 }
 
@@ -23,5 +23,4 @@ char* Mode::execute() const
     return strdup(out.c_str());
 }
 
-Mode::~Mode()
-{}
+Mode::~Mode() {}
