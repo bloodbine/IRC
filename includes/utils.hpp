@@ -35,3 +35,4 @@ void	ERR_NOORIGIN();
 void	ERR_NOSUCHSERVER(const std::string& server);
 void	ERR_NOSUCHNICK(const std::string& nickName);
 void	ERR_ERRONEUSNICKNAME(const std::string& nickName);
+void	ERR_NICKNAMEINUSE(const std::string& nickName);

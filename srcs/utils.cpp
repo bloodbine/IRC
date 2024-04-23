@@ -123,3 +123,8 @@ void	ERR_ERRONEUSNICKNAME(const std::string& nickName)
 {
 	throw  std::invalid_argument(nickName + " 432 :Erroneous nickname\n");
 }
+
+void	ERR_NICKNAMEINUSE(const std::string& nickName)
+{
+	throw  std::invalid_argument(nickName + " 433 :Nickname is already in use\n");
+}

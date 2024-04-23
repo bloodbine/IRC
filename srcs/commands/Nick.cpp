@@ -7,7 +7,7 @@ Nick::Nick(Client* client, const std::vector<std::string>& vec) : _client(client
 	if (_size <= 1) throw std::invalid_argument(" 431 :No nickname given\n");
 	_nickName = vec[1];
 	if (_size > 2 || (_size == 2 && !validNick(vec[1]))) ERR_ERRONEUSNICKNAME(vec[1]);
-	if (_client->GetNickName() == vec[1]) throw std::invalid_argument(" 433 :Nickname is already in use\n");
+	if (_client->GetNickName() == vec[1]) ERR_NICKNAMEINUSE(vec[1]);
 	_nickName = vec[1];
 }
 
