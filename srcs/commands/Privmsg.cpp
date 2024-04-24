@@ -7,7 +7,7 @@ Privmsg::Privmsg(Client* client, const std::vector<std::string>& vec): _client(c
     if (_size < 3) ERR_NEEDMOREPARAMS("PRIVMSG");
 	if (vec[1][0] == '#')
 	{
-		if (isInvalidChannelName(vec[1]) == false) ERR_NOSUCHCHANNEL();
+		if (isInvalidChannelName(vec[1])) ERR_NOSUCHCHANNEL();
 		_targetIsChannel = true;
 	}
 	else if (validNick(vec[1]) == false) ERR_ERRONEUSNICKNAME(vec[1]);
@@ -20,8 +20,10 @@ char* Privmsg::execute() const
 {
 	std::string	out = "";
     //check if the channel is exist
-    if (_targetIsChannel &&  server::channelExists(_target) == false) ERR_NOSUCHCHANNEL();
-    else if (server::clientExists(_target) == false) ERR_NOSUCHNICK(_target);
+	if (_targetIsChannel) std::cout << ">>> channel " << _target << " exists: " << server::channelExists(_target) << std::endl;
+	else std::cout << ">>> client " << _target << " exists: " << server::clientExists(_target) << std::endl;
+    if (_targetIsChannel && server::channelExists(_target) == false) ERR_NOSUCHCHANNEL();
+    else if (!_targetIsChannel && server::clientExists(_target) == false) ERR_NOSUCHNICK(_target);
 	out = ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 PRIVMSG " + _target + " " + _msg + "\r\n";
 	// std::cout << "Message to " << _target << std::endl;
 	std::cout << _msg << std::endl;
