@@ -127,15 +127,26 @@ int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 		tmp = strdup(e.what());
 		failedToSendMsg = true;
 	}
-
 	int	toSendFd;
-	if (failedToSendMsg) toSendFd = this->_clientFDs[i].fd;
-	else toSendFd = getClientFdByName(vec[1]);
-	std::cout << "privmsg to fd: " << toSendFd << std::endl;
-	int	sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+	if (failedToSendMsg)
+	{
+		toSendFd = this->_clientFDs[i].fd;
+		int	sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		return (sendStatus);
+	}
+	else
+	{
+		Channel *channel = server::getChannelByName(vec[1]);
+		std::map<std::string, Client*>	memberList = channel->getMemberList();
+		std::map<std::string, Client*>::iterator itr = memberList.begin();
+		std::map<std::string, Client*>::iterator end = memberList.end();
+		for (; itr != end; ++itr)
+		{
+			toSendFd = (*itr).second->getFd();
+			send(toSendFd, tmp, std::strlen(tmp), 0);
+		}
+	}
 	delete tmp;
-	if (sendStatus == -1)
-		return -1;
 	return 0;
 }
 
