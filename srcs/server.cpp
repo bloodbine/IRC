@@ -103,6 +103,31 @@ int							server::getClientFdByName(const std::string& clientName)
 	return -1;
 }
 
+int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const
+{
+	int	toSendFd;
+	int	sendStatus;
+	if (failedToSendMsg)
+	{
+		toSendFd = this->_clientFDs[i].fd;
+		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		return (sendStatus);
+	}
+	else
+	{
+		Channel *channel = server::getChannelByName(vec[1]);
+		std::map<std::string, Client*>	memberList = channel->getMemberList();
+		std::map<std::string, Client*>::iterator itr = memberList.begin();
+		std::map<std::string, Client*>::iterator end = memberList.end();
+		for (; itr != end; ++itr)
+		{
+			toSendFd = (*itr).second->getFd();
+			sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		}
+	}
+	return (sendStatus);
+}
+
 
 int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 {
@@ -127,25 +152,7 @@ int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 		tmp = strdup(e.what());
 		failedToSendMsg = true;
 	}
-	int	toSendFd;
-	if (failedToSendMsg)
-	{
-		toSendFd = this->_clientFDs[i].fd;
-		int	sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
-		return (sendStatus);
-	}
-	else
-	{
-		Channel *channel = server::getChannelByName(vec[1]);
-		std::map<std::string, Client*>	memberList = channel->getMemberList();
-		std::map<std::string, Client*>::iterator itr = memberList.begin();
-		std::map<std::string, Client*>::iterator end = memberList.end();
-		for (; itr != end; ++itr)
-		{
-			toSendFd = (*itr).second->getFd();
-			send(toSendFd, tmp, std::strlen(tmp), 0);
-		}
-	}
+	customSend(tmp, i, failedToSendMsg, vec);
 	delete tmp;
 	return 0;
 }
@@ -173,26 +180,7 @@ int	server::runJoinCommand(std::vector<std::string>& vec, int i)
 		tmp = strdup(e.what());
 		failedToSendMsg = true;
 	}
-
-	int	toSendFd;
-	if (failedToSendMsg)
-	{
-		toSendFd = this->_clientFDs[i].fd;
-		int	sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
-		return (sendStatus);
-	}
-	else
-	{
-		Channel *channel = server::getChannelByName(vec[1]);
-		std::map<std::string, Client*>	memberList = channel->getMemberList();
-		std::map<std::string, Client*>::iterator itr = memberList.begin();
-		std::map<std::string, Client*>::iterator end = memberList.end();
-		for (; itr != end; ++itr)
-		{
-			toSendFd = (*itr).second->getFd();
-			send(toSendFd, tmp, std::strlen(tmp), 0);
-		}
-	}
+	customSend(tmp, i, failedToSendMsg, vec);
 	delete tmp;
 	return 0;
 }
