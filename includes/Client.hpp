@@ -13,6 +13,7 @@ private:
     bool _isRegistered; // Flag to track registration status
     bool _isValidatedPassword;
     std::string _serverPassword;
+    std::vector<Channel*>   _channelList;
     int _socketFd;
 public:
     Client(std::string& serverPassword, int fd);

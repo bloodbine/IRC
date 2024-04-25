@@ -86,12 +86,10 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 		std::map<std::string, Client*>::iterator end = memberList.end();
 		for (; itr != end; ++itr)
 		{
-		std::cout << ">>>F" << std::endl;
 			toSendFd = (*itr).second->getFd();
 			sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
 		}
 	}
-		std::cout << ">>>H" << std::endl;
 	return (sendStatus);
 }
 
