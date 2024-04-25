@@ -15,7 +15,11 @@ char* Join::execute() const
     std::string out = "";
     std::cout << ":" << _client->GetIdenClient() << " Join " << _channelName << std::endl;
     //check if the channel is exist
-     if (!server::channelExists(_channelName)) server::addChannel(new Channel(_channelName, "No topic is set", "Default mode"));
+    if (!server::channelExists(_channelName))
+	{
+		server::addChannel(new Channel(_channelName));
+		server::getChannelByName(_channelName)->addOperator(_client);
+	}
     // check if channel as user
 	Channel* channel = server::getChannelByName(_channelName);
 	if (!channel->hasUser(*_client)) channel->addMember(_client);

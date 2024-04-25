@@ -112,6 +112,12 @@ bool	isValidMode(const std::string& mode)
 	return false;
 }
 
+bool	stringIsNumeric(const char *string)
+{
+	for (size_t i = 0; i < strlen(string); ++i)
+		if (isdigit(string[i]) == false) return false;
+	return true;
+}
 
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName)
 {
@@ -171,4 +177,9 @@ void	ERR_SYNTAXPROBLEM()
 void	ERR_UMODEUNKNOWNFLAG()
 {
 	throw  std::invalid_argument(" 501 :Unknown MODE flag\n");
+}
+
+void	ERR_CHANOPRIVSNEEDED(const std::string& channelName)
+{
+	throw std::invalid_argument(" 481 " + channelName + ": Channel operator priviliges required\n");
 }

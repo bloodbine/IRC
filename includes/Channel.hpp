@@ -1,9 +1,9 @@
 
 /* We need to implement thoses function :
-    join(user): This method adds a User object to the users list, signifying the user has joined the channel. It can potentially broadcast a join message to other users in the channel.
-    part(user): This method removes a User object from the users list when the user leaves the channel. It can potentially broadcast a part message to other users in the channel.
-    send_message(message): This method takes a Message object and broadcasts the message content to all users in the users list.
-    get_users(): This method returns a list of all usernames or User objects currently joined in the channel.
+	join(user): This method adds a User object to the users list, signifying the user has joined the channel. It can potentially broadcast a join message to other users in the channel.
+	part(user): This method removes a User object from the users list when the user leaves the channel. It can potentially broadcast a part message to other users in the channel.
+	send_message(message): This method takes a Message object and broadcasts the message content to all users in the users list.
+	get_users(): This method returns a list of all usernames or User objects currently joined in the channel.
 */
 
 #pragma once
@@ -17,54 +17,79 @@ class Client;
 class Channel
 {
 private:
-    /* data */
-    std::string _name; //String representing the channel name (e.g., "#programming")
-    std::string _topic; // String representing the current topic of the channel (optional)
-    std::string _mode; // String representing the current channel mode (e.g., "+v" for voice mode)
-    std::map<std::string, Client*> _memberList; // List or set containing User objects currently joined in the channel
+	/* data */
+	std::string						_name; //String representing the channel name (e.g., "#programming")
+	std::string						_topic; // String representing the current topic of the channel (optional)
+	std::string						_chanKey; // String representing the current channel password (if "k" mode is set only)
+	std::map<std::string, Client*>	_memberList; // List or set containing User objects currently joined in the channel
+	std::map<std::string, Client*>	_operatorList; // List or set containing Operator level user objects currently joined in the channel
+	std::map<std::string, Client*>	_invitedList; // List or set containing User objects currently invited to join the channel (Valid if +i)
+	bool							_inviteFlag; // Boolean representing the flag for Invite only mode
+	bool							_topicRestrictFlag; // Boolean representing the flag for restricting Topic changing to Operators only
+	int								_userLimit; // Integer representing the Limit of user in a channel, 0 == no limit set
 public:
-    Channel(const std::string& name, const std::string& topic, const std::string& mode);
-    // Channel(const std::string& name); // Constructor with channel name
+	Channel(const std::string& name);
 
-    Channel(const Channel& copy); // // Copy constructor and assignment operator (implement proper copying of User objects in the map)
+	Channel& operator=(const Channel& other);
 
-    Channel& operator=(const Channel& other);
+	// Set the channel name (consider security implications)
+	void setName(const std::string& name);
 
-    // void join(User* user); // Add a user to the channel
+	// Get the channel name
+	const std::string& getName() const;
 
-    // void part(User* user); // Remove a user from the channel
+	// Set the channel topic
+	void setTopic(const std::string& topic);
 
-    // Set the channel name (consider security implications)
-    void setName(const std::string& name);
+	// Get the channel topic
+	const std::string& getTopic() const;
 
-    // Get the channel name
-    const std::string& getName() const;
+	// Get channel key
+	const std::string& getChanKey() const;
 
-    // Set the channel topic
-    void setTopic(const std::string& topic);
+	// Set channel key
+	void setChanKey(const std::string& key);
 
-      // Get the channel topic
-    const std::string& getTopic() const;
+	// Get invite flag
+	const bool& getInviteFlag() const;
 
-    // Set the channel mode
-    void setMode(const std::string& mode);
+	// Set invite flag
+	void setInviteFlag(const bool& flag);
 
-    // Get the channel mode
-    const std::string& getMode() const;
+	// Get topic restrict flag
+	const bool& getTopicRestrictFlag() const;
 
-    bool  getIsMember(const std::string &name) const;
-    
-    bool hasUser(const Client& client) const;
+	// Set topic restrict flag
+	void setTopicRestrictFlag(const bool& flag);
 
-    void removeUser(const Client& client);
+	// Get user limit
+	const int& getUserLimit() const;
 
-    void  addMember(Client *client);
-//     // Get a list of usernames in the channel
+	// Set user limit
+	void setUserLimit(const int& limit);
+
+	bool getIsMember(const std::string &name) const;
+
+	bool getIsOperator(const std::string &name) const;
+
+	bool hasUser(const Client& client) const;
+
+	void removeUser(const Client& client);
+
+	void addMember(Client *client);
+
+	void removeOperator(const Client& client);
+
+	void addOperator(Client *client);
+
+	//	Get a list of usernames in the channel
 //   std::vector<std::string> getUsernames() const;
 
-    std::string getClientList() const;
+	std::string getClientList() const;
 
-    std::map<std::string, Client*>  getMemberList() const;
+	std::map<std::string, Client*>& getMemberList();
 
-    ~Channel();
+	std::map<std::string, Client*>& getOperatorList();
+
+	~Channel();
 };

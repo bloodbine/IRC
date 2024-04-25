@@ -27,6 +27,7 @@ bool	validNick(const std::string &nickname);
 void	missingPass();
 void	missingNick();
 bool	isValidMode(const std::string& mode);
+bool	stringIsNumeric(const char *string);
 
 /*
 Error handling
@@ -43,3 +44,4 @@ void	ERR_ERRONEUSNICKNAME(const std::string& nickName);
 void	ERR_NICKNAMEINUSE(const std::string& nickName);
 void	ERR_SYNTAXPROBLEM();
 void	ERR_UMODEUNKNOWNFLAG();
+void	ERR_CHANOPRIVSNEEDED(const std::string& channelName);
