@@ -119,27 +119,8 @@ char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedT
 	return tmp;
 }
 
-int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
+int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg)
 {
-	bool	failedToSendMsg = false;
-	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
-	customSend(tmp, i, failedToSendMsg, vec);
-	delete tmp;
-	return 0;
-}
-
-int	server::runJoinCommand(std::vector<std::string>& vec, int i)
-{
-	bool	failedToSendMsg = false;
-	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
-	customSend(tmp, i, failedToSendMsg, vec);
-	delete tmp;
-	return 0;
-}
-
-int	server::runNormalCommand(std::vector<std::string>& vec, int i)
-{
-	bool	failedToSendMsg = true;
 	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
 	customSend(tmp, i, failedToSendMsg, vec);
 	delete tmp;
@@ -215,17 +196,13 @@ void server::handleClient()
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
 						std::cout << std::string(buffer);
 					std::vector<std::string> vec = getVector(buffer);
-					if (vec.size() > 0 && vec[0] == "PRIVMSG" ){
-						runPrivmsgCommand(vec, i);
-						break;
-					}
-					else if (vec.size() > 0 && vec[0] == "JOIN" ){
-						runJoinCommand(vec, i);
+					if (vec.size() > 0 && (vec[0] == "PRIVMSG" || vec[0] == "JOIN" || vec[0] == "PART") ){
+						runNormalCommand(vec, i, false);
 						break;
 					}
 					else
 					{
-						runNormalCommand(vec, i);
+						runNormalCommand(vec, i, true);
 						break;
 					}
 				}

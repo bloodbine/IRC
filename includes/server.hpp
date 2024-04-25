@@ -49,7 +49,5 @@ class server
 		int							getClientFdByName(const std::string& clientName) const;
 		const std::string&			getServerIp() const;
 		int							customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const;
-		int							runNormalCommand(std::vector<std::string>& vec, int i);
-		int							runPrivmsgCommand(std::vector<std::string>& vec, int i);
-		int							runJoinCommand(std::vector<std::string>& vec, int i);
+		int							runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg);
 };
