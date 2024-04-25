@@ -18,6 +18,7 @@
 #include "commands/Mode.hpp"
 #include <sstream>
 
+char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
 std::vector<std::string> getVector(char *in);
 Command	*getCommand(Client* client, const std::vector<std::string>& vec);
 bool	isInvalidChannelName(const std::string& str);

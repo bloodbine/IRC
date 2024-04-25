@@ -98,27 +98,6 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 	return (sendStatus);
 }
 
-char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
-{
-	char *tmp;
-	try
-	{
-		Command* cmd = getCommand(client, vec);
-		if (cmd == NULL) tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-		else
-		{
-			tmp = cmd->execute();
-			delete cmd;
-		}
-	}
-	catch (std::exception& e)
-	{
-		tmp = strdup(e.what());
-		*failedToSendMsg = true;
-	}
-	return tmp;
-}
-
 int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg)
 {
 	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);

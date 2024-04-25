@@ -1,6 +1,27 @@
 #include "utils.hpp"
 #include "Channel.hpp"
 
+char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
+{
+	char *tmp;
+	try
+	{
+		Command* cmd = getCommand(client, vec);
+		if (cmd == NULL) tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+		else
+		{
+			tmp = cmd->execute();
+			delete cmd;
+		}
+	}
+	catch (std::exception& e)
+	{
+		tmp = strdup(e.what());
+		*failedToSendMsg = true;
+	}
+	return tmp;
+}
+
 std::vector<std::string> getVector(char *in)
 {
 	std::string					text(in);
