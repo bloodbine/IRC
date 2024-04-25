@@ -45,10 +45,7 @@ server::server(int port, std::string pass) : _serverIp("")
 	this->_clientFDs.push_back(server);
 };
 
-server::~server()
-{
-	close(this->_socketfd);
-};
+server::~server() { close(this->_socketfd); }
 
 std::string	server::getPass() {return this->_pass;};
 int			server::getSocketfd() {return this->_socketfd;};
@@ -191,37 +188,19 @@ void server::handleClient()
 	}
 };
 
-void	server::setServerIp(const std::string& ip) 
-{
-	_serverIp = ip;
-}
+void	server::setServerIp(const std::string& ip) { _serverIp = ip; }
 
 const std::string&	server::getServerIp() const { return _serverIp; }
 
-bool	server::channelExists(const std::string& channelName)
-{
-	return (channelList.find(channelName) != channelList.end());
-}
+bool	server::channelExists(const std::string& channelName) { return (channelList.find(channelName) != channelList.end()); }
 
-void	server::addChannel(Channel *channel)
-{
-	channelList[channel->getName()] = channel;
-}
+void	server::addChannel(Channel *channel) { channelList[channel->getName()] = channel; }
 
-Channel* server::getChannelByName(const std::string& channelName)
-{
-	return channelList[channelName];
-}
+Channel* server::getChannelByName(const std::string& channelName) { return channelList[channelName]; }
 
-void	server::addClient(Client *client)
-{
-	_clientList[client->getFd()] = client;
-}
+void	server::addClient(Client *client) { _clientList[client->getFd()] = client; }
 
-Client* server::getClientByFd(int fd)
-{
-	return _clientList[fd];
-}
+Client* server::getClientByFd(int fd) { return _clientList[fd]; }
 
 bool	server::clientExists(const std::string& clientName)
 {
