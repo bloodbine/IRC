@@ -136,19 +136,13 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 	return (sendStatus);
 }
 
-
-int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
+char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
 {
-	bool	failedToSendMsg = false;
 	char *tmp;
 	try
 	{
-		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
-		if (cmd == NULL)
-		{
-			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-			return -1;
-		}
+		Command* cmd = getCommand(client, vec);
+		if (cmd == NULL) tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
 		else
 		{
 			tmp = cmd->execute();
@@ -158,8 +152,15 @@ int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 	catch (std::exception& e)
 	{
 		tmp = strdup(e.what());
-		failedToSendMsg = true;
+		*failedToSendMsg = true;
 	}
+	return tmp;
+}
+
+int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
+{
+	bool	failedToSendMsg = false;
+	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
 	customSend(tmp, i, failedToSendMsg, vec);
 	delete tmp;
 	return 0;
@@ -168,26 +169,7 @@ int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
 int	server::runJoinCommand(std::vector<std::string>& vec, int i)
 {
 	bool	failedToSendMsg = false;
-	char *tmp;
-	try
-	{
-		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
-		if (cmd == NULL)
-		{
-			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-			return -1;
-		}
-		else
-		{
-			tmp = cmd->execute();
-			delete cmd;
-		}
-	}
-	catch (std::exception& e)
-	{
-		tmp = strdup(e.what());
-		failedToSendMsg = true;
-	}
+	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
 	customSend(tmp, i, failedToSendMsg, vec);
 	delete tmp;
 	return 0;
