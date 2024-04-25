@@ -93,7 +93,7 @@ int	server::runNormalCommand(std::vector<std::string>& vec, int i)
 	return 0;
 }
 
-int							server::getClientFdByName(const std::string& clientName)
+int							server::getClientFdByName(const std::string& clientName) const
 {
 	std::map<int, Client*>::iterator itr = _clientList.begin();
 	std::map<int, Client*>::iterator end = _clientList.end();
@@ -107,9 +107,15 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 {
 	int	toSendFd;
 	int	sendStatus;
-	if (failedToSendMsg || validNick(vec[1]))
+	if (failedToSendMsg)
 	{
 		toSendFd = this->_clientFDs[i].fd;
+		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		return (sendStatus);
+	}
+	else if (validNick(vec[1]))
+	{
+		toSendFd = server::getClientFdByName(vec[1]);
 		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
 		return (sendStatus);
 	}
