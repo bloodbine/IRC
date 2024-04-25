@@ -1,7 +1,10 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+#include "Channel.hpp"
 
+class Channel;
 
 class Client
 {
@@ -17,6 +20,7 @@ private:
     int _socketFd;
 public:
     Client(std::string& serverPassword, int fd);
+    ~Client();
     void Register();
     bool GetIsRegistered() const;
     const std::string& GetNickName() const;
@@ -32,6 +36,8 @@ public:
     void setIsRegistered();
     std::string GetIdenClient() const;
     int         getFd() const;
-    ~Client();
+    // to implement
+    std::vector<Channel*> getChannelList() const;
+    void                  addChannelToChannelList(Channel *channel);
 };
 
