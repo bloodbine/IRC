@@ -65,44 +65,6 @@ int			server::getPort() {return this->_port;};
 			// 	std::cout << p.first<< ": " << p.second->getName() << std::endl;
 			// }
 
-int	server::runNormalCommand(std::vector<std::string>& vec, int i)
-{
-	char *tmp;
-	try
-	{
-		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
-		if (cmd == NULL)
-		{
-			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-			return -1;
-		}
-		else
-		{
-			tmp = cmd->execute();
-			delete cmd;
-		}
-	}
-	catch (std::exception& e)
-	{
-		tmp = strdup(e.what());
-	}
-	int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
-	delete tmp;
-	if (sendStatus == -1)
-		return -1;
-	return 0;
-}
-
-int							server::getClientFdByName(const std::string& clientName) const
-{
-	std::map<int, Client*>::iterator itr = _clientList.begin();
-	std::map<int, Client*>::iterator end = _clientList.end();
-	for (; itr != end; itr++) {
-		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
-	}
-	return -1;
-}
-
 int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const
 {
 	int	toSendFd;
@@ -173,6 +135,25 @@ int	server::runJoinCommand(std::vector<std::string>& vec, int i)
 	customSend(tmp, i, failedToSendMsg, vec);
 	delete tmp;
 	return 0;
+}
+
+int	server::runNormalCommand(std::vector<std::string>& vec, int i)
+{
+	bool	failedToSendMsg = true;
+	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
+	customSend(tmp, i, failedToSendMsg, vec);
+	delete tmp;
+	return 0;
+}
+
+int							server::getClientFdByName(const std::string& clientName) const
+{
+	std::map<int, Client*>::iterator itr = _clientList.begin();
+	std::map<int, Client*>::iterator end = _clientList.end();
+	for (; itr != end; itr++) {
+		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
+	}
+	return -1;
 }
 
 void server::handleClient()
