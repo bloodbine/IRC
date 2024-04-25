@@ -78,6 +78,41 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
 		return (sendStatus);
 	}
+	else if (vec[0] == "QUIT")
+	{
+		std::cout << "You called QUIT!\n";
+		Client *client = this->_clientList[this->_clientFDs[i].fd];
+		std::cout << "This is the name of the client " << client->GetNickName() << std::endl;
+		std::vector<Channel*>	channelList = client->getChannelList();
+		std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
+		std::vector<Channel*>::iterator	end = channelList.end();
+		std::cout << "The client is member of the next channels: " << std::endl;
+		for (; tmpChannel != end; ++tmpChannel)
+		{
+			std::cout << (*tmpChannel)->getName() << std::endl;
+			std::string reasson = "no reasson";
+			if (vec.size() > 1)
+			{
+				reasson = vec[1];
+				for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
+			}
+			// std::cout << ">>>>>>>" << std::endl;
+			std::string out = ":127.0.0.1 " + client->GetNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\n";
+			char *tmp2 = strdup(out.c_str());
+			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
+			std::map<std::string, Client*>	memberList = channel->getMemberList();
+			// std::cout << ">>>>>>>" << std::endl;
+			sendStatus = 0;
+			std::map<std::string, Client*>::iterator itr = memberList.begin();
+			std::map<std::string, Client*>::iterator end = memberList.end();
+			for (; itr != end; ++itr)
+			{
+				toSendFd = (*itr).second->getFd();
+				sendStatus = send(toSendFd, tmp2, std::strlen(tmp2), 0);
+			}
+			delete tmp2;
+		}
+	}
 	else
 	{
 		Channel *channel = server::getChannelByName(vec[1]);
@@ -170,7 +205,8 @@ void server::handleClient()
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
 						std::cout << std::string(buffer);
 					std::vector<std::string> vec = getVector(buffer);
-					if (vec.size() > 0 && (vec[0] == "PRIVMSG" || vec[0] == "JOIN" || vec[0] == "PART") ){
+					if (vec.size() > 0 && (vec[0] == "PRIVMSG" || 
+						vec[0] == "JOIN" || vec[0] == "PART" || vec[0] == "QUIT") ){
 						runNormalCommand(vec, i, false);
 						break;
 					}
