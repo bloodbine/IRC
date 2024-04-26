@@ -136,7 +136,7 @@ int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedTo
 	return 0;
 }
 
-int							server::getClientFdByName(const std::string& clientName) const
+int							server::getClientFdByName(const std::string& clientName)
 {
 	std::map<int, Client*>::iterator itr = _clientList.begin();
 	std::map<int, Client*>::iterator end = _clientList.end();
