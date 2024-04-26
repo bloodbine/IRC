@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _serverPassword(serverPassword), _socketFd(fd)
+Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _isValidatedPassword(false), _serverPassword(serverPassword), _socketFd(fd)
 {}
 
 Client::~Client()
