@@ -45,8 +45,8 @@ char* Join::execute() const
 	else
 		ERR_USERONCHANNEL(_channelName);
 	_client->addChannelToChannelList(channel);
-	out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 JOIN " + _channelName + " ;\n";
-	// out += ": 127.0.0.1 "  + _client->GetNickName() + " JOIN " + _channelName + "\n";
+	// out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 JOIN " + _channelName + " ;\n";
+	out += ": 127.0.0.1 "  + _client->GetNickName() + " JOIN " + _channelName + "\n";
 	out += " 331 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
 	// out += " 332 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
 	// out += " 353 " + _client->GetNickName() + " " + _channelName + ": " + channel->getClientList() + "\n";
