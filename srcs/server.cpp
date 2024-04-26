@@ -5,8 +5,7 @@
 #include <utility>
 
 std::map<std::string, Channel*>	server::channelList;
-std::map<std::string, Client*>	server::_clientList;
-std::map<pollfd, std::string>	server::_clientMVLink;
+std::map<int, Client*>			server::_clientList;
 std::vector<pollfd>				server::_clientFDs;
 
 server::server(int port, std::string pass) : _serverIp("")
@@ -23,10 +22,27 @@ server::server(int port, std::string pass) : _serverIp("")
 	std::cout << this->_port << std::endl;
 	this->_address.sin_port = htons(this->_port);
 	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
+	int enable = 1;
+	linger lin;
+	lin.l_onoff = 0;
+	lin.l_linger = 0;
 	if (this->_socketfd == -1)
 		throw std::logic_error("Failed to create Server socket");
-	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) != 0)
+	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1)
+		throw std::logic_error(std::string((char *)("Failed to set Server socket Address option: ")) + std::string(strerror(errno)));
+	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(enable)) == -1)
+		throw std::logic_error(std::string((char *)"Failed to set Server socket Port option"));
+	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_LINGER, &lin, sizeof(lin)) == -1)
+		throw std::logic_error(std::string((char *)"Failed to set Server socket Linger option"));
+	if (fcntl(this->_socketfd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::logic_error("Failed to set Server socket Non-Block flag");
+	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) == -1)
 		throw std::logic_error("Failed to bind Socket");
+	pollfd server;
+	server.fd = this->_socketfd;
+	server.events = POLLIN;
+	server.revents = 0;
+	this->_clientFDs.push_back(server);
 };
 
 server::~server()
@@ -49,58 +65,133 @@ int			server::getPort() {return this->_port;};
 			// 	std::cout << p.first<< ": " << p.second->getName() << std::endl;
 			// }
 
-// void server::handleClient()
-// {
-// 	int					client_socketfd;
-// 	socklen_t			client_len;
-// 	struct sockaddr_in	client_address;
-// 	char				buffer[256];
-// 	char*				tmp;
+int	server::runNormalCommand(std::vector<std::string>& vec, int i)
+{
+	char *tmp;
+	try
+	{
+		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
+		if (cmd == NULL)
+		{
+			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+			return -1;
+		}
+		else
+		{
+			tmp = cmd->execute();
+			delete cmd;
+		}
+	}
+	catch (std::exception& e)
+	{
+		tmp = strdup(e.what());
+	}
+	int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
+	delete tmp;
+	if (sendStatus == -1)
+		return -1;
+	return 0;
+}
+
+int							server::getClientFdByName(const std::string& clientName) const
+{
+	std::map<int, Client*>::iterator itr = _clientList.begin();
+	std::map<int, Client*>::iterator end = _clientList.end();
+	for (; itr != end; itr++) {
+		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
+	}
+	return -1;
+}
+
+int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const
+{
+	int	toSendFd;
+	int	sendStatus;
+	if (failedToSendMsg)
+	{
+		toSendFd = this->_clientFDs[i].fd;
+		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		return (sendStatus);
+	}
+	else if (validNick(vec[1]))
+	{
+		toSendFd = server::getClientFdByName(vec[1]);
+		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		return (sendStatus);
+	}
+	else
+	{
+		Channel *channel = server::getChannelByName(vec[1]);
+		std::map<std::string, Client*>	memberList = channel->getMemberList();
+		std::map<std::string, Client*>::iterator itr = memberList.begin();
+		std::map<std::string, Client*>::iterator end = memberList.end();
+		for (; itr != end; ++itr)
+		{
+		std::cout << ">>>F" << std::endl;
+			toSendFd = (*itr).second->getFd();
+			sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		}
+	}
+		std::cout << ">>>H" << std::endl;
+	return (sendStatus);
+}
 
 
-// 	listen(this->_socketfd, 1);
-// 	client_len = sizeof(client_address);
-// 	client_socketfd = accept(this->_socketfd, (struct sockaddr *)&client_address, &client_len);
-// 	if (!client_socketfd)
-// 		throw std::logic_error("Failed to create Client socket");
-// 	Client client((*this)._pass, client_socketfd);
-// 	while (true)
-// 	{
-// 		bzero(buffer, sizeof(buffer));
-// 		recv(client_socketfd, buffer, 256, 0);
-// 		std::cout << "Message Received: " << buffer << std::endl;
-// 		std::vector<std::string> vec = getVector(buffer);
-// 		if (vec.size() == 0) break;
-// 		try
-// 		{
-// 			Command* cmd = getCommand(&client, vec);
-// 			if (cmd == NULL)
-// 			{
-// 				bzero(buffer, sizeof(buffer));
-// 				tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-// 			}
-// 			else
-// 			{
-// 				tmp = cmd->execute();
-// 				delete cmd;
-// 			}
-// 			bzero(buffer, sizeof(buffer));
-// 		}
-// 		catch (std::exception& e)
-// 		{
-// 			tmp = strdup(e.what());
-// 			bzero(buffer, sizeof(buffer));
-// 		}
-// 		int sendStatus = send(client_socketfd, tmp, std::strlen(tmp), 0);
-// 		if (sendStatus == -1)
-// 		{
-// 			delete tmp;
-// 			break;
-// 		}
-// 		delete tmp;
-// 	}
-// 	close(client_socketfd);
-// };
+int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
+{
+	bool	failedToSendMsg = false;
+	char *tmp;
+	try
+	{
+		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
+		if (cmd == NULL)
+		{
+			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+			return -1;
+		}
+		else
+		{
+			tmp = cmd->execute();
+			delete cmd;
+		}
+	}
+	catch (std::exception& e)
+	{
+		tmp = strdup(e.what());
+		failedToSendMsg = true;
+	}
+	customSend(tmp, i, failedToSendMsg, vec);
+	delete tmp;
+	return 0;
+}
+
+int	server::runJoinCommand(std::vector<std::string>& vec, int i)
+{
+	bool	failedToSendMsg = false;
+	char *tmp;
+	try
+	{
+		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
+		if (cmd == NULL)
+		{
+			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+			return -1;
+		}
+		else
+		{
+			tmp = cmd->execute();
+			delete cmd;
+		}
+	}
+	catch (std::exception& e)
+	{
+		tmp = strdup(e.what());
+		failedToSendMsg = true;
+	}
+	customSend(tmp, i, failedToSendMsg, vec);
+	delete tmp;
+	return 0;
+}
 
 void server::handleClient()
 {
@@ -113,7 +204,7 @@ void server::handleClient()
 			perror("poll");
 			break;
 		}
-		if (this->_clientFDs[0].revents & POLLIN)
+		if (this->_clientFDs[0].revents == POLLIN)
 		{
 			sockaddr_in incClientAddr;
 			socklen_t incClientAddrLen = sizeof(incClientAddr);
@@ -124,60 +215,58 @@ void server::handleClient()
 			{
 				pollfd incClientTemp;
 				incClientTemp.fd = incClientSocket;
-				incClientTemp.revents = POLLIN;
-				fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK);
+				incClientTemp.events = POLLIN;
+				incClientTemp.revents = 0;
+				if (fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK) == -1)
+					perror("fcntl");
 				this->_clientFDs.push_back(incClientTemp);
+				this->_clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(this->_pass, incClientTemp.fd)));
 				std::cout << "New Client " << incClientTemp.fd << " connected : " << inet_ntoa(incClientAddr.sin_addr) << std::endl;
+				this->_clientFDs[0].revents = 0;
 			}
 		}
+
 		for (unsigned int i = 1; i < this->_clientFDs.size(); ++i)
 		{
 			if (this->_clientFDs[i].revents & POLLIN)
 			{
 				char buffer[1024];
-				char *tmp = NULL;
 				bzero(buffer, sizeof(buffer));
 				int bytesRead = recv(this->_clientFDs[i].fd, buffer, 1024, 0);
 				switch(bytesRead)
 				{
 					case -1:
 						std::cerr << "Client " << this->_clientFDs[i].fd << " error: ";
+						std::cerr << errno << " ";
 						perror("recv");
+						this->_clientList.erase(this->_clientFDs[i].fd);
 						this->_clientFDs.erase(this->_clientFDs.begin() + i);
 						break;
 					case 0:
 						std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
 						close(this->_clientFDs[i].fd);
+						this->_clientList.erase(this->_clientFDs[i].fd);
 						this->_clientFDs.erase(this->_clientFDs.begin() + i);
 						break;
 					default:
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
 						std::cout << std::string(buffer);
-						try
-						{
-							// Command* cmd = getCommand(&client, vec);
-							// if (cmd == NULL)
-							// {
-							// 	bzero(buffer, sizeof(buffer));
-							// 	tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-							// }
-							// else
-							// {
-							// 	tmp = cmd->execute();
-							// 	delete cmd;
-							// }
-							bzero(buffer, sizeof(buffer));
-						}
-						catch (std::exception& e)
-						{
-							tmp = strdup(e.what());
-							bzero(buffer, sizeof(buffer));
-						}
-						int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
-						delete tmp;
-						if (sendStatus == -1)
-							break;
+					std::vector<std::string> vec = getVector(buffer);
+					if (vec.size() > 0 && vec[0] == "PRIVMSG" ){
+						runPrivmsgCommand(vec, i);
+						break;
+					}
+					else if (vec.size() > 0 && vec[0] == "JOIN" ){
+						runJoinCommand(vec, i);
+						break;
+					}
+					else
+					{
+						runNormalCommand(vec, i);
+						break;
+					}
 				}
+				this->_clientFDs[i].revents = 0;
 			}
 		}
 	}
@@ -190,12 +279,12 @@ void	server::setServerIp(const std::string& ip)
 
 const std::string&	server::getServerIp() const { return _serverIp; }
 
-bool			server::channelExists(const std::string& channelName)
+bool	server::channelExists(const std::string& channelName)
 {
 	return (channelList.find(channelName) != channelList.end());
 }
 
-void			server::addChannel(Channel *channel)
+void	server::addChannel(Channel *channel)
 {
 	channelList[channel->getName()] = channel;
 }
@@ -205,17 +294,22 @@ Channel* server::getChannelByName(const std::string& channelName)
 	return channelList[channelName];
 }
 
-void			server::addClient(Client *client)
+void	server::addClient(Client *client)
 {
-	_clientList[client->GetNickName()] = client;
+	_clientList[client->getFd()] = client;
 }
 
-Client* server::getClientByName(const std::string& clientName)
+Client* server::getClientByFd(int fd)
 {
-	return _clientList[clientName];
+	return _clientList[fd];
 }
 
-bool			server::clientExists(const std::string& clientName)
+bool	server::clientExists(const std::string& clientName)
 {
-	return (_clientList.find(clientName) != _clientList.end());
+	std::map<int, Client*>::iterator itr = _clientList.begin();
+	std::map<int, Client*>::iterator end = _clientList.end();
+	for (; itr != end; ++itr) {
+		if ((*itr).second->GetNickName() == clientName) return true;
+	}
+	return (false);
 }

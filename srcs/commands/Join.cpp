@@ -15,13 +15,15 @@ char* Join::execute() const
     std::string out = "";
     std::cout << ":" << _client->GetIdenClient() << " Join " << _channelName << std::endl;
     //check if the channel is exist
-     if (!server::channelExists(_channelName)) server::addChannel(new Channel(_channelName, "Default topic", "Default mode"));
+     if (!server::channelExists(_channelName)) server::addChannel(new Channel(_channelName, "No topic is set", "Default mode"));
     // check if channel as user
 	Channel* channel = server::getChannelByName(_channelName);
 	if (!channel->hasUser(*_client)) channel->addMember(_client);
-    out += " 332 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
-    out += " 353 " + _client->GetNickName() + " " + _channelName + ": " + channel->getClientList() + "\n";
-    out += " 366 " + _client->GetNickName() + " " + _channelName + ": End of /NAMES list.\n";
+    out += ": 127.0.0.1 "  + _client->GetNickName() + " JOIN " + _channelName + "\n";
+    out += " 331 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
+    // out += " 332 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
+    // out += " 353 " + _client->GetNickName() + " " + _channelName + ": " + channel->getClientList() + "\n";
+    // out += " 366 " + _client->GetNickName() + " " + _channelName + ": End of /NAMES list.\n";
 
     std::cout << "SEND TO CLIENT \"" << out << "\"" << std::endl;
 	return strdup(out.c_str());

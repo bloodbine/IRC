@@ -72,3 +72,5 @@ std::string Channel::getClientList() const
     }
     return out;
 }
+
+std::map<std::string, Client*>  Channel::getMemberList() const { return _memberList; }

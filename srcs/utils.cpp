@@ -14,6 +14,7 @@ std::vector<std::string> getVector(char *in)
 
 Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 {
+	if (vec.size() < 1) return NULL;
 	if (vec[0] == "CAP") return (new Cap(client, vec));
 	if (vec[0] == "PASS") return (new Pass(client, vec));
 	if (vec[0] == "NICK") return (new Nick(client, vec));
@@ -24,6 +25,10 @@ Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 	if (vec[0] == "NOTICE") return (new Notice(client, vec));
 	if (vec[0] == "TOPIC") return (new Topic(client, vec));
 	if (vec[0] == "PRIVMSG") return (new Privmsg(client, vec));
+	if (vec[0] == "INVITE") return (new Invite(client, vec));
+	if (vec[0] == "KICK") return (new Kick(client, vec));
+	if (vec[0] == "QUIT") return (new Quit(client, vec));
+	if (vec[0] == "MODE") return (new Mode(client, vec));
 	return NULL;
 }
 
@@ -47,6 +52,27 @@ bool	isSpecialChar(char c)
 	return false;
 }
 
+bool	validNick(const std::string &nickname)
+{
+	if (nickname.size() > 1 && nickname.size() <= 9)
+	{
+		if (isSpecialChar(nickname[0]) || std::isalpha(nickname[0]))
+		{
+			std::string::const_iterator i = nickname.begin();
+			i++;
+			for (; i != nickname.end(); ++i)
+			{
+				if (isSpecialChar(*i) || std::isalnum(*i) || *i == '-')
+					continue;
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+	return false;
+}
+
 void	missingPass()
 {
 	throw std::invalid_argument(" ERROR: YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\n");
@@ -56,6 +82,15 @@ void	missingNick()
 {
 	throw std::invalid_argument("You need to set NICK <nickname>!\n");
 }
+
+bool	isValidMode(const std::string& mode)
+{
+	std::string validModes = "itkol";
+	if (mode.size() != 2 || (mode[0] != '+' && mode[0] != '-')) return false;
+	if (validModes.find(mode[1]) != std::string::npos) return true;
+	return false;
+}
+
 
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName)
 {
@@ -95,4 +130,24 @@ void	ERR_NOSUCHSERVER(const std::string& server)
 void	ERR_NOSUCHNICK(const std::string& nickName)
 {
 	throw  std::invalid_argument(nickName + " 401 :No such nick/channel\n");
+}
+
+void	ERR_ERRONEUSNICKNAME(const std::string& nickName)
+{
+	throw  std::invalid_argument(nickName + " 432 :Erroneous nickname\n");
+}
+
+void	ERR_NICKNAMEINUSE(const std::string& nickName)
+{
+	throw  std::invalid_argument(nickName + " 433 :Nickname is already in use\n");
+}
+
+void	ERR_SYNTAXPROBLEM()
+{
+	throw  std::invalid_argument(" 430 : invalid syntax my friend\n");
+}
+
+void	ERR_UMODEUNKNOWNFLAG()
+{
+	throw  std::invalid_argument(" 501 :Unknown MODE flag\n");
 }

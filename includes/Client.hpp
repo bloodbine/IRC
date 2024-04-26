@@ -30,6 +30,7 @@ public:
     void setIsValidatePassword();
     void setIsRegistered();
     std::string GetIdenClient() const;
+    int         getFd() const;
     ~Client();
 };
 

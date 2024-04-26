@@ -29,3 +29,4 @@ bool Client::getIsValidatedPassword() const { return _isValidatedPassword; }
 const std::string& Client::getServerPassword() const { return _serverPassword; }
 void Client::setIsValidatePassword() { _isValidatedPassword = true; }
 void Client::setIsRegistered() { _isRegistered = true; }
+int  Client::getFd() const { return _socketFd; }
