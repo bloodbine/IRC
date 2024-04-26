@@ -208,6 +208,13 @@ void server::handleClient()
 						if (vec.size() > 0 && (vec[0] == "PRIVMSG" || 
 							vec[0] == "JOIN" || vec[0] == "PART" || vec[0] == "QUIT") ){
 							runNormalCommand(vec, i, false);
+							if (vec[0] == "QUIT")
+							{
+								std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
+								close(this->_clientFDs[i].fd);
+								this->_clientList.erase(this->_clientFDs[i].fd);
+								this->_clientFDs.erase(this->_clientFDs.begin() + i);
+							}
 							break;
 						}
 						else
