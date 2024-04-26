@@ -29,7 +29,7 @@ char* Join::execute() const
 		if (channel->getChanKey() != "")
 		{
 			if (_chanKey == "") ERR_BADCHANNELKEY(_channelName, "No key given");
-			else if (_chanKey != channel->getChanKey()) ERR_BADCHANNELKEY(_channelName, "Wrong key given");
+			else if (_chanKey != channel->getChanKey()) ERR_BADCHANNELKEY(_channelName, ": Cannot join channel (+k)");
 		}
 		if (channel->getInviteFlag() == 1)
 		{
