@@ -19,6 +19,7 @@ char* Join::execute() const
     // check if channel as user
 	Channel* channel = server::getChannelByName(_channelName);
 	if (!channel->hasUser(*_client)) channel->addMember(_client);
+    _client->addChannelToChannelList(channel);
     out += ": 127.0.0.1 "  + _client->GetNickName() + " JOIN " + _channelName + "\n";
     out += " 331 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
     // out += " 332 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";

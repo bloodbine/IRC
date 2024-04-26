@@ -45,10 +45,7 @@ server::server(int port, std::string pass) : _serverIp("")
 	this->_clientFDs.push_back(server);
 };
 
-server::~server()
-{
-	close(this->_socketfd);
-};
+server::~server() { close(this->_socketfd); }
 
 std::string	server::getPass() {return this->_pass;};
 int			server::getSocketfd() {return this->_socketfd;};
@@ -64,44 +61,6 @@ int			server::getPort() {return this->_port;};
 			// 	std::pair<std::string, Channel*> p = *itr;
 			// 	std::cout << p.first<< ": " << p.second->getName() << std::endl;
 			// }
-
-int	server::runNormalCommand(std::vector<std::string>& vec, int i)
-{
-	char *tmp;
-	try
-	{
-		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
-		if (cmd == NULL)
-		{
-			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-			return -1;
-		}
-		else
-		{
-			tmp = cmd->execute();
-			delete cmd;
-		}
-	}
-	catch (std::exception& e)
-	{
-		tmp = strdup(e.what());
-	}
-	int sendStatus = send(this->_clientFDs[i].fd, tmp, std::strlen(tmp), 0);
-	delete tmp;
-	if (sendStatus == -1)
-		return -1;
-	return 0;
-}
-
-int							server::getClientFdByName(const std::string& clientName) const
-{
-	std::map<int, Client*>::iterator itr = _clientList.begin();
-	std::map<int, Client*>::iterator end = _clientList.end();
-	for (; itr != end; itr++) {
-		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
-	}
-	return -1;
-}
 
 int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const
 {
@@ -119,6 +78,41 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
 		return (sendStatus);
 	}
+	else if (vec[0] == "QUIT")
+	{
+		std::cout << "You called QUIT!\n";
+		Client *client = this->_clientList[this->_clientFDs[i].fd];
+		std::cout << "This is the name of the client " << client->GetNickName() << std::endl;
+		std::vector<Channel*>	channelList = client->getChannelList();
+		std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
+		std::vector<Channel*>::iterator	end = channelList.end();
+		std::cout << "The client is member of the next channels: " << std::endl;
+		for (; tmpChannel != end; ++tmpChannel)
+		{
+			std::cout << (*tmpChannel)->getName() << std::endl;
+			std::string reasson = "no reasson";
+			if (vec.size() > 1)
+			{
+				reasson = vec[1];
+				for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
+			}
+			// std::cout << ">>>>>>>" << std::endl;
+			std::string out = ":127.0.0.1 " + client->GetNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\n";
+			char *tmp2 = strdup(out.c_str());
+			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
+			std::map<std::string, Client*>	memberList = channel->getMemberList();
+			// std::cout << ">>>>>>>" << std::endl;
+			sendStatus = 0;
+			std::map<std::string, Client*>::iterator itr = memberList.begin();
+			std::map<std::string, Client*>::iterator end = memberList.end();
+			for (; itr != end; ++itr)
+			{
+				toSendFd = (*itr).second->getFd();
+				sendStatus = send(toSendFd, tmp2, std::strlen(tmp2), 0);
+			}
+			delete tmp2;
+		}
+	}
 	else
 	{
 		Channel *channel = server::getChannelByName(vec[1]);
@@ -127,70 +121,29 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 		std::map<std::string, Client*>::iterator end = memberList.end();
 		for (; itr != end; ++itr)
 		{
-		std::cout << ">>>F" << std::endl;
 			toSendFd = (*itr).second->getFd();
 			sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
 		}
 	}
-		std::cout << ">>>H" << std::endl;
 	return (sendStatus);
 }
 
-
-int	server::runPrivmsgCommand(std::vector<std::string>& vec, int i)
+int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg)
 {
-	bool	failedToSendMsg = false;
-	char *tmp;
-	try
-	{
-		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
-		if (cmd == NULL)
-		{
-			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-			return -1;
-		}
-		else
-		{
-			tmp = cmd->execute();
-			delete cmd;
-		}
-	}
-	catch (std::exception& e)
-	{
-		tmp = strdup(e.what());
-		failedToSendMsg = true;
-	}
+	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
 	customSend(tmp, i, failedToSendMsg, vec);
 	delete tmp;
 	return 0;
 }
 
-int	server::runJoinCommand(std::vector<std::string>& vec, int i)
+int							server::getClientFdByName(const std::string& clientName) const
 {
-	bool	failedToSendMsg = false;
-	char *tmp;
-	try
-	{
-		Command* cmd = getCommand(this->_clientList[this->_clientFDs[i].fd], vec);
-		if (cmd == NULL)
-		{
-			tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
-			return -1;
-		}
-		else
-		{
-			tmp = cmd->execute();
-			delete cmd;
-		}
+	std::map<int, Client*>::iterator itr = _clientList.begin();
+	std::map<int, Client*>::iterator end = _clientList.end();
+	for (; itr != end; itr++) {
+		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
 	}
-	catch (std::exception& e)
-	{
-		tmp = strdup(e.what());
-		failedToSendMsg = true;
-	}
-	customSend(tmp, i, failedToSendMsg, vec);
-	delete tmp;
-	return 0;
+	return -1;
 }
 
 void server::handleClient()
@@ -252,17 +205,14 @@ void server::handleClient()
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
 						std::cout << std::string(buffer);
 					std::vector<std::string> vec = getVector(buffer);
-					if (vec.size() > 0 && vec[0] == "PRIVMSG" ){
-						runPrivmsgCommand(vec, i);
-						break;
-					}
-					else if (vec.size() > 0 && vec[0] == "JOIN" ){
-						runJoinCommand(vec, i);
+					if (vec.size() > 0 && (vec[0] == "PRIVMSG" || 
+						vec[0] == "JOIN" || vec[0] == "PART" || vec[0] == "QUIT") ){
+						runNormalCommand(vec, i, false);
 						break;
 					}
 					else
 					{
-						runNormalCommand(vec, i);
+						runNormalCommand(vec, i, true);
 						break;
 					}
 				}
@@ -272,37 +222,19 @@ void server::handleClient()
 	}
 };
 
-void	server::setServerIp(const std::string& ip) 
-{
-	_serverIp = ip;
-}
+void	server::setServerIp(const std::string& ip) { _serverIp = ip; }
 
 const std::string&	server::getServerIp() const { return _serverIp; }
 
-bool	server::channelExists(const std::string& channelName)
-{
-	return (channelList.find(channelName) != channelList.end());
-}
+bool	server::channelExists(const std::string& channelName) { return (channelList.find(channelName) != channelList.end()); }
 
-void	server::addChannel(Channel *channel)
-{
-	channelList[channel->getName()] = channel;
-}
+void	server::addChannel(Channel *channel) { channelList[channel->getName()] = channel; }
 
-Channel* server::getChannelByName(const std::string& channelName)
-{
-	return channelList[channelName];
-}
+Channel* server::getChannelByName(const std::string& channelName) { return channelList[channelName]; }
 
-void	server::addClient(Client *client)
-{
-	_clientList[client->getFd()] = client;
-}
+void	server::addClient(Client *client) { _clientList[client->getFd()] = client; }
 
-Client* server::getClientByFd(int fd)
-{
-	return _clientList[fd];
-}
+Client* server::getClientByFd(int fd) { return _clientList[fd]; }
 
 bool	server::clientExists(const std::string& clientName)
 {
