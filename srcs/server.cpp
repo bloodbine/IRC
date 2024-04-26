@@ -204,17 +204,17 @@ void server::handleClient()
 					default:
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
 						std::cout << std::string(buffer);
-					std::vector<std::string> vec = getVector(buffer);
-					if (vec.size() > 0 && (vec[0] == "PRIVMSG" || 
-						vec[0] == "JOIN" || vec[0] == "PART" || vec[0] == "QUIT") ){
-						runNormalCommand(vec, i, false);
-						break;
-					}
-					else
-					{
-						runNormalCommand(vec, i, true);
-						break;
-					}
+						std::vector<std::string> vec = getVector(buffer);
+						if (vec.size() > 0 && (vec[0] == "PRIVMSG" || 
+							vec[0] == "JOIN" || vec[0] == "PART" || vec[0] == "QUIT") ){
+							runNormalCommand(vec, i, false);
+							break;
+						}
+						else
+						{
+							runNormalCommand(vec, i, true);
+							break;
+						}
 				}
 				this->_clientFDs[i].revents = 0;
 			}

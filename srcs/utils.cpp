@@ -112,13 +112,18 @@ bool	isValidMode(const std::string& mode)
 	return false;
 }
 
+bool	stringIsNumeric(const char *string)
+{
+	for (size_t i = 0; i < strlen(string); ++i)
+		if (isdigit(string[i]) == false) return false;
+	return true;
+}
 
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName)
 {
 	std::string	text = "461 " + cmdName +  " :Not enough parameters\n";
 	throw std::invalid_argument(text);
 }
-
 
 void	ERR_ALREADYREGISTRED()
 {
@@ -171,4 +176,27 @@ void	ERR_SYNTAXPROBLEM()
 void	ERR_UMODEUNKNOWNFLAG()
 {
 	throw  std::invalid_argument(" 501 :Unknown MODE flag\n");
+}
+
+void	ERR_CHANOPRIVSNEEDED(const std::string& channelName)
+{
+	throw std::invalid_argument(" 481 " + channelName + " :Channel operator priviliges required\n");
+}
+
+void	ERR_CHANNELISFULL(const std::string& channelName)
+{
+	throw std::invalid_argument(" 471 " + channelName + " :Channel is full\n");
+}
+void	ERR_INVITEONLYCHAN(const std::string& channelName)
+{
+	throw std::invalid_argument(" 473 " + channelName + " :Channel is invite-only\n");
+}
+void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason)
+{
+	throw std::invalid_argument(" 475 " + channelName + " :" + reason + "\n");
+}
+
+void ERR_USERONCHANNEL(const std::string& channelName)
+{
+	throw std::invalid_argument(" " + channelName + " :User already on channel" + "\n");
 }

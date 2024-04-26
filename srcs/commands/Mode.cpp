@@ -1,26 +1,65 @@
-#include "commands/Quit.hpp"
+#include "commands/Mode.hpp"
 #include "server.hpp"
 
-Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client), _size(vec.size()), _nickname(""), _mode("")
+Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client), _channelObj(NULL), _size(vec.size()), _channel(""), _mode(""), _parameter("")
 {
-	(void)_client;
-	if (_size != 3) ERR_NEEDMOREPARAMS("MODE");
-	if (validNick(vec[1]) == false) ERR_ERRONEUSNICKNAME(vec[1]);
-	_nickname = vec[1];
-
-	// Verify that mode is valid mode
+	if (_size < 3) ERR_NEEDMOREPARAMS("MODE");
+	if (server::channelExists(vec[1]) == false) ERR_NOSUCHCHANNEL();
+	_channel = vec[1];
+	_channelObj = server::getChannelByName(_channel);
 	if (isValidMode(vec[2]) == false) ERR_UMODEUNKNOWNFLAG();
 	_mode = vec[2];
+	if (_mode.find("o") != std::string::npos && server::clientExists(vec[3]) == false) ERR_NOSUCHNICK(vec[3]);
+	if (_size > 3)
+		_parameter = vec[3];
+	if (_channelObj->getIsMember(_client->GetNickName()) == false) ERR_NOTONCHANNEL();
+	if (_channelObj->getIsOperator(_client->GetNickName()) == false) ERR_CHANOPRIVSNEEDED(_channel);
 }
 
 char* Mode::execute() const
 {
-	std::string	out = "";
-	std::cout << "THX FOR CALLINNG Mode\n";
-    //check if the channel is exist
-	// std::cout << "> target is a user\n";
-	
-    return strdup(out.c_str());
+	std::string tmp = "324 :";
+	switch (_mode[1])
+	{
+		case 'i': // Invite
+			if (_mode[0] == '+') _channelObj->setInviteFlag(true);
+			else _channelObj->setInviteFlag(false);
+			break;
+		case 't': // Topic restriction
+			if (_mode[0] == '+') _channelObj->setTopicRestrictFlag(true);
+			else _channelObj->setTopicRestrictFlag(false);
+			break;
+		case 'k': // Channel key
+			if (_mode[0] == '+')
+			{
+				if (_parameter != "") _channelObj->setChanKey(_parameter);
+				else ERR_NEEDMOREPARAMS("MODE");
+			}
+			else _channelObj->setChanKey("");
+			break;
+		case 'o': // Operator Privilige
+			if (_mode[0] == '+')
+			{
+				if (_channelObj->getIsMember(_parameter) == true &&
+				_channelObj->getIsOperator(_parameter) == false)
+					_channelObj->addOperator(_channelObj->getMemberList()[_parameter]);
+			}
+			else _channelObj->removeOperator(*_channelObj->getOperatorList()[_parameter]);
+			break;
+		case 'l': // User Limit
+			if (_mode[0] == '+')
+			{
+				if (_parameter != "" && stringIsNumeric(_parameter.c_str()) == true) _channelObj->setUserLimit(std::atoi(_parameter.c_str()));
+				else if (_parameter == "") ERR_NEEDMOREPARAMS("MODE");
+				else if (stringIsNumeric(_parameter.c_str()) == false) ERR_SYNTAXPROBLEM();
+			}
+			else _channelObj->setUserLimit(0);
+			break;
+	}
+	tmp.append(_channel);
+	tmp.append(" " + _mode);
+	tmp.append(" " + _parameter);
+	return strdup(tmp.c_str());
 }
 
 Mode::~Mode() {}
