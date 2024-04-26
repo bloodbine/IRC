@@ -91,5 +91,7 @@ public:
 
 	std::map<std::string, Client*>& getOperatorList();
 
+	std::map<std::string, Client*>& getInvitedList();
+
 	~Channel();
 };

@@ -109,3 +109,5 @@ std::string Channel::getClientList() const
 std::map<std::string, Client*>& Channel::getMemberList() { return _memberList; }
 
 std::map<std::string, Client*>& Channel::getOperatorList() { return _operatorList; }
+
+std::map<std::string, Client*>& Channel::getInvitedList() { return _invitedList; }

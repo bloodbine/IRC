@@ -45,3 +45,8 @@ void	ERR_NICKNAMEINUSE(const std::string& nickName);
 void	ERR_SYNTAXPROBLEM();
 void	ERR_UMODEUNKNOWNFLAG();
 void	ERR_CHANOPRIVSNEEDED(const std::string& channelName);
+void	ERR_CHANOPRIVSNEEDED(const std::string& channelName);
+void	ERR_CHANNELISFULL(const std::string& channelName);
+void	ERR_INVITEONLYCHAN(const std::string& channelName);
+void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason);
+void	ERR_USERONCHANNEL(const std::string& channelName);

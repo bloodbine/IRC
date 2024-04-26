@@ -125,7 +125,6 @@ void	ERR_NEEDMOREPARAMS(const std::string& cmdName)
 	throw std::invalid_argument(text);
 }
 
-
 void	ERR_ALREADYREGISTRED()
 {
 	throw std::invalid_argument(" 462 :Unauthorized command (already registered)\n");
@@ -181,5 +180,23 @@ void	ERR_UMODEUNKNOWNFLAG()
 
 void	ERR_CHANOPRIVSNEEDED(const std::string& channelName)
 {
-	throw std::invalid_argument(" 481 " + channelName + ": Channel operator priviliges required\n");
+	throw std::invalid_argument(" 481 " + channelName + " :Channel operator priviliges required\n");
+}
+
+void	ERR_CHANNELISFULL(const std::string& channelName)
+{
+	throw std::invalid_argument(" 471 " + channelName + " :Channel is full\n");
+}
+void	ERR_INVITEONLYCHAN(const std::string& channelName)
+{
+	throw std::invalid_argument(" 473 " + channelName + " :Channel is invite-only\n");
+}
+void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason)
+{
+	throw std::invalid_argument(" 475 " + channelName + " :" + reason + "\n");
+}
+
+void ERR_USERONCHANNEL(const std::string& channelName)
+{
+	throw std::invalid_argument(" " + channelName + " :User already on channel" + "\n");
 }
