@@ -46,7 +46,7 @@ class server
 		static Channel*				getChannelByName(const std::string& channelName);
 		static Client*				getClientByFd(int fd);
 		static bool					clientExists(const std::string& clientName);
-		int							getClientFdByName(const std::string& clientName) const;
+		static int					getClientFdByName(const std::string& clientName);
 		const std::string&			getServerIp() const;
 		int							customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const;
 		int							runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg);

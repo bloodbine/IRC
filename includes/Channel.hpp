@@ -82,6 +82,10 @@ public:
 
 	void addOperator(Client *client);
 
+	void removeInvited(const Client& client);
+
+	void addInvited(Client *client);
+
 	//	Get a list of usernames in the channel
 //   std::vector<std::string> getUsernames() const;
 

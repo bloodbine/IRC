@@ -88,6 +88,20 @@ void Channel::addOperator(Client *client)
 	_operatorList[client->GetNickName()] = client;
 }
 
+void Channel::removeInvited(const Client& client)
+{
+	// Find the client member list using nickname
+	std::map<std::string, Client*>::iterator it = _operatorList.find(client.GetNickName());
+	// If client found remove key-value pair from the map
+	if (it != _operatorList.end())
+		_operatorList.erase(it);
+}
+
+void Channel::addInvited(Client *client)
+{
+	_invitedList[client->GetNickName()] = client;
+}
+
 std::string Channel::getClientList() const
 {
 	std::string out;
