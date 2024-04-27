@@ -136,19 +136,19 @@ int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedTo
 	return 0;
 }
 
-// REMOVE
+// START TESTING
 void	server::testOne(int i, char* in, std::string& expected, bool shouldFail)
 {
 	Client *client = this->_clientList[this->_clientFDs[i].fd];
 	std::vector<std::string>	tmpIn = getVector(in);
 	std::cout << "___________________" << std::endl;
-	std::cout << "\tTest" << in << std::endl;
+	std::cout << "\tTest " << in << std::endl;
 	std::cout << "___________________" << std::endl;
 	try
 	{
 		Command*	cmd = getCommand(client, tmpIn);
-		char *out = cmd->execute();
-		if (out != expected.c_str()) std::cout << "[ok] ;)\n";
+		char *out = cmd->execute();		
+		if (out == expected.c_str()) std::cout << "[ok] ;)\n";
 		else
 		{
 			std::cout << "[ko] :/\n";
@@ -163,6 +163,7 @@ void	server::testOne(int i, char* in, std::string& expected, bool shouldFail)
 		{
 			std::cout << "[ko] :/\n";
 			std::cout << "it shouln't have thrown an exception" << std::endl;
+			std::cout << "the exception is => " << out << std::endl;
 		}
 		if (out != expected.c_str()) std::cout << "[ok] ;)\n";
 		else
