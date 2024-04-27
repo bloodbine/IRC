@@ -2,3 +2,4 @@
 ircserv
 *.o
 *.dSYM
+tests
