@@ -3,7 +3,7 @@
 
 Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick(""), _reasson("")
 {
-    // if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
+    if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
     if (_size < 3) ERR_NEEDMOREPARAMS("KICK");
     // More than 3 char throw invalid SYNTAX ERROR.
 
