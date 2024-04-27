@@ -187,6 +187,14 @@ void	server::test(int i)
 	char *i3 = strdup("KICK #Finnish John :Speaking English");
 	std::string c3 = ":127.0.0.1 John leaves the channel because Speaking English\n";;
 	testOne(i, i3, c3, false);
+
+	char *i4 = strdup("KICK #Finnish John :Speaking");
+	std::string c4 = ":127.0.0.1 John leaves the channel because Speaking\n";;
+	testOne(i, i4, c4, false);
+
+	char *i5 = strdup("KICK #Finnish John");
+	std::string c5 = ":127.0.0.1 John leaves the channel because it's the wish of the operator of the channel\n";;
+	testOne(i, i5, c5, false);
 }
 
 // END TESTING
