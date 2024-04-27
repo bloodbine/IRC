@@ -13,7 +13,7 @@ Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client
 	if (_size > 3)
 		_parameter = vec[3];
 	if (_channelObj->getIsMember(_client->GetNickName()) == false) ERR_NOTONCHANNEL();
-	if (_channelObj->getIsOperator(_client->GetNickName()) == false) ERR_CHANOPRIVSNEEDED(_channel);
+	if (_channelObj->getIsOperator(_client->GetNickName()) == false) ERR_NOPRIVILEGES(_channel);
 }
 
 char* Mode::execute() const
