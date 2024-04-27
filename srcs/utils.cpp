@@ -177,10 +177,10 @@ void	ERR_UMODEUNKNOWNFLAG()
 {
 	throw  std::invalid_argument(" 501 :Unknown MODE flag\n");
 }
-
-void	ERR_CHANOPRIVSNEEDED(const std::string& channelName)
+// Greg
+void	ERR_NOPRIVILEGES(const std::string& channelName)
 {
-	throw std::invalid_argument(" 481 " + channelName + " :Channel operator priviliges required\n");
+	throw std::invalid_argument(" 481 " + channelName + " :Permission Denied- You're not an IRC operator\n");
 }
 
 void	ERR_CHANNELISFULL(const std::string& channelName)
@@ -201,10 +201,10 @@ void ERR_USERONCHANNEL(const std::string& channelName)
 	throw std::invalid_argument(" " + channelName + " :User already on channel\n");
 }
 
-void ERR_USERNOTINCHANNEL(const std::string& channelName,const std::string& nickName)
-{
-	throw std::invalid_argument(nickName + " " + channelName + " :They aren't on that channel");
-}
+// void ERR_USERNOTINCHANNEL(const std::string& channelName,const std::string& nickName)
+// {
+// 	throw std::invalid_argument(nickName + " " + channelName + " :They aren't on that channel");
+// }
 
 void ERR_BADCHANMASK(const std::string& channelName)
 {
@@ -214,4 +214,12 @@ void ERR_BADCHANMASK(const std::string& channelName)
 void ERR_CANTKICKYOURSELF()
 {
 	throw std::invalid_argument("Dear friend, you can't kick yourself. Use PART instead\n");
+}
+void ERR_USERNOTINCHANNEL(const std::string& channelName, const std::string& nickName)
+{
+	throw std::invalid_argument("441 " + nickName + channelName + "  :They aren't on that channel\n");
+}
+void ERR_CHANOPRIVSNEEDED(const std::string& channelName)
+{
+	throw std::invalid_argument("482 " + channelName + " :You're not channel operator\n");
 }
