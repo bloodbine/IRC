@@ -50,5 +50,6 @@ void	ERR_CHANNELISFULL(const std::string& channelName);
 void	ERR_INVITEONLYCHAN(const std::string& channelName);
 void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason);
 void	ERR_USERONCHANNEL(const std::string& channelName);
-void	ERR_USERNOTINCHANNEL(const std::string& channelName);
+void	ERR_USERNOTINCHANNEL(const std::string& channelName,const std::string& nickName);
+void	ERR_BADCHANMASK(const std::string& channelName);
 void	ERR_CANTKICKYOURSELF();

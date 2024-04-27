@@ -31,7 +31,8 @@ char* Kick::execute() const
 	if (server::channelExists(_channel) == false) ERR_NOSUCHCHANNEL();
 	Channel *channel = server::getChannelByName(_channel);
 	if (_nick == _client->GetNickName()) ERR_CANTKICKYOURSELF();
-	if (channel->getIsMember(_nick) == false) ERR_USERNOTINCHANNEL(_nick);
+	if (channel->getIsOperator(_nick) == false) ERR_BADCHANMASK(_channel);
+	if (channel->getIsMember(_nick) == false) ERR_USERNOTINCHANNEL(_channel, _nick);
 	std::string	out = ":127.0.0.1 " + _nick + " leaves the channel " + _channel + \
 		" because " + _reasson + "\n";
 	channel->removeUser(*_client);

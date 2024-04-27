@@ -198,12 +198,17 @@ void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason
 
 void ERR_USERONCHANNEL(const std::string& channelName)
 {
-	throw std::invalid_argument(" " + channelName + " :User already on channel" + "\n");
+	throw std::invalid_argument(" " + channelName + " :User already on channel\n");
 }
 
-void ERR_USERNOTINCHANNEL(const std::string& channelName)
+void ERR_USERNOTINCHANNEL(const std::string& channelName,const std::string& nickName)
 {
-	throw std::invalid_argument(" " + channelName + " :User already on channel" + "\n");
+	throw std::invalid_argument(nickName + " " + channelName + " :They aren't on that channel");
+}
+
+void ERR_BADCHANMASK(const std::string& channelName)
+{
+	throw std::invalid_argument(channelName + " :Bad Channel Mask\n");
 }
 
 void ERR_CANTKICKYOURSELF()
