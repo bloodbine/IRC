@@ -23,7 +23,6 @@ char* Part::execute() const
     Channel* channel = server::getChannelByName(_channelName);
     if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
     std::string out = ":127.0.0.1 " + _client->GetNickName() + " leaves the channel because " + _reasson + "\n";
-    std::cout << "send to clients: " << out << std::endl;
     channel->removeUser(*_client);
     return strdup(out.c_str());
 }

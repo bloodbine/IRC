@@ -3,7 +3,8 @@
 
 Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick(""), _reasson("")
 {
-    if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
+	(void)_client;
+    // if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
     if (_size < 3) ERR_NEEDMOREPARAMS("KICK");
     // More than 3 char throw invalid SYNTAX ERROR.
 
@@ -18,19 +19,23 @@ Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client)
 	// Read reasson
 	if (_size >= 4)
 	{
-		_reasson += vec[3].substr(1);
+		if (vec[3][0] == ':') _reasson = vec[3].substr(1);
+		else _reasson = vec[3];
 		for (size_t i = 4; i < _size; i++) _reasson += " " + vec[i];
 	}
+	else _reasson = "it's the wish of the channel operator";
 }
 
 char* Kick::execute() const
 {
-	std::string	out = "";
-	std::cout << "THX FOR CALLINNG Kick\n";
-	std::cout << "Reasson: " << _reasson << std::endl;
-    //check if the channel is exist
-	// std::cout << "> target is a user\n";
-	
+	if (server::channelExists(_channel) == false) ERR_NOSUCHCHANNEL();
+	Channel *channel = server::getChannelByName(_channel);
+	if (_nick == _client->GetNickName()) ERR_CANTKICKYOURSELF();
+	if (channel->getIsOperator(_nick) == false) ERR_BADCHANMASK(_channel);
+	if (channel->getIsMember(_nick) == false) ERR_USERNOTINCHANNEL(_channel, _nick);
+	std::string	out = ":127.0.0.1 " + _nick + " leaves the channel " + _channel + \
+		" because " + _reasson + "\n";
+	channel->removeUser(*_client);
     return strdup(out.c_str());
 }
 

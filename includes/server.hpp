@@ -35,7 +35,6 @@ class server
 		~server();
 
 		void handleClient();
-
 		std::string					getPass();
 		int							getSocketfd();
 		int							getPort();

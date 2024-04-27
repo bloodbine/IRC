@@ -18,8 +18,7 @@ char* Quit::execute() const
 	std::string	out = "";
 	std::cout << "THX FOR CALLINNG Quit\n";
 	std::cout << "Reasson: " << _reasson << std::endl;
-    //check if the channel is exist
-	// std::cout << "> target is a user\n";
+	
 	
     return strdup(out.c_str());
 }
