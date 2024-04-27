@@ -170,7 +170,7 @@ void	ERR_NICKNAMEINUSE(const std::string& nickName)
 
 void	ERR_SYNTAXPROBLEM()
 {
-	throw  std::invalid_argument(" 430 : invalid syntax my friend\n");
+	throw  std::invalid_argument(":127.0.0.1 430 : invalid syntax my friend\n");
 }
 
 void	ERR_UMODEUNKNOWNFLAG()

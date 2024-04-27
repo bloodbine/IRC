@@ -7,7 +7,7 @@ User::User(Client* client, const std::vector<std::string>& vec) : _size(vec.size
 	if (_client->GetIsRegistered()) ERR_ALREADYREGISTRED();
 	if (_client->GetNickName() == "") missingNick();
 	if (_size < 5) ERR_NEEDMOREPARAMS("USER");
-	if (validUser() == false) throw std::invalid_argument("INVALID SYNTAX");
+	if (validUser() == false) ERR_SYNTAXPROBLEM();
 
 }
 
