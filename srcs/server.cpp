@@ -148,12 +148,12 @@ void	server::testOne(int i, char* in, std::string& expected, bool shouldFail)
 	{
 		Command*	cmd = getCommand(client, tmpIn);
 		char *out = cmd->execute();		
-		if (out == expected.c_str()) std::cout << "[ok] ;)\n";
+		if (strcmp(out,expected.c_str()) == 0) std::cout << "[ok] ;)\n";
 		else
 		{
 			std::cout << "[ko] :/\n";
-			std::cout << "out => " << out << std::endl;
-			std::cout << "expected => " << expected << std::endl;
+			std::cout << "o => " << out << std::endl;
+			std::cout << "e => " << expected << std::endl;
 		}
 	}
 	catch(const std::exception& e)
@@ -169,8 +169,8 @@ void	server::testOne(int i, char* in, std::string& expected, bool shouldFail)
 		else
 		{
 			std::cout << "[ko] :/\n";
-			std::cout << "out => " << out << std::endl;
-			std::cout << "expected => " << expected << std::endl;
+			std::cout << "o => " << out << std::endl;
+			std::cout << "e => " << expected << std::endl;
 		}
 	}
 }
@@ -186,15 +186,15 @@ void	server::test(int i)
 	testOne(i, i2, c2, true);
 
 	char *i3 = strdup("KICK #Finnish John :Speaking English");
-	std::string c3 = ":127.0.0.1 John leaves the channel because Speaking English\n";;
+	std::string c3 = ":127.0.0.1 John leaves the channel #Finnish because Speaking English\n";;
 	testOne(i, i3, c3, false);
 
 	char *i4 = strdup("KICK #Finnish John :Speaking");
-	std::string c4 = ":127.0.0.1 John leaves the channel because Speaking\n";;
+	std::string c4 = ":127.0.0.1 John leaves the channel #Finnish because Speaking\n";;
 	testOne(i, i4, c4, false);
 
 	char *i5 = strdup("KICK #Finnish John");
-	std::string c5 = ":127.0.0.1 John leaves the channel because it's the wish of the operator of the channel\n";;
+	std::string c5 = ":127.0.0.1 John leaves the channel #Finnish because it's the wish of the channel operator\n";
 	testOne(i, i5, c5, false);
 }
 
