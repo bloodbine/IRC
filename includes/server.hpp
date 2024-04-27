@@ -35,8 +35,6 @@ class server
 		~server();
 
 		void handleClient();
-void testOne(int i, char * in, std::string& expected, bool shouldFail); //remove
-void test(int i); //remove
 		std::string					getPass();
 		int							getSocketfd();
 		int							getPort();

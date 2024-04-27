@@ -136,70 +136,6 @@ int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedTo
 	return 0;
 }
 
-// START TESTING
-void	server::testOne(int i, char* in, std::string& expected, bool shouldFail)
-{
-	Client *client = this->_clientList[this->_clientFDs[i].fd];
-	std::vector<std::string>	tmpIn = getVector(in);
-	std::cout << "___________________" << std::endl;
-	std::cout << "\tTest " << in << std::endl;
-	std::cout << "___________________" << std::endl;
-	try
-	{
-		Command*	cmd = getCommand(client, tmpIn);
-		char *out = cmd->execute();		
-		if (strcmp(out,expected.c_str()) == 0) std::cout << "[ok] ;)\n";
-		else
-		{
-			std::cout << "[ko] :/\n";
-			std::cout << "o => " << out << std::endl;
-			std::cout << "e => " << expected << std::endl;
-		}
-	}
-	catch(const std::exception& e)
-	{
-		const char *out = e.what();
-		if (shouldFail == false)
-		{
-			std::cout << "[ko] :/\n";
-			std::cout << "it shouln't have thrown an exception" << std::endl;
-			std::cout << "the exception is => " << out << std::endl;
-		}
-		if (out != expected.c_str()) std::cout << "[ok] ;)\n";
-		else
-		{
-			std::cout << "[ko] :/\n";
-			std::cout << "o => " << out << std::endl;
-			std::cout << "e => " << expected << std::endl;
-		}
-	}
-}
-
-void	server::test(int i)
-{
-	char *i1 = strdup("KICK");
-	std::string c1 = "461 KICK :Not enough parameters\n";
-	testOne(i, i1, c1, true);
-
-	char *i2 = strdup("KICK #Finnish");
-	std::string c2 = "461 KICK :Not enough parameters\n";
-	testOne(i, i2, c2, true);
-
-	char *i3 = strdup("KICK #Finnish John :Speaking English");
-	std::string c3 = ":127.0.0.1 John leaves the channel #Finnish because Speaking English\n";;
-	testOne(i, i3, c3, false);
-
-	char *i4 = strdup("KICK #Finnish John :Speaking");
-	std::string c4 = ":127.0.0.1 John leaves the channel #Finnish because Speaking\n";;
-	testOne(i, i4, c4, false);
-
-	char *i5 = strdup("KICK #Finnish John");
-	std::string c5 = ":127.0.0.1 John leaves the channel #Finnish because it's the wish of the channel operator\n";
-	testOne(i, i5, c5, false);
-}
-
-// END TESTING
-
 int							server::getClientFdByName(const std::string& clientName) const
 {
 	std::map<int, Client*>::iterator itr = _clientList.begin();
@@ -245,9 +181,6 @@ void server::handleClient()
 
 		for (unsigned int i = 1; i < this->_clientFDs.size(); ++i)
 		{
-			// To remove tests
-			test(i);
-			// end to remove tests
 			if (this->_clientFDs[i].revents & POLLIN)
 			{
 				char buffer[1024];
@@ -274,7 +207,7 @@ void server::handleClient()
 						std::vector<std::string> vec = getVector(buffer);
 						if (vec.size() > 0 && (vec[0] == "PRIVMSG" || 
 							vec[0] == "JOIN" || vec[0] == "PART" ||
-							vec[0] == "QUIT" || vec[0] == "PART") )
+							vec[0] == "QUIT" || vec[0] == "KICK") )
 						{
 							runNormalCommand(vec, i, false);
 							if (vec[0] == "QUIT")

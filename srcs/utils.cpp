@@ -200,3 +200,13 @@ void ERR_USERONCHANNEL(const std::string& channelName)
 {
 	throw std::invalid_argument(" " + channelName + " :User already on channel" + "\n");
 }
+
+void ERR_USERNOTINCHANNEL(const std::string& channelName)
+{
+	throw std::invalid_argument(" " + channelName + " :User already on channel" + "\n");
+}
+
+void ERR_CANTKICKYOURSELF()
+{
+	throw std::invalid_argument("Dear friend, you can't kick yourself. Use PART instead\n");
+}
