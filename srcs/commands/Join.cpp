@@ -17,7 +17,7 @@ char* Join::execute() const
 	std::string out = "";
 	std::cout << ":" << _client->GetIdenClient() << " Join " << _channelName << std::endl;
 	//check if the channel is exist
-	if (!server::channelExists(_channelName))
+	if (!server::channelExists(_channelName) && _client->getTotalChannels() < 4)
 	{
 		server::addChannel(new Channel(_channelName));
 		server::getChannelByName(_channelName)->addOperator(_client);
