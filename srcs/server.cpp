@@ -7,8 +7,11 @@
 std::map<std::string, Channel*>	server::channelList;
 std::map<int, Client*>			server::_clientList;
 std::vector<pollfd>				server::_clientFDs;
+std::string						server::_hostname;
+std::string						server::_serverIp;
+std::string						server::_creationTime;
 
-server::server(int port, std::string pass) : _serverIp("")
+server::server(int port, std::string pass)
 {
 	if (!port || port <= 0)
 		throw std::logic_error("Missing or Invalid Port");
@@ -44,7 +47,9 @@ server::server(int port, std::string pass) : _serverIp("")
 	server.events = POLLIN;
 	server.revents = 0;
 	this->_clientFDs.push_back(server);
-	// std::cout << "Server address: " << inet_ntoa(_address.sin_addr) << "\r\n";
+	addrStructToString(_serverIp, _hostname);
+	std::cerr << "Host and IP: " << _hostname << " " << _serverIp << std::endl;
+	_creationTime = getTimestamp();
 };
 
 server::~server() { close(this->_socketfd); }
@@ -52,17 +57,6 @@ server::~server() { close(this->_socketfd); }
 std::string	server::getPass() {return this->_pass;};
 int			server::getSocketfd() {return this->_socketfd;};
 int			server::getPort() {return this->_port;};
-
-			// Channel tmpChannel("hola", "tmpTopic", "TmpMode");
-			// std::cout << "'hola' is in _channelList: " << channelExists(tmpChannel.getName()) << std::endl;
-			// std::cout << "Adding 'hola' to _channelList" << std::endl;
-			// addChannel(&tmpChannel);
-			// std::cout << "channel list: \r\n";
-			// for (std::map<std::string, Channel*>::iterator itr = _channelList.begin(); itr != _channelList.end(); ++itr)
-			// {
-			// 	std::pair<std::string, Channel*> p = *itr;
-			// 	std::cout << p.first<< ": " << p.second->getName() << std::endl;
-			// }
 
 int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const
 {
@@ -241,7 +235,15 @@ void server::handleClient()
 
 void	server::setServerIp(const std::string& ip) { _serverIp = ip; }
 
-const std::string&	server::getServerIp() const { return _serverIp; }
+std::string&	server::getServerIp()  { return _serverIp; }
+
+void	server::setHostname(const std::string& hostname) { _hostname = hostname; }
+
+std::string&	server::getHostname()  { return _hostname; }
+
+void	server::setCreationTime(const std::string& timestamp) { _creationTime = timestamp; }
+
+std::string&	server::getCreationTime()  { return _creationTime; };
 
 bool	server::channelExists(const std::string& channelName) { return (channelList.find(channelName) != channelList.end()); }
 

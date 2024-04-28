@@ -1,5 +1,38 @@
 #include "utils.hpp"
 #include "Channel.hpp"
+#include <netdb.h>
+
+std::string		getTimestamp()
+{
+	time_t t = time(0);
+	struct tm* tinf = localtime(&t);
+	char buffer[80];
+	
+	strftime(buffer, 80, "%H:%M:%S %b %d %Y", tinf);
+	return std::string(buffer);
+}
+
+void addrStructToString(std::string &ip_dest, std::string &hostname_dest)
+{
+	char				host[256];
+	struct hostent*		hostEntry;
+
+	if (gethostname(host, sizeof(host)) == -1)
+		throw std::logic_error("Failed to retrieve hostname");
+	
+	hostEntry = gethostbyname(host);
+	if (!hostEntry)
+	{
+		ip_dest = "127.0.0.1";
+		hostname_dest = "localhost";
+	}
+	else
+	{
+		ip_dest = inet_ntoa(*((struct in_addr*) hostEntry->h_addr_list[0]));
+		std::cout << ">> Hostname: " << hostEntry->h_name << std::endl;
+		hostname_dest = std::string(hostEntry->h_name);
+	}
+}
 
 char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
 {

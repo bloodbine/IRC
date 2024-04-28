@@ -20,13 +20,15 @@
 
 class server
 {
-	static std::map<std::string, Channel*>		channelList;
-	static std::map<int, Client*>				_clientList;
-	static std::vector<pollfd>					_clientFDs;
+	static	std::map<std::string, Channel*>		channelList;
+	static	std::map<int, Client*>				_clientList;
+	static	std::vector<pollfd>					_clientFDs;
+	static	std::string _hostname;
+	static	std::string	_serverIp;
+	static	std::string _creationTime;
 	private:
 		struct sockaddr_in _address;
 		std::string _pass;
-		std::string	_serverIp;
 		int _socketfd;
 		int _port;
 
@@ -47,7 +49,11 @@ class server
 		static Client*				getClientByFd(int fd);
 		static bool					clientExists(const std::string& clientName);
 		static int					getClientFdByName(const std::string& clientName);
-		const std::string&			getServerIp() const;
+		static std::string&			getServerIp();
+		void						setHostname(const std::string& hostname);
+		static std::string&			getHostname();
+		void						setCreationTime(const std::string& timestamp);
+		static std::string&			getCreationTime();
 		int							customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const;
 		int							runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg);
 };

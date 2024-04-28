@@ -18,6 +18,8 @@
 #include "commands/Mode.hpp"
 #include <sstream>
 
+std::string	getTimestamp();
+void addrStructToString(std::string &ip_dest, std::string &hostname_dest);
 char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
 std::vector<std::string> getVector(char *in);
 Command	*getCommand(Client* client, const std::vector<std::string>& vec);
