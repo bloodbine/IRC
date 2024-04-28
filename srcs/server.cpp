@@ -58,7 +58,54 @@ std::string	server::getPass() {return this->_pass;};
 int			server::getSocketfd() {return this->_socketfd;};
 int			server::getPort() {return this->_port;};
 
-int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const
+void	server::handleQuit(std::vector<std::string> vec, int i)
+{
+	int	sendStatus;
+	int toSendFd;
+
+	std::cout << "You called QUIT!\r\n";
+	Client *client = this->_clientList[this->_clientFDs[i].fd];
+	std::cout << "This is the name of the client " << client->GetNickName() << std::endl;
+	std::vector<Channel*>	channelList = client->getChannelList();
+	std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
+	std::vector<Channel*>::iterator	end = channelList.end();
+	std::cout << "The client is member of the next channels: " << std::endl;
+	for (; tmpChannel != end; ++tmpChannel)
+	{
+		std::cout << (*tmpChannel)->getName() << std::endl;
+		std::string reasson = "no reasson";
+		if (vec.size() > 1)
+		{
+			reasson = vec[1];
+			for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
+		}
+		std::string out = ":127.0.0.1 " + client->GetNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
+		char *tmp2 = strdup(out.c_str());
+		Channel *channel = server::getChannelByName((*tmpChannel)->getName());
+		std::map<std::string, Client*>	memberList = channel->getMemberList();
+		sendStatus = 0;
+		std::map<std::string, Client*>::iterator itr = memberList.begin();
+		std::map<std::string, Client*>::iterator end = memberList.end();
+		for (; itr != end; ++itr)
+		{
+			toSendFd = (*itr).second->getFd();
+			sendStatus = send(toSendFd, tmp2, std::strlen(tmp2), 0);
+		}
+		delete tmp2;
+		(*tmpChannel)->removeUser(*client);
+		if ((*tmpChannel)->getIsOperator(client->GetNickName()))
+			(*tmpChannel)->removeOperator(*client);
+		if ((*tmpChannel)->getClientList().size() == 0)
+			server::removeChannel(channel->getName());
+	}
+	std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
+	toSendFd = this->_clientFDs[i].fd;
+	close(this->_clientFDs[i].fd);
+	this->_clientList.erase(this->_clientFDs[i].fd);
+	this->_clientFDs.erase(this->_clientFDs.begin() + i);
+}
+
+int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec)
 {
 	int	toSendFd;
 	int	sendStatus = 0;
@@ -74,51 +121,7 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
 		return (sendStatus);
 	}
-	else if (vec[0] == "QUIT")
-	{
-		std::cout << "You called QUIT!\r\n";
-		Client *client = this->_clientList[this->_clientFDs[i].fd];
-		std::cout << "This is the name of the client " << client->GetNickName() << std::endl;
-		std::vector<Channel*>	channelList = client->getChannelList();
-		std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
-		std::vector<Channel*>::iterator	end = channelList.end();
-		std::cout << "The client is member of the next channels: " << std::endl;
-		for (; tmpChannel != end; ++tmpChannel)
-		{
-			std::cout << (*tmpChannel)->getName() << std::endl;
-			std::string reasson = "no reasson";
-			if (vec.size() > 1)
-			{
-				reasson = vec[1];
-				for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
-			}
-			// std::cout << ">>>>>>>" << std::endl;
-			std::string out = ":127.0.0.1 " + client->GetNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
-			char *tmp2 = strdup(out.c_str());
-			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
-			std::map<std::string, Client*>	memberList = channel->getMemberList();
-			// std::cout << ">>>>>>>" << std::endl;
-			sendStatus = 0;
-			std::map<std::string, Client*>::iterator itr = memberList.begin();
-			std::map<std::string, Client*>::iterator end = memberList.end();
-			for (; itr != end; ++itr)
-			{
-				toSendFd = (*itr).second->getFd();
-				sendStatus = send(toSendFd, tmp2, std::strlen(tmp2), 0);
-			}
-			delete tmp2;
-			(*tmpChannel)->removeUser(*client);
-			if ((*tmpChannel)->getIsOperator(client->GetNickName()))
-				(*tmpChannel)->removeOperator(*client);
-			if ((*tmpChannel)->getClientList().size() == 0)
-				server::removeChannel(channel->getName());
-		}
-		std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
-		toSendFd = this->_clientFDs[i].fd;
-		close(this->_clientFDs[i].fd);
-		this->_clientList.erase(this->_clientFDs[i].fd);
-		this->_clientFDs.erase(this->_clientFDs.begin() + i);
-	}
+	else if (vec[0] == "QUIT") handleQuit(vec, i);
 	else
 	{
 		if (channelExists(vec[1]) == true)
