@@ -96,7 +96,10 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 		if ((*tmpChannel)->getIsOperator(client->GetNickName()))
 			(*tmpChannel)->removeOperator(*client);
 		if ((*tmpChannel)->getClientList().size() == 0)
+		{
 			server::removeChannel(channel->getName());
+			delete channel;
+		}
 	}
 	std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
 	toSendFd = this->_clientFDs[i].fd;
@@ -112,10 +115,23 @@ void	server::handleShutdown(std::vector<std::string> vec)
 	for (size_t i = 2; i < this->_clientFDs.size(); i++) handleQuit(vec, i);
 	std::map<int, Client*>::iterator	itr = this->_clientList.begin();
 	std::map<int, Client*>::iterator	end = this->_clientList.end();
-	for (; itr != end; ++itr) delete (*itr).second;
+	std::cout << "remove the next users:\n";
+	for (; itr != end; ++itr)
+	{
+		std::cout << (*itr).second->GetNickName() << ", ";
+		delete (*itr).second;
+	}
+	std::cout << "--------------------------\n";
+
 	std::map<std::string, Channel*>::iterator	itr1 = this->channelList.begin();
 	std::map<std::string, Channel*>::iterator	end1 = this->channelList.end();
-	for (; itr1 != end1; ++itr1) delete (*itr1).second;
+	std::cout << "remove the next channels:\n";
+	for (; itr1 != end1; ++itr1)
+	{
+		std::cout << (*itr1).second->getName() << ", ";
+		delete (*itr1).second;
+	}
+	std::cout << "--------------------------\n";
 	_finish = true;
 }
 
