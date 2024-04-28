@@ -83,6 +83,7 @@ Command	*getCommand(Client* client, const std::vector<std::string>& vec)
 	if (vec[0] == "KICK") return (new Kick(client, vec));
 	if (vec[0] == "QUIT") return (new Quit(client, vec));
 	if (vec[0] == "MODE") return (new Mode(client, vec));
+	if (vec[0] == "SHUTDOWN") return (new Shutdown(client, vec));
 	return NULL;
 }
 

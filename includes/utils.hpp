@@ -16,6 +16,7 @@
 #include "commands/Kick.hpp"
 #include "commands/Quit.hpp"
 #include "commands/Mode.hpp"
+#include "commands/Shutdown.hpp"
 #include <sstream>
 
 std::string	getTimestamp();
