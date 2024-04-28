@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: gpasztor <gpasztor@student.42.fr>          +#+  +:+       +#+         #
+#    By: rdragan <rdragan@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/03 14:10:51 by rdragan           #+#    #+#              #
-#    Updated: 2024/04/28 09:51:11 by gpasztor         ###   ########.fr        #
+#    Updated: 2024/04/28 12:58:02 by rdragan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME	=	ircserv
 SRC		=	$(wildcard srcs/*.cpp)
 SRC		+=	$(wildcard srcs/commands/*.cpp)
 OBJ		=	$(SRC:.cpp=.o)
-CFLAGS	=	-Wall -Werror -Wextra -std=c++98
+CFLAGS	=	-Wall -Werror -Wextra -std=c++98 -g
 INCLUDES = -I./includes
 CC		=	c++
 

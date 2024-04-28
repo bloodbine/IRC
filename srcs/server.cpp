@@ -109,6 +109,9 @@ void	server::handleShutdown(std::vector<std::string> vec)
 {
 	std::cout << "_clientFDs.size(): " << this->_clientFDs.size() << std::endl;
 	for (size_t i = 2; i < this->_clientFDs.size(); i++) handleQuit(vec, i);
+	std::map<int, Client*>::iterator	itr = this->_clientList.begin();
+	std::map<int, Client*>::iterator	end = this->_clientList.end();
+	for (; itr != end; ++itr) delete (*itr).second;
 	exit(0);
 }
 
