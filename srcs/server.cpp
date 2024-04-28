@@ -103,6 +103,7 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 	close(this->_clientFDs[i].fd);
 	this->_clientList.erase(this->_clientFDs[i].fd);
 	this->_clientFDs.erase(this->_clientFDs.begin() + i);
+	delete client;
 }
 
 void	server::handleShutdown(std::vector<std::string> vec)
