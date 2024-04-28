@@ -113,6 +113,9 @@ void	server::handleShutdown(std::vector<std::string> vec)
 	std::map<int, Client*>::iterator	itr = this->_clientList.begin();
 	std::map<int, Client*>::iterator	end = this->_clientList.end();
 	for (; itr != end; ++itr) delete (*itr).second;
+	std::map<std::string, Channel*>::iterator	itr1 = this->channelList.begin();
+	std::map<std::string, Channel*>::iterator	end1 = this->channelList.end();
+	for (; itr1 != end1; ++itr1) delete (*itr1).second;
 	exit(0);
 }
 
