@@ -57,4 +57,5 @@ class server
 		int							customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec);
 		int							runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg);
 		void						handleQuit(std::vector<std::string> vec, int i);
+		void						handleShutdown(std::vector<std::string> vec);
 };

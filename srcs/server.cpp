@@ -105,6 +105,13 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 	this->_clientFDs.erase(this->_clientFDs.begin() + i);
 }
 
+void	server::handleShutdown(std::vector<std::string> vec)
+{
+	std::cout << "_clientFDs.size(): " << this->_clientFDs.size() << std::endl;
+	for (size_t i = 2; i < this->_clientFDs.size(); i++) handleQuit(vec, i);
+	exit(0);
+}
+
 int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec)
 {
 	int	toSendFd;
@@ -115,13 +122,14 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
 		return (sendStatus);
 	}
-	else if (validNick(vec[1]))
+	else if (vec[0] != "SHUTDOWN" && validNick(vec[1]))
 	{
 		toSendFd = server::getClientFdByName(vec[1]);
 		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
 		return (sendStatus);
 	}
 	else if (vec[0] == "QUIT") handleQuit(vec, i);
+	else if (vec[0] == "SHUTDOWN") handleShutdown(vec);
 	else
 	{
 		if (channelExists(vec[1]) == true)
