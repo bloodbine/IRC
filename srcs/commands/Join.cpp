@@ -26,6 +26,7 @@ char* Join::execute() const
 	Channel* channel = server::getChannelByName(_channelName);
 	if (!channel->hasUser(*_client))
 	{
+		if (_client->getTotalChannels() >= 4) ERR_TOOMANYCHANNELS(_channelName);
 		if (channel->getChanKey() != "")
 		{
 			if (_chanKey == "") ERR_BADCHANNELKEY(_channelName, "No key given");
@@ -45,6 +46,7 @@ char* Join::execute() const
 	else
 		ERR_USERONCHANNEL(_channelName);
 	_client->addChannelToChannelList(channel);
+	_client->incrementTotalChannels();
 	out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@" + server::getServerIp() +" JOIN " + _channelName + "\r\n";
 	out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@" + server::getServerIp() +" 331 " + _client->GetNickName() + " " + _channelName + " :No topic is set\r\n";
 	out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@" + server::getServerIp() +" 353 " + _client->GetNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";

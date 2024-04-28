@@ -257,3 +257,8 @@ void ERR_CHANOPRIVSNEEDED(const std::string& channelName)
 {
 	throw std::invalid_argument("482 " + channelName + " :You're not channel operator\r\n");
 }
+
+void ERR_TOOMANYCHANNELS(const std::string& channelName)
+{
+	throw std::invalid_argument("405 " + channelName + " :You have joined too many channels\r\n");
+}

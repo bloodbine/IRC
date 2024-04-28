@@ -17,6 +17,7 @@ private:
     bool _isValidatedPassword;
     std::string _serverPassword;
     std::vector<Channel*>   _channelList;
+    int                _totalChannels;
     int _socketFd;
 public:
     Client(std::string& serverPassword, int fd);
@@ -36,6 +37,8 @@ public:
     void setIsRegistered();
     std::string GetIdenClient() const;
     int         getFd() const;
+    int         getTotalChannels() const;
+    void        incrementTotalChannels();
     // to implement
     std::vector<Channel*> getChannelList() const;
     void                  addChannelToChannelList(Channel *channel);

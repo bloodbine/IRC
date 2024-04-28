@@ -56,3 +56,4 @@ void	ERR_CANTKICKYOURSELF();
 void    ERR_USERNOTINCHANNEL(const std::string& channelName, const std::string& nickName);
 void    ERR_CHANOPRIVSNEEDED(const std::string& channelName);
 void	ERR_NOPRIVILEGES(const std::string& channelName);
+void	ERR_TOOMANYCHANNELS(const std::string& channelName);

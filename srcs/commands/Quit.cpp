@@ -19,7 +19,6 @@ char* Quit::execute() const
 	std::cout << "THX FOR CALLINNG Quit\r\n";
 	std::cout << "Reasson: " << _reasson << std::endl;
 	
-	
     return strdup(out.c_str());
 }
 

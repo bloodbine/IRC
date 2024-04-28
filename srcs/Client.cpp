@@ -1,7 +1,9 @@
 #include "Client.hpp"
 
 Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _isValidatedPassword(false), _serverPassword(serverPassword), _socketFd(fd)
-{}
+{
+    _totalChannels = 0;
+}
 
 Client::~Client()
 {}
@@ -29,6 +31,8 @@ bool Client::getIsValidatedPassword() const { return _isValidatedPassword; }
 const std::string& Client::getServerPassword() const { return _serverPassword; }
 void Client::setIsValidatePassword() { _isValidatedPassword = true; }
 void Client::setIsRegistered() { _isRegistered = true; }
+void Client::incrementTotalChannels() { _totalChannels++; }
 int  Client::getFd() const { return _socketFd; }
+int  Client::getTotalChannels() const { return _totalChannels; }
 std::vector<Channel*> Client::getChannelList() const { return _channelList; }
 void                  Client::addChannelToChannelList(Channel *channel) { _channelList.push_back(channel); }
