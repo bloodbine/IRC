@@ -3,3 +3,4 @@ ircserv
 *.o
 *.dSYM
 tests
+USER bla 0 * :hi

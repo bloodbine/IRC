@@ -11,7 +11,7 @@ std::string						server::_hostname;
 std::string						server::_serverIp;
 std::string						server::_creationTime;
 
-server::server(int port, std::string pass)
+server::server(int port, std::string pass) : _finish(false)
 {
 	if (!port || port <= 0)
 		throw std::logic_error("Missing or Invalid Port");
@@ -116,7 +116,7 @@ void	server::handleShutdown(std::vector<std::string> vec)
 	std::map<std::string, Channel*>::iterator	itr1 = this->channelList.begin();
 	std::map<std::string, Channel*>::iterator	end1 = this->channelList.end();
 	for (; itr1 != end1; ++itr1) delete (*itr1).second;
-	exit(0);
+	_finish = true;
 }
 
 int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec)
@@ -176,7 +176,7 @@ int							server::getClientFdByName(const std::string& clientName)
 void server::handleClient()
 {
 	listen(this->_socketfd, 5);
-	while (42)
+	while (!_finish)
 	{
 		int ret = poll(&this->_clientFDs[0], this->_clientFDs.size(), -1);
 		if (ret == -1)

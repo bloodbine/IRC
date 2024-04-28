@@ -31,6 +31,7 @@ class server
 		std::string _pass;
 		int _socketfd;
 		int _port;
+		bool	_finish;
 
 	public:
 		server(int port, std::string pass);
