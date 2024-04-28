@@ -30,11 +30,11 @@ char* Topic::execute() const
     // check if channel as user
     Channel* channel = server::getChannelByName(_channelName);
     if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
-	if (_topic == "") out = " 331 RPL_NOTOPIC " + _channelName + " :No topic is set\n";
+	if (_topic == "") out = " 331 RPL_NOTOPIC " + _channelName + " :No topic is set\r\n";
 	else
 	{
 		channel->setTopic(_topic);
-		out = " 332 RPL_TOPIC " + _channelName + " :" + _topic + "\n";
+		out = " 332 RPL_TOPIC " + _channelName + " :" + _topic + "\r\n";
 	}
     return strdup(out.c_str());
 }

@@ -39,7 +39,7 @@ char* Kick::execute() const
 	if (channel->getIsOperator(_nick) == false) ERR_CHANOPRIVSNEEDED(_nick);
 	std::cout << "get operator : " << channel->getIsOperator(_nick) << std::endl;
 	std::string	out = ":127.0.0.1 " + _nick + " leaves the channel " + _channel + \
-		" because " + _reasson + "\n";
+		" because " + _reasson + "\r\n";
 	channel->removeUser(*_client);
     return strdup(out.c_str());
 }

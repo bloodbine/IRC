@@ -45,7 +45,7 @@ char*	User::execute() const
 	// set client.setMode() to mode.
 	std::cout << "Username\t|\tReal Name" << std::endl;
 	std::cout << _client->GetUserName() << "\t\t|" << _client->GetRealUserName() << std::endl;
-	std::string out = "001 * Welcome to the Internet Relay Network " + _client->GetNickName() + "!" + _client->GetUserName() +"@127.0.0.1\n";
+	std::string out = "001 * Welcome to the Internet Relay Network " + _client->GetNickName() + "!" + _client->GetUserName() +"@127.0.0.1\r\n";
 	return strdup(out.c_str());
 }
 

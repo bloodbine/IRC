@@ -116,8 +116,8 @@ std::string Channel::getClientList() const
 	{
 		tmp = *itr;
 		if (i > 0)
-			out += " " + tmp.second->GetNickName();
-		else out += tmp.second->GetNickName();
+			out += " @" + tmp.second->GetNickName();
+		else out += "@" + tmp.second->GetNickName();
 		i++;
 	}
 	return out;
@@ -132,7 +132,7 @@ std::map<std::string, Client*>& Channel::getInvitedList() { return _invitedList;
 
 // bool Channel::doKickFromChannel(int fd, int userFd, string userName){
 //     if (fd == userFd) {
-//         string err = "You can't KICK yourself\r\n";
+//         string err = "You can't KICK yourself\r\r\n";
 //         send(fd, err.c_str(), err.length() + 1, 0);
 //         return false;
 //     }
@@ -147,12 +147,12 @@ std::map<std::string, Client*>& Channel::getInvitedList() { return _invitedList;
 // 			}
 // 		}
 // 	if (it == ite) {
-// 		string err = "441 * " + userName +  _channelName + " :They aren't on that channel\n";
+// 		string err = "441 * " + userName +  _channelName + " :They aren't on that channel\r\n";
 // 		send(fd, err.c_str(), err.length() + 1, 0);
 // 		return false;
 // 	}
 // 	} else {
-// 		string err = "482 *  " + _channelName + " :You're not channel operator\n";
+// 		string err = "482 *  " + _channelName + " :You're not channel operator\r\n";
 // 		send(fd, err.c_str(), err.length() + 1, 0);
 // 		return false;
 // 	}

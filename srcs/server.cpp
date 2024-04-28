@@ -19,6 +19,7 @@ server::server(int port, std::string pass) : _serverIp("")
 	bzero((char *)&this->_address, sizeof(this->_address));
 	this->_address.sin_family = AF_INET;
 	this->_address.sin_addr.s_addr = INADDR_ANY;
+	inet_pton(AF_INET, "0.0.0.0", &_address.sin_addr);
 	std::cout << this->_port << std::endl;
 	this->_address.sin_port = htons(this->_port);
 	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -43,6 +44,7 @@ server::server(int port, std::string pass) : _serverIp("")
 	server.events = POLLIN;
 	server.revents = 0;
 	this->_clientFDs.push_back(server);
+	// std::cout << "Server address: " << inet_ntoa(_address.sin_addr) << "\r\n";
 };
 
 server::~server() { close(this->_socketfd); }
@@ -55,7 +57,7 @@ int			server::getPort() {return this->_port;};
 			// std::cout << "'hola' is in _channelList: " << channelExists(tmpChannel.getName()) << std::endl;
 			// std::cout << "Adding 'hola' to _channelList" << std::endl;
 			// addChannel(&tmpChannel);
-			// std::cout << "channel list: \n";
+			// std::cout << "channel list: \r\n";
 			// for (std::map<std::string, Channel*>::iterator itr = _channelList.begin(); itr != _channelList.end(); ++itr)
 			// {
 			// 	std::pair<std::string, Channel*> p = *itr;
@@ -65,7 +67,7 @@ int			server::getPort() {return this->_port;};
 int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec) const
 {
 	int	toSendFd;
-	int	sendStatus;
+	int	sendStatus = 0;
 	if (failedToSendMsg)
 	{
 		toSendFd = this->_clientFDs[i].fd;
@@ -80,7 +82,7 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 	}
 	else if (vec[0] == "QUIT")
 	{
-		std::cout << "You called QUIT!\n";
+		std::cout << "You called QUIT!\r\n";
 		Client *client = this->_clientList[this->_clientFDs[i].fd];
 		std::cout << "This is the name of the client " << client->GetNickName() << std::endl;
 		std::vector<Channel*>	channelList = client->getChannelList();
@@ -97,7 +99,7 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 				for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
 			}
 			// std::cout << ">>>>>>>" << std::endl;
-			std::string out = ":127.0.0.1 " + client->GetNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\n";
+			std::string out = ":127.0.0.1 " + client->GetNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
 			char *tmp2 = strdup(out.c_str());
 			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
 			std::map<std::string, Client*>	memberList = channel->getMemberList();
@@ -111,6 +113,11 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 				sendStatus = send(toSendFd, tmp2, std::strlen(tmp2), 0);
 			}
 			delete tmp2;
+			(*tmpChannel)->removeUser(*client);
+			if ((*tmpChannel)->getIsOperator(client->GetNickName()))
+				(*tmpChannel)->removeOperator(*client);
+			if ((*tmpChannel)->getClientList().size() == 0)
+				server::removeChannel(channel->getName());
 		}
 		std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
 		toSendFd = this->_clientFDs[i].fd;
@@ -120,14 +127,17 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 	}
 	else
 	{
-		Channel *channel = server::getChannelByName(vec[1]);
-		std::map<std::string, Client*>	memberList = channel->getMemberList();
-		std::map<std::string, Client*>::iterator itr = memberList.begin();
-		std::map<std::string, Client*>::iterator end = memberList.end();
-		for (; itr != end; ++itr)
+		if (channelExists(vec[1]) == true)
 		{
-			toSendFd = (*itr).second->getFd();
-			sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+			Channel *channel = server::getChannelByName(vec[1]);
+			std::map<std::string, Client*>	memberList = channel->getMemberList();
+			std::map<std::string, Client*>::iterator itr = memberList.begin();
+			std::map<std::string, Client*>::iterator end = memberList.end();
+			for (; itr != end; ++itr)
+			{
+				toSendFd = (*itr).second->getFd();
+				sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+			}
 		}
 	}
 	return (sendStatus);
@@ -191,6 +201,7 @@ void server::handleClient()
 				char buffer[1024];
 				bzero(buffer, sizeof(buffer));
 				int bytesRead = recv(this->_clientFDs[i].fd, buffer, 1024, 0);
+				this->_clientFDs[i].revents = 0;
 				switch(bytesRead)
 				{
 					case -1:
@@ -223,7 +234,6 @@ void server::handleClient()
 							break;
 						}
 				}
-				this->_clientFDs[i].revents = 0;
 			}
 		}
 	}
@@ -236,6 +246,8 @@ const std::string&	server::getServerIp() const { return _serverIp; }
 bool	server::channelExists(const std::string& channelName) { return (channelList.find(channelName) != channelList.end()); }
 
 void	server::addChannel(Channel *channel) { channelList[channel->getName()] = channel; }
+
+void	server::removeChannel(std::string channelName) { channelList.erase(channelName); }
 
 Channel* server::getChannelByName(const std::string& channelName) { return channelList[channelName]; }
 

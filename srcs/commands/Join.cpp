@@ -45,12 +45,10 @@ char* Join::execute() const
 	else
 		ERR_USERONCHANNEL(_channelName);
 	_client->addChannelToChannelList(channel);
-	// out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 JOIN " + _channelName + " ;\n";
-	out += ": 127.0.0.1 "  + _client->GetNickName() + " JOIN " + _channelName + "\n";
-	out += " 331 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
-	// out += " 332 " + _client->GetNickName() + " " + _channelName + ": " + channel->getTopic() + "\n";
-	// out += " 353 " + _client->GetNickName() + " " + _channelName + ": " + channel->getClientList() + "\n";
-	// out += " 366 " + _client->GetNickName() + " " + _channelName + ": End of /NAMES list.\n";
+	out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 JOIN" + _channelName + " ; Default join message\r\n";
+	out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 331 " + _client->GetNickName() + " " + _channelName + " :No topic is set\r\n";
+	out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 353 " + _client->GetNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
+	out += ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 366 " + _client->GetNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
 
 	std::cout << "SEND TO CLIENT \"" << out << "\"" << std::endl;
 	return strdup(out.c_str());
@@ -58,4 +56,3 @@ char* Join::execute() const
 
 Join::~Join()
 {}
-

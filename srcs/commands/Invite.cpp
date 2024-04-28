@@ -34,7 +34,7 @@ char* Invite::execute() const
 		else if (channel->getIsMember(_nick) == true)
 			ERR_USERONCHANNEL(_channel);
 	}
-	out.append(" 341 :" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 INVITE " + _nick + " " + _channel + "\n");
+	out.append(" 341 :" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 INVITE " + _nick + " " + _channel + "\r\n");
 	return strdup(out.c_str());
 }
 

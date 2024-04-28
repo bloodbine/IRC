@@ -7,7 +7,7 @@ char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedT
 	try
 	{
 		Command* cmd = getCommand(client, vec);
-		if (cmd == NULL) tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\n");
+		if (cmd == NULL) tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\r\n");
 		else
 		{
 			tmp = cmd->execute();
@@ -96,12 +96,12 @@ bool	validNick(const std::string &nickname)
 
 void	missingPass()
 {
-	throw std::invalid_argument(" ERROR: YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\n");
+	throw std::invalid_argument(" ERROR: YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\r\n");
 }
 
 void	missingNick()
 {
-	throw std::invalid_argument("You need to set NICK <nickname>!\n");
+	throw std::invalid_argument("You need to set NICK <nickname>!\r\n");
 }
 
 bool	isValidMode(const std::string& mode)
@@ -121,84 +121,84 @@ bool	stringIsNumeric(const char *string)
 
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName)
 {
-	std::string	text = "461 " + cmdName +  " :Not enough parameters\n";
+	std::string	text = "461 " + cmdName +  " :Not enough parameters\r\n";
 	throw std::invalid_argument(text);
 }
 
 void	ERR_ALREADYREGISTRED()
 {
-	throw std::invalid_argument(" 462 :Unauthorized command (already registered)\n");
+	throw std::invalid_argument(" 462 :Unauthorized command (already registered)\r\n");
 }
 void	ERR_NOTREGISTERED()
 {
-	throw std::invalid_argument(" 451 :You have not registered\n");
+	throw std::invalid_argument(" 451 :You have not registered\r\n");
 }
 
 void	ERR_NOSUCHCHANNEL()
 {
-	throw std::invalid_argument(" 403 :No such channel\n");
+	throw std::invalid_argument(" 403 :No such channel\r\n");
 }
 void	ERR_NOTONCHANNEL()
 {
-	throw std::invalid_argument(" 442 :You're not on that channel\n");
+	throw std::invalid_argument(" 442 :You're not on that channel\r\n");
 }
 
 void	ERR_NOORIGIN()
 {
-	throw  std::invalid_argument(" 409 :No origin specified\n");
+	throw  std::invalid_argument(" 409 :No origin specified\r\n");
 }
 
 void	ERR_NOSUCHSERVER(const std::string& server)
 {
-	throw  std::invalid_argument(server + " 402 :No such server\n");
+	throw  std::invalid_argument(server + " 402 :No such server\r\n");
 }
 
 void	ERR_NOSUCHNICK(const std::string& nickName)
 {
-	throw  std::invalid_argument(nickName + " 401 :No such nick/channel\n");
+	throw  std::invalid_argument(nickName + " 401 :No such nick/channel\r\n");
 }
 
 void	ERR_ERRONEUSNICKNAME(const std::string& nickName)
 {
-	throw  std::invalid_argument(nickName + " 432 :Erroneous nickname\n");
+	throw  std::invalid_argument(nickName + " 432 :Erroneous nickname\r\n");
 }
 
 void	ERR_NICKNAMEINUSE(const std::string& nickName)
 {
-	throw  std::invalid_argument(nickName + " 433 :Nickname is already in use\n");
+	throw  std::invalid_argument(nickName + " 433 :Nickname is already in use\r\n");
 }
 
 void	ERR_SYNTAXPROBLEM()
 {
-	throw  std::invalid_argument(":127.0.0.1 430 : invalid syntax my friend\n");
+	throw  std::invalid_argument(":127.0.0.1 430 : invalid syntax my friend\r\n");
 }
 
 void	ERR_UMODEUNKNOWNFLAG()
 {
-	throw  std::invalid_argument(" 501 :Unknown MODE flag\n");
+	throw  std::invalid_argument(" 501 :Unknown MODE flag\r\n");
 }
 // Greg
 void	ERR_NOPRIVILEGES(const std::string& channelName)
 {
-	throw std::invalid_argument(" 481 " + channelName + " :Permission Denied- You're not an IRC operator\n");
+	throw std::invalid_argument(" 481 " + channelName + " :Permission Denied- You're not an IRC operator\r\n");
 }
 
 void	ERR_CHANNELISFULL(const std::string& channelName)
 {
-	throw std::invalid_argument(" 471 " + channelName + " :Channel is full\n");
+	throw std::invalid_argument(" 471 " + channelName + " :Channel is full\r\n");
 }
 void	ERR_INVITEONLYCHAN(const std::string& channelName)
 {
-	throw std::invalid_argument(" 473 " + channelName + " :Channel is invite-only\n");
+	throw std::invalid_argument(" 473 " + channelName + " :Channel is invite-only\r\n");
 }
 void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason)
 {
-	throw std::invalid_argument(" 475 " + channelName + " :" + reason + "\n");
+	throw std::invalid_argument(" 475 " + channelName + " :" + reason + "\r\n");
 }
 
 void ERR_USERONCHANNEL(const std::string& channelName)
 {
-	throw std::invalid_argument(" " + channelName + " :User already on channel\n");
+	throw std::invalid_argument(" " + channelName + " :User already on channel\r\n");
 }
 
 // void ERR_USERNOTINCHANNEL(const std::string& channelName,const std::string& nickName)
@@ -208,18 +208,18 @@ void ERR_USERONCHANNEL(const std::string& channelName)
 
 void ERR_BADCHANMASK(const std::string& channelName)
 {
-	throw std::invalid_argument(channelName + " :Bad Channel Mask\n");
+	throw std::invalid_argument(channelName + " :Bad Channel Mask\r\n");
 }
 
 void ERR_CANTKICKYOURSELF()
 {
-	throw std::invalid_argument("Dear friend, you can't kick yourself. Use PART instead\n");
+	throw std::invalid_argument("Dear friend, you can't kick yourself. Use PART instead\r\n");
 }
 void ERR_USERNOTINCHANNEL(const std::string& channelName, const std::string& nickName)
 {
-	throw std::invalid_argument("441 " + nickName + channelName + "  :They aren't on that channel\n");
+	throw std::invalid_argument("441 " + nickName + channelName + "  :They aren't on that channel\r\n");
 }
 void ERR_CHANOPRIVSNEEDED(const std::string& channelName)
 {
-	throw std::invalid_argument("482 " + channelName + " :You're not channel operator\n");
+	throw std::invalid_argument("482 " + channelName + " :You're not channel operator\r\n");
 }
