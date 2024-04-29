@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h> 
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdexcept>
 #include <iostream>
@@ -12,7 +13,9 @@
 #include <vector>
 #include <map>
 #include <stdexcept>
-#include <libc.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cerrno>
 #include "Command.hpp"
 #include "utils.hpp"
 #include "Client.hpp"

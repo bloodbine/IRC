@@ -60,7 +60,6 @@ int			server::getPort() {return this->_port;};
 
 void	server::handleQuit(std::vector<std::string> vec, int i)
 {
-	int	sendStatus;
 	int toSendFd;
 
 	std::cout << "You called QUIT!\r\n";
@@ -83,13 +82,12 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 		char *tmp2 = strdup(out.c_str());
 		Channel *channel = server::getChannelByName((*tmpChannel)->getName());
 		std::map<std::string, Client*>	memberList = channel->getMemberList();
-		sendStatus = 0;
 		std::map<std::string, Client*>::iterator itr = memberList.begin();
 		std::map<std::string, Client*>::iterator end = memberList.end();
 		for (; itr != end; ++itr)
 		{
 			toSendFd = (*itr).second->getFd();
-			sendStatus = send(toSendFd, tmp2, std::strlen(tmp2), 0);
+			send(toSendFd, tmp2, std::strlen(tmp2), 0);
 		}
 		delete tmp2;
 		(*tmpChannel)->removeUser(*client);
