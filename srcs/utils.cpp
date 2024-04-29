@@ -49,7 +49,7 @@ std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *f
 			}
 			catch(const std::exception& e)
 			{
-				std::cerr << e.what() << '\n';
+				tmp = e.what();
 			}
 			delete cmd;
 		}
