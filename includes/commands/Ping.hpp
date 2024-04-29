@@ -17,6 +17,6 @@ private:
 	std::string	_serverName;
 public:
 	Ping	(Client* client, const std::vector<std::string>& vec);
-	char* execute() const;
+	std::string execute() const;
 	~Ping	();
 };

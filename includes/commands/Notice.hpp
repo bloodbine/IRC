@@ -13,6 +13,6 @@ private:
     size_t _size;
 public:
     Notice(Client* client, const std::vector<std:: string>& vec);
-    char * execute() const;
+    std::string execute() const;
     ~Notice();
 };

@@ -18,6 +18,6 @@ private:
 	size_t	_size;
 public:
 	Shutdown	(Client* client, const std::vector<std::string>& vec);
-	char* execute() const;
+	std::string execute() const;
 	~Shutdown	();
 };

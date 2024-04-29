@@ -21,6 +21,6 @@ private:
 	// char*	ERR_NICKNAMEINUSE(const std::string& serverIp) const;
 public:
 	Nick	(Client* client, const std::vector<std::string>& vec);
-	char* execute() const;
+	std::string execute() const;
 	~Nick	();
 };

@@ -30,7 +30,7 @@ Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client)
 	else _reasson = "it's the wish of the channel operator";
 }
 
-char* Kick::execute() const
+std::string Kick::execute() const
 {
 	if (server::channelExists(_channel) == false) ERR_NOSUCHCHANNEL();
 	Channel *channel = server::getChannelByName(_channel);
@@ -41,7 +41,7 @@ char* Kick::execute() const
 	std::string	out = ":127.0.0.1 " + _nick + " leaves the channel " + _channel + \
 		" because " + _reasson + "\r\n";
 	channel->removeUser(*_client);
-    return strdup(out.c_str());
+    return out;
 }
 
 Kick::~Kick()

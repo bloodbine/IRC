@@ -19,6 +19,6 @@ private:
 	std::string	_parameter;
 public:
 	Mode(Client* client, const std::vector<std::string>& vec);
-	char* execute() const;
+	std::string execute() const;
 	~Mode();
 };

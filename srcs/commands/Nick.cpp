@@ -11,10 +11,10 @@ Nick::Nick(Client* client, const std::vector<std::string>& vec) : _client(client
 	_nickName = vec[1];
 }
 
-char*	Nick::execute() const
+std::string	Nick::execute() const
 {
 	_client->setNickName(_nickName);
 	std::string	out = "NICK " + _nickName + "\r\n";
-	return strdup(out.c_str());
+	return out;
 }
 Nick::~Nick() {}

@@ -16,6 +16,6 @@ private:
     std::string _nick;
 public:
     Invite(Client* client, const std::vector<std::string>& vec);
-    char* execute() const;
+    std::string execute() const;
     ~Invite();
 };

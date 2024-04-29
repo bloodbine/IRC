@@ -11,9 +11,9 @@ Ping::Ping(Client* client, const std::vector<std::string>& vec) : _size(vec.size
 	if (_size == 3) _serverName = vec[2];
 }
 
-char*	Ping::execute() const
+std::string	Ping::execute() const
 {
 	std::string	out = "PONG " + _serverName;
-	return strdup(out.c_str());
+	return out;
 }
 Ping::~Ping() {}

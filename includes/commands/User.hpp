@@ -19,7 +19,7 @@ private:
 	Client						*_client;
 public:
 	User	(Client* client, const std::vector<std::string>& vec);
-	char* execute() const;
+	std::string execute() const;
 	bool	validUser() const;
 	~User	();
 };

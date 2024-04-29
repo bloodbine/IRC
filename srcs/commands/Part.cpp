@@ -14,7 +14,7 @@ Part::Part(Client* client, const std::vector<std::string>& vec): _client(client)
 
 }
 
-char* Part::execute() const
+std::string Part::execute() const
 {
 	std::cout << ":" << _client->GetIdenClient() << " PART " << _channelName << std::endl;
 	//check if the channel is exist
@@ -28,7 +28,7 @@ char* Part::execute() const
 	channel->removeUser(*_client);
 	if (channel->getClientList().size() == 0)
 		server::removeChannel(channel->getName());
-	return strdup(out.c_str());
+	return out;
 }
 
 Part::~Part()

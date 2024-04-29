@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class server;
 class Client;
 
@@ -7,6 +9,6 @@ class Command
 {
 public:
 	Command();
-	virtual char* execute() const = 0;
+	virtual std::string execute() const = 0;
 	virtual ~Command();
 };

@@ -16,7 +16,7 @@ Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client
 	if (_channelObj->getIsOperator(_client->GetNickName()) == false) ERR_NOPRIVILEGES(_channel);
 }
 
-char* Mode::execute() const
+std::string Mode::execute() const
 {
 	std::string tmp = "324 :";
 	switch (_mode[1])
@@ -59,7 +59,7 @@ char* Mode::execute() const
 	tmp.append(_channel);
 	tmp.append(" " + _mode);
 	tmp.append(" " + _parameter);
-	return strdup(tmp.c_str());
+	return tmp;
 }
 
 Mode::~Mode() {}

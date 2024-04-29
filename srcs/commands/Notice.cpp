@@ -7,9 +7,9 @@ Notice::Notice(Client* client, const std::vector<std:: string>& vec): _client(cl
     //     return ;
 }
 
-char* Notice::execute() const
+std::string Notice::execute() const
 {
-    return (strdup(""));
+    return ("");
 }
 
 Notice::~Notice()

@@ -8,9 +8,9 @@ Shutdown::Shutdown(Client* client, const std::vector<std::string>& vec) : _clien
 	if (_size != 2 || _password != "hola") throw std::invalid_argument("462 :Password incorrect\r\n");
 }
 
-char*	Shutdown::execute() const
+std::string	Shutdown::execute() const
 {
-	return NULL;
+	return "";
 }
 
 Shutdown::~Shutdown() {}

@@ -36,11 +36,11 @@ void addrStructToString(std::string &ip_dest, std::string &hostname_dest)
 
 std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
 {
-	char *tmp;
+	std::string tmp;
 	try
 	{
 		Command* cmd = getCommand(client, vec);
-		if (cmd == NULL) tmp = strdup("[ERROR]: UNSUPPORTED COMMAND\r\n");
+		if (cmd == NULL) tmp = "[ERROR]: UNSUPPORTED COMMAND\r\n";
 		else
 		{
 			tmp = cmd->execute();
@@ -49,7 +49,7 @@ std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *f
 	}
 	catch (std::exception& e)
 	{
-		tmp = strdup(e.what());
+		tmp = e.what();
 		*failedToSendMsg = true;
 	}
 	return tmp;

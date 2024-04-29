@@ -16,7 +16,7 @@ Privmsg::Privmsg(Client* client, const std::vector<std::string>& vec): _client(c
 	for (size_t i = 3 ; i < _size; i++) _msg += " " + vec[i];
 }
 
-char* Privmsg::execute() const
+std::string Privmsg::execute() const
 {
 	std::string	out = "";
     //check if the channel is exist
@@ -27,7 +27,7 @@ char* Privmsg::execute() const
 	out = ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 PRIVMSG " + _target + " :" + _msg + "\r\r\n";
 	// std::cout << "Message to " << _target << std::endl;
 	std::cout << _msg << std::endl;
-    return strdup(out.c_str());
+    return out;
 }
 
 Privmsg::~Privmsg() {}

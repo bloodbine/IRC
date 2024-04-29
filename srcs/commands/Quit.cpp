@@ -13,13 +13,13 @@ Quit::Quit(Client* client, const std::vector<std::string>& vec): _client(client)
 	}
 }
 
-char* Quit::execute() const
+std::string Quit::execute() const
 {
 	std::string	out = "";
 	std::cout << "THX FOR CALLINNG Quit\r\n";
 	std::cout << "Reasson: " << _reasson << std::endl;
 	
-    return strdup(out.c_str());
+    return out;
 }
 
 Quit::~Quit()

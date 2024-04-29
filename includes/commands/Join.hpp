@@ -16,6 +16,6 @@ private:
 	std::string _chanKey;
 public:
     Join(Client* client, const std::vector<std::string>& vec);
-    char* execute() const;
+    std::string execute() const;
     ~Join();
 };

@@ -18,7 +18,7 @@ Invite::Invite(Client* client, const std::vector<std::string>& vec): _client(cli
 	_channel = vec[2];
 }
 
-char* Invite::execute() const
+std::string Invite::execute() const
 {
 	std::string	out = "";
 	if (server::channelExists(_channel))
@@ -35,7 +35,7 @@ char* Invite::execute() const
 			ERR_USERONCHANNEL(_channel);
 	}
 	out.append(" 341 :" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 INVITE " + _nick + " " + _channel + "\r\n");
-	return strdup(out.c_str());
+	return out;
 }
 
 Invite::~Invite() {}

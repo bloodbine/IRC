@@ -10,9 +10,9 @@ Pass::Pass(Client* client, const std::vector<std::string>& vec) : _client(client
 
 Pass::~Pass() {}
 
-char* Pass::execute() const {
-      if (_password != _client->getServerPassword()) return strdup("462 :Password incorrect\r\n");
+std::string Pass::execute() const {
+      if (_password != _client->getServerPassword()) return "462 :Password incorrect\r\n";
       // _client->Register();
       _client->setIsValidatePassword();
-      return strdup("Correct Password. Now run NICK <nickname>\r\n");
+      return "Correct Password. Now run NICK <nickname>\r\n";
 }

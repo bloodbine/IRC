@@ -13,6 +13,6 @@ private:
     std::string _password;
 public:
     Pass(Client* client, const std::vector<std::string>& vec);
-    char* execute() const;
+    std::string execute() const;
     ~Pass();
 };

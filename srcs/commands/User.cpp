@@ -27,7 +27,7 @@ bool	User::validUser() const
 	return true;
 }
 
-char*	User::execute() const
+std::string	User::execute() const
 {
 
 	std::string realName = "";
@@ -49,7 +49,7 @@ char*	User::execute() const
 	out += ":" + server::getHostname() + " 002 " + _client->GetNickName() + " :Your host is KVIRC, running version 5.0\r\n";
 	out += ":" + server::getHostname() + " 003 " + _client->GetNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
 	out += ":" + server::getHostname() + " 004 " + _client->GetNickName() + " :KVIRC 5.0 itkol\r\n";
-	return strdup(out.c_str());
+	return out;
 }
 
 User::~User() {}
