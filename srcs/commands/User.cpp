@@ -43,13 +43,13 @@ std::string	User::execute() const
 	if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
 	else server::addClient(_client);
 	// set client.setMode() to mode.
-	std::cout << "Username\t|\tReal Name" << std::endl;
-	std::cout << _client->GetUserName() << "\t\t|" << _client->GetRealUserName() << std::endl;
-	std::string out = ":" + server::getHostname() + " 001 " + _client->GetNickName() + " :Welcome to the 42 Heilbronn KVIRC Network, " + _client->GetNickName() + "!" + _client->GetUserName() + "@" + server::getHostname() + "\r\n";
-	out += ":" + server::getHostname() + " 002 " + _client->GetNickName() + " :Your host is KVIRC, running version 5.0\r\n";
-	out += ":" + server::getHostname() + " 003 " + _client->GetNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
-	out += ":" + server::getHostname() + " 004 " + _client->GetNickName() + " :KVIRC 5.0 itkol\r\n";
-	return out;
+	// std::cout << "Username\t|\tReal Name" << std::endl;
+	// std::cout << _client->GetUserName() << "\t\t|" << _client->GetRealUserName() << std::endl;
+	std::string out = ":" + server::getServerIp() + " 001 " + _client->GetNickName() + " :Welcome to the Internet Relay Network " + _client->GetNickName() + "!" + _client->GetUserName() + "@" + server::getHostname() + "\r\n";
+	out += ":" + server::getServerIp() + " 002 " + _client->GetNickName() + " :Your host is ircserv, running version 1.0\r\n";
+	out += ":" + server::getServerIp() + " 003 " + _client->GetNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
+	out += ":" + server::getServerIp() + " 004 " + _client->GetNickName() + " :ircserv 1.0 oiws ositnmlvk\r\n";
+	return strdup(out.c_str());
 }
 
 User::~User() {}

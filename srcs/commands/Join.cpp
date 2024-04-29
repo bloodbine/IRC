@@ -4,7 +4,7 @@
 Join::Join(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _chanKey("")
 {
 	if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
-	if (_size <= 1) ERR_NEEDMOREPARAMS("JOIN");
+	if (_size < 1) ERR_NEEDMOREPARAMS("JOIN");
 	_channelName = vec[1]; // extract channel name in index 1
 	if (isInvalidChannelName(_channelName)) ERR_NOSUCHCHANNEL();
 	if (_size >= 3)

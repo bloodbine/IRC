@@ -22,7 +22,7 @@ std::string Part::execute() const
 	// check if channel as user
 	Channel* channel = server::getChannelByName(_channelName);
 	if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
-	std::string out = ":@127.0.0.1 " + _client->GetNickName() + " leaves the channel because " + _reasson + "\r\n";
+	std::string out = ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@" + server::getHostname() + " PART " + _channelName + ": I lost\r\n";
 	if (channel->getIsOperator(_client->GetNickName()))
 		channel->removeOperator(*_client);
 	channel->removeUser(*_client);
