@@ -79,7 +79,6 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 			for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
 		}
 		std::string out = ":127.0.0.1 " + client->GetNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
-		char *tmp2 = strdup(out.c_str());
 		Channel *channel = server::getChannelByName((*tmpChannel)->getName());
 		std::map<std::string, Client*>	memberList = channel->getMemberList();
 		std::map<std::string, Client*>::iterator itr = memberList.begin();
@@ -87,9 +86,8 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 		for (; itr != end; ++itr)
 		{
 			toSendFd = (*itr).second->getFd();
-			send(toSendFd, tmp2, std::strlen(tmp2), 0);
+			send(toSendFd, out.c_str(), out.length(), 0);
 		}
-		delete tmp2;
 		(*tmpChannel)->removeUser(*client);
 		if ((*tmpChannel)->getIsOperator(client->GetNickName()))
 			(*tmpChannel)->removeOperator(*client);
@@ -133,20 +131,20 @@ void	server::handleShutdown(std::vector<std::string> vec)
 	_finish = true;
 }
 
-int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::string> vec)
+int	server::customSend(std::string tmp, int i, bool failedToSendMsg, std::vector<std::string> vec)
 {
 	int	toSendFd;
 	int	sendStatus = 0;
 	if (failedToSendMsg)
 	{
 		toSendFd = this->_clientFDs[i].fd;
-		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
 		return (sendStatus);
 	}
 	else if (vec[0] != "SHUTDOWN" && validNick(vec[1]))
 	{
 		toSendFd = server::getClientFdByName(vec[1]);
-		sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+		sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
 		return (sendStatus);
 	}
 	else if (vec[0] == "QUIT") handleQuit(vec, i);
@@ -162,7 +160,7 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 			for (; itr != end; ++itr)
 			{
 				toSendFd = (*itr).second->getFd();
-				sendStatus = send(toSendFd, tmp, std::strlen(tmp), 0);
+				sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
 			}
 		}
 	}
@@ -171,9 +169,8 @@ int	server::customSend(char *tmp, int i, bool failedToSendMsg, std::vector<std::
 
 int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg)
 {
-	char *tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
+	std::string tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
 	customSend(tmp, i, failedToSendMsg, vec);
-	delete tmp;
 	return 0;
 }
 

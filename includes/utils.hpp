@@ -21,7 +21,7 @@
 
 std::string	getTimestamp();
 void addrStructToString(std::string &ip_dest, std::string &hostname_dest);
-char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
+std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
 std::vector<std::string> getVector(char *in);
 Command	*getCommand(Client* client, const std::vector<std::string>& vec);
 bool	isInvalidChannelName(const std::string& str);

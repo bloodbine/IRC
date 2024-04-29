@@ -34,7 +34,7 @@ void addrStructToString(std::string &ip_dest, std::string &hostname_dest)
 	}
 }
 
-char *getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
+std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
 {
 	char *tmp;
 	try
