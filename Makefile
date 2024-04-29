@@ -6,7 +6,7 @@
 #    By: rdragan <rdragan@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/03 14:10:51 by rdragan           #+#    #+#              #
-#    Updated: 2024/04/28 12:58:02 by rdragan          ###   ########.fr        #
+#    Updated: 2024/04/29 15:00:27 by rdragan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,5 +31,8 @@ clean:
 
 fclean: clean
 	rm -Rf $(NAME)
+
+linux:
+	./run_docker.sh 4444
 
 re: fclean all
