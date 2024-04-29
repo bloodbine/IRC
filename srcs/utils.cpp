@@ -43,7 +43,14 @@ std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *f
 		if (cmd == NULL) tmp = "[ERROR]: UNSUPPORTED COMMAND\r\n";
 		else
 		{
-			tmp = cmd->execute();
+			try
+			{
+				tmp = cmd->execute();
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr << e.what() << '\n';
+			}
 			delete cmd;
 		}
 	}
