@@ -4,7 +4,7 @@
 Part::Part(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _reasson("no reasson was specifyed.")
 {
 	if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
-	if (_size < 1) ERR_NEEDMOREPARAMS("USER");
+	if (_size < 2) ERR_NEEDMOREPARAMS("USER");
 	_channelName = vec[1]; // extract channel name in index 1
 	if (_size >= 3)
 	{
