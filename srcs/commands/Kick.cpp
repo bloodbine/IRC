@@ -5,7 +5,7 @@ Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client)
 {
 	(void)_client;
 	// int 
-    // if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
+    // if (!_client->getIsregistered()) ERR_NOTregisterED();
     if (_size < 3) ERR_NEEDMOREPARAMS("KICK");
     // More than 3 char throw invalid SYNTAX ERROR.
 
@@ -35,7 +35,7 @@ std::string Kick::execute() const
 	if (server::channelExists(_channel) == false) ERR_NOSUCHCHANNEL();
 	Channel *channel = server::getChannelByName(_channel);
 	if (channel->getIsMember(_nick) == false) ERR_USERNOTINCHANNEL(_channel, _nick);
-	if (_nick == _client->GetNickName()) ERR_CANTKICKYOURSELF();
+	if (_nick == _client->getNickName()) ERR_CANTKICKYOURSELF();
 	if (channel->getIsOperator(_nick) == false) ERR_CHANOPRIVSNEEDED(_nick);
 	std::cout << "get operator : " << channel->getIsOperator(_nick) << std::endl;
 	std::string	out = ":127.0.0.1 " + _nick + " leaves the channel " + _channel + \

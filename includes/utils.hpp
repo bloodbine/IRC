@@ -19,6 +19,7 @@
 #include "commands/Shutdown.hpp"
 #include <sstream>
 
+std::string	getClientHostname(int clientFD);
 std::string	getTimestamp();
 void addrStructToString(std::string &ip_dest, std::string &hostname_dest);
 std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
@@ -37,7 +38,7 @@ Error handling
 */
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName);
 void	ERR_ALREADYREGISTRED();
-void    ERR_NOTREGISTERED();
+void    ERR_NOTregisterED();
 void	ERR_NOSUCHCHANNEL();
 void	ERR_NOTONCHANNEL();
 void	ERR_NOORIGIN();

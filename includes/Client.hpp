@@ -8,39 +8,42 @@ class Channel;
 
 class Client
 {
-private:
-    /* data */
-    std::string _nickName;
-    std::string _userName;
-    std::string _realUserName;
-    bool _isRegistered; // Flag to track registration status
-    bool _isValidatedPassword;
-    std::string _serverPassword;
-    std::vector<Channel*>   _channelList;
-    int                _totalChannels;
-    int _socketFd;
-public:
-    Client(std::string& serverPassword, int fd);
-    ~Client();
-    void Register();
-    bool GetIsRegistered() const;
-    const std::string& GetNickName() const;
-    const std::string& GetUserName() const;
-    const std::string& GetRealUserName() const;
-    int     getScoketFd() const;
-    const std::string& getServerPassword() const;
-    void setNickName(const std::string& newNickname);
-    void setUserName(const std::string& newClientname);
-    void setRealUserName(const std::string& newClientname);
-    bool getIsValidatedPassword() const;
-    void setIsValidatePassword();
-    void setIsRegistered();
-    std::string GetIdenClient() const;
-    int         getFd() const;
-    int         getTotalChannels() const;
-    void        incrementTotalChannels();
-    // to implement
-    std::vector<Channel*> getChannelList() const;
-    void                  addChannelToChannelList(Channel *channel);
+	private:
+		/* data */
+		std::string				_nickName;
+		std::string				_userName;
+		std::string				_realUserName;
+		std::string				_hostname;
+		bool					_isRegistered; // Flag to track registration status
+		bool					_isValidatedPassword;
+		std::string				_serverPassword;
+		std::vector<Channel*>	_channelList;
+		int						_totalChannels;
+		int 					_socketFd;
+	public:
+		Client(std::string& serverPassword, int fd);
+		~Client();
+		void					registerClient();
+		bool					getIsregistered() const;
+		void					setIsregistered();
+		const std::string&		getNickName() const;
+		void					setNickName(const std::string& newNickname);
+		const std::string&		getUserName() const;
+		void					setUserName(const std::string& newClientname);
+		const std::string&		getRealUserName() const;
+		void					setRealUserName(const std::string& newClientname);
+		const std::string&		getHostname() const;
+void							setHostname(const std::string& newHostname);
+		int						getSocketFd() const;
+		const std::string&		getServerPassword() const;
+		bool					getIsValidatedPassword() const;
+		void					setIsValidatePassword();
+		void					incrementTotalChannels();
+		int						getTotalChannels() const;
+		std::string				getIdenClient() const;
+		int						getFd() const;
+		// to implement
+		std::vector<Channel*>	getChannelList() const;
+		void					addChannelToChannelList(Channel *channel);
 };
 

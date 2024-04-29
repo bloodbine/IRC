@@ -2,6 +2,26 @@
 #include "Channel.hpp"
 #include <netdb.h>
 
+std::string getClientHostname(int clientFD)
+{
+	struct sockaddr_in clientAddr;
+	socklen_t clientAddrLen = sizeof(clientAddr);
+		
+	if (getpeername(clientFD, (struct sockaddr*)&clientAddr, &clientAddrLen) == -1) {
+		std::cerr << "Error getting client address" << std::endl;
+		return ("Error");
+	}
+
+	char hostBuffer[NI_MAXHOST];
+	char serviceBuffer[NI_MAXSERV];
+	if (getnameinfo((struct sockaddr*)&clientAddr, sizeof(clientAddr), hostBuffer, sizeof(hostBuffer), serviceBuffer, sizeof(serviceBuffer), 0) != 0) {
+		std::cerr << "Error getting client info" << std::endl;
+		return ("Error");
+	}
+
+	return std::string(hostBuffer);
+}
+
 std::string		getTimestamp()
 {
 	time_t t = time(0);
@@ -171,7 +191,7 @@ void	ERR_ALREADYREGISTRED()
 {
 	throw std::invalid_argument(" 462 :Unauthorized command (already registered)\r\n");
 }
-void	ERR_NOTREGISTERED()
+void	ERR_NOTregisterED()
 {
 	throw std::invalid_argument(" 451 :You have not registered\r\n");
 }

@@ -4,8 +4,8 @@
 User::User(Client* client, const std::vector<std::string>& vec) : _size(vec.size()), _vec(vec), _userName(""), _client(client)
 {
 	// if (_client->getIsValidatedPassword() == false) missingPass();
-	if (_client->GetIsRegistered()) ERR_ALREADYREGISTRED();
-	if (_client->GetNickName() == "") missingNick();
+	if (_client->getIsregistered()) ERR_ALREADYREGISTRED();
+	if (_client->getNickName() == "") missingNick();
 	if (_size < 5) ERR_NEEDMOREPARAMS("USER");
 	if (validUser() == false) ERR_SYNTAXPROBLEM();
 
@@ -34,21 +34,17 @@ std::string	User::execute() const
 	if (_vec[4][0] == ':') realName = _vec[4].substr(1);
 	else realName = _vec[4];
 	for (size_t i = 5; i < _size; i++) 
-	{
 			realName += " " + _vec[i];
-	}
 	_client->setUserName(_vec[1]);
 	_client->setRealUserName(realName);
-	_client->setIsRegistered();
+	_client->setHostname(getClientHostname(_client->getFd()));
+	_client->setIsregistered();
 	if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
 	else server::addClient(_client);
-	// set client.setMode() to mode.
-	// std::cout << "Username\t|\tReal Name" << std::endl;
-	// std::cout << _client->GetUserName() << "\t\t|" << _client->GetRealUserName() << std::endl;
-	std::string out = ":" + server::getServerIp() + " 001 " + _client->GetNickName() + " :Welcome to the Internet Relay Network " + _client->GetNickName() + "!" + _client->GetUserName() + "@" + server::getHostname() + "\r\n";
-	out += ":" + server::getServerIp() + " 002 " + _client->GetNickName() + " :Your host is ircserv, running version 1.0\r\n";
-	out += ":" + server::getServerIp() + " 003 " + _client->GetNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
-	out += ":" + server::getServerIp() + " 004 " + _client->GetNickName() + " :ircserv 1.0 oiws ositnmlvk\r\n";
+	std::string out = ":" + server::getServerIp() + " 001 " + _client->getNickName() + " :Welcome to the Internet Relay Network " + _client->getNickName() + "!" + _client->getUserName() + "@" + _client->getHostname() + "\r\n";
+	out += ":" + server::getServerIp() + " 002 " + _client->getNickName() + " :Your host is ircserv, running version 1.0\r\n";
+	out += ":" + server::getServerIp() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
+	out += ":" + server::getServerIp() + " 004 " + _client->getNickName() + " :ircserv 1.0 oiws ositnmlvk\r\n";
 	return strdup(out.c_str());
 }
 

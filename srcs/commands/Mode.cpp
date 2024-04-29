@@ -12,8 +12,8 @@ Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client
 	if (_mode.find("o") != std::string::npos && server::clientExists(vec[3]) == false) ERR_NOSUCHNICK(vec[3]);
 	if (_size > 3)
 		_parameter = vec[3];
-	if (_channelObj->getIsMember(_client->GetNickName()) == false) ERR_NOTONCHANNEL();
-	if (_channelObj->getIsOperator(_client->GetNickName()) == false) ERR_NOPRIVILEGES(_channel);
+	if (_channelObj->getIsMember(_client->getNickName()) == false) ERR_NOTONCHANNEL();
+	if (_channelObj->getIsOperator(_client->getNickName()) == false) ERR_NOPRIVILEGES(_channel);
 }
 
 std::string Mode::execute() const
