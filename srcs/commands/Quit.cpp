@@ -3,7 +3,7 @@
 
 Quit::Quit(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _reasson("")
 {
-    if (!_client->getIsregistered()) ERR_NOTregisterED();
+    if (!_client->getIsregistered()) ERR_NOTREGISTERED();
 
 	// Read reasson
 	if (_size > 1)

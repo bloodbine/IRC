@@ -3,7 +3,7 @@
 
 Invite::Invite(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick("")
 {
-	if (!_client->getIsregistered()) ERR_NOTregisterED();
+	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
 	if (_size < 3) ERR_NEEDMOREPARAMS("INVITE");
 	// More than 3 char throw invalid SYNTAX ERROR.
 	if (_size != 3) ERR_SYNTAXPROBLEM();

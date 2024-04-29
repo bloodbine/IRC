@@ -3,7 +3,7 @@
 
 Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client), _channelObj(NULL), _size(vec.size()), _channel(""), _mode(""), _parameter("")
 {
-	if (_size < 3) ERR_NEEDMOREPARAMS("MODE");
+	if (_size < 2) ERR_NEEDMOREPARAMS("MODE");
 	if (server::channelExists(vec[1]) == false) ERR_NOSUCHCHANNEL();
 	_channel = vec[1];
 	_channelObj = server::getChannelByName(_channel);

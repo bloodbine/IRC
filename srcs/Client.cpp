@@ -30,7 +30,7 @@ const std::string&		Client::getHostname() const { return _hostname; };
 void					Client::setHostname(const std::string& newHostname) { _hostname = newHostname; };
 bool					Client::getIsValidatedPassword() const { return _isValidatedPassword; }
 void					Client::setIsValidatePassword() { _isValidatedPassword = true; }
-std::string				Client::getIdenClient() const{return (_nickName + "!" +_userName + "@");}
+std::string				Client::getIdenClient() const{return (_nickName + "!" + _userName + "@" + _hostname);}
 int						Client::getSocketFd() const {return _socketFd; }
 const std::string&		Client::getServerPassword() const { return _serverPassword; }
 void					Client::incrementTotalChannels() { _totalChannels++; }

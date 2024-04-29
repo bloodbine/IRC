@@ -3,7 +3,7 @@
 
 Topic::Topic(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _topic(""), _clearTopic(false)
 {
-    if (!_client->getIsregistered()) ERR_NOTregisterED();
+    if (!_client->getIsregistered()) ERR_NOTREGISTERED();
     if (_size < 1) ERR_NEEDMOREPARAMS("TOPIC");
 	_channelName = vec[1];
 	if (_size >= 3 && vec[2][0] == ':')

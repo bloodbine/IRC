@@ -14,7 +14,7 @@ private:
     size_t _size;
     std::string _channel;
     std::string _nick;
-    std::string _reasson;
+    std::string _reason;
 public:
     Kick(Client* client, const std::vector<std::string>& vec);
     std::string execute() const;

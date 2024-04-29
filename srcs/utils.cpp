@@ -191,7 +191,7 @@ void	ERR_ALREADYREGISTRED()
 {
 	throw std::invalid_argument(" 462 :Unauthorized command (already registered)\r\n");
 }
-void	ERR_NOTregisterED()
+void	ERR_NOTREGISTERED()
 {
 	throw std::invalid_argument(" 451 :You have not registered\r\n");
 }

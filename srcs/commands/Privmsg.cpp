@@ -3,7 +3,7 @@
 
 Privmsg::Privmsg(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _msg(""), _target(""), _targetIsChannel(false) 
 {
-    if (!_client->getIsregistered()) ERR_NOTregisterED();
+    if (!_client->getIsregistered()) ERR_NOTREGISTERED();
     if (_size < 3) ERR_NEEDMOREPARAMS("PRIVMSG");
 	if (vec[1][0] == '#')
 	{

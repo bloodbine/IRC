@@ -78,7 +78,7 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 			reasson = vec[1];
 			for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
 		}
-		std::string out = ":127.0.0.1 " + client->getNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
+		std::string out = client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
 		Channel *channel = server::getChannelByName((*tmpChannel)->getName());
 		std::map<std::string, Client*>	memberList = channel->getMemberList();
 		std::map<std::string, Client*>::iterator itr = memberList.begin();

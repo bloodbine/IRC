@@ -3,7 +3,7 @@
 
 Join::Join(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _chanKey("")
 {
-	if (!_client->getIsregistered()) ERR_NOTregisterED();
+	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
 	if (_size < 1) ERR_NEEDMOREPARAMS("JOIN");
 	_channelName = vec[1]; // extract channel name in index 1
 	if (isInvalidChannelName(_channelName)) ERR_NOSUCHCHANNEL();
@@ -48,10 +48,10 @@ std::string Join::execute() const
 		ERR_USERONCHANNEL(_channelName);
 	_client->addChannelToChannelList(channel);
 	_client->incrementTotalChannels();
-	out += ":" + _client->getNickName() + "!" + _client->getUserName() + "@" + server::getServerIp() +" JOIN " + _channelName + "\r\n";
-	out += ":" + _client->getNickName() + "!" + _client->getUserName() + "@" + server::getServerIp() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
-	out += ":" + _client->getNickName() + "!" + _client->getUserName() + "@" + server::getServerIp() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
-	out += ":" + _client->getNickName() + "!" + _client->getUserName() + "@" + server::getServerIp() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
+	out += ":" + _client->getIdenClient() +" JOIN " + _channelName + "\r\n";
+	out += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
+	out += ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
+	out += ":" + _client->getIdenClient() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
 
 	std::cout << "SEND TO CLIENT \"" << out << "\"" << std::endl;
 	return out;

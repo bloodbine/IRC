@@ -38,7 +38,7 @@ Error handling
 */
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName);
 void	ERR_ALREADYREGISTRED();
-void    ERR_NOTregisterED();
+void    ERR_NOTREGISTERED();
 void	ERR_NOSUCHCHANNEL();
 void	ERR_NOTONCHANNEL();
 void	ERR_NOORIGIN();
