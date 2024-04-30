@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: rdragan <rdragan@student.42heilbronn.de    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/04/03 14:10:51 by rdragan           #+#    #+#              #
-#    Updated: 2024/04/29 15:00:27 by rdragan          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME	=	ircserv
 SRC		=	$(wildcard srcs/*.cpp)
 SRC		+=	$(wildcard srcs/commands/*.cpp)
@@ -17,6 +5,7 @@ OBJ		=	$(SRC:.cpp=.o)
 CFLAGS	=	-Wall -Werror -Wextra -std=c++98 -g
 INCLUDES = -I./includes
 CC		=	c++
+PORT	?=4444
 
 %.o:%.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -c $^ -o $@
@@ -33,6 +22,7 @@ fclean: clean
 	rm -Rf $(NAME)
 
 linux:
-	./run_docker.sh 4444
+	@echo "[+] IRC server will run in port: " $(PORT)
+	./run_docker.sh $(PORT)
 
 re: fclean all
