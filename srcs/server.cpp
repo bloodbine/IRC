@@ -221,6 +221,7 @@ void server::handleClient()
 		{
 			if (this->_clientFDs[i].revents & POLLIN)
 			{
+				Client *client = this->_clientList[this->_clientFDs[i].fd];
 				char buffer[1024];
 				bzero(buffer, sizeof(buffer));
 				int bytesRead = recv(this->_clientFDs[i].fd, buffer, 1024, 0);
@@ -233,12 +234,14 @@ void server::handleClient()
 						perror("recv");
 						this->_clientList.erase(this->_clientFDs[i].fd);
 						this->_clientFDs.erase(this->_clientFDs.begin() + i);
+						delete client;
 						break;
 					case 0:
 						std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
 						close(this->_clientFDs[i].fd);
 						this->_clientList.erase(this->_clientFDs[i].fd);
 						this->_clientFDs.erase(this->_clientFDs.begin() + i);
+						delete client;
 						break;
 					default:
 						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
