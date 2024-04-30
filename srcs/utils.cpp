@@ -70,6 +70,7 @@ std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *f
 			catch(const std::exception& e)
 			{
 				tmp = e.what();
+				*failedToSendMsg = true;
 			}
 			delete cmd;
 		}
