@@ -37,15 +37,15 @@ std::string Kick::execute() const
 	if (channel->getIsMember(_nick) == false) ERR_USERNOTINCHANNEL(_channel, _nick);
 	if (_nick == _client->getNickName()) ERR_CANTKICKYOURSELF();
 	if (channel->getIsOperator(_client->getNickName()) == false) ERR_CHANOPRIVSNEEDED(_client->getNickName());
-	// std::cout << "get operator : " << channel->getIsOperator(_nick) << std::endl;
 	Client* client = server::getClientByFd(server::getClientFdByName(_nick));
 	std::string	out;
 	if (_channel.size() != 0)
-		out = ":" + client->getIdenClient() + " KICK " + _channel + " " + _nick + "\r\n";
+		out = ":" + _client->getIdenClient() + " KICK " + _channel + " " + _nick + "\r\n";
 	else
-		out = ":" + client->getIdenClient() + " KICK " + _nick + "\r\n";
+		out = ":" + _client->getIdenClient() + " KICK " + _nick + "\r\n";
 	channel->removeUser(*client);
-	return out;
+	send(client->getFd(), out.c_str(), out.length(), 0);
+	return "";
 }
 
 Kick::~Kick()
