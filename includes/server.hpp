@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <cstdio>
+#include <csignal>
 #include <cerrno>
 #include "Command.hpp"
 #include "utils.hpp"
