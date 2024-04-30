@@ -3,7 +3,7 @@
 
 Invite::Invite(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick("")
 {
-	if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
+	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
 	if (_size < 3) ERR_NEEDMOREPARAMS("INVITE");
 	// More than 3 char throw invalid SYNTAX ERROR.
 	if (_size != 3) ERR_SYNTAXPROBLEM();
@@ -26,15 +26,15 @@ std::string Invite::execute() const
 		Channel* channel = server::getChannelByName(_channel);
 		if (channel->getInviteFlag() == 1)
 		{
-			if (channel->getIsOperator(_client->GetNickName()) == true)
+			if (channel->getIsOperator(_client->getNickName()) == true)
 				channel->addInvited(server::getClientByFd(server::getClientFdByName(_nick)));
-			else if (channel->getIsMember(_client->GetNickName()) == true)
+			else if (channel->getIsMember(_client->getNickName()) == true)
 				ERR_CHANOPRIVSNEEDED(_channel);
 		}
 		else if (channel->getIsMember(_nick) == true)
 			ERR_USERONCHANNEL(_channel);
 	}
-	out.append(" 341 :" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 INVITE " + _nick + " " + _channel + "\r\n");
+	out.append(" 341 :" + _client->getNickName() + "!" + _client->getUserName() + "@127.0.0.1 INVITE " + _nick + " " + _channel + "\r\n");
 	return out;
 }
 

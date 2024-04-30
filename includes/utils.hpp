@@ -19,6 +19,7 @@
 #include "commands/Shutdown.hpp"
 #include <sstream>
 
+std::string	getClientHostname(int clientFD);
 std::string	getTimestamp();
 void addrStructToString(std::string &ip_dest, std::string &hostname_dest);
 std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);

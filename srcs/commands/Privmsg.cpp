@@ -3,7 +3,7 @@
 
 Privmsg::Privmsg(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _msg(""), _target(""), _targetIsChannel(false) 
 {
-    if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
+    if (!_client->getIsregistered()) ERR_NOTREGISTERED();
     if (_size < 3) ERR_NEEDMOREPARAMS("PRIVMSG");
 	if (vec[1][0] == '#')
 	{
@@ -24,7 +24,7 @@ std::string Privmsg::execute() const
 	else std::cout << ">>> client " << _target << " exists: " << server::clientExists(_target) << std::endl;
     if (_targetIsChannel && server::channelExists(_target) == false) ERR_NOSUCHCHANNEL();
     else if (!_targetIsChannel && server::clientExists(_target) == false) ERR_NOSUCHNICK(_target);
-	out = ":" + _client->GetNickName() + "!" + _client->GetUserName() + "@127.0.0.1 PRIVMSG " + _target + " :" + _msg + "\r\r\n";
+	out = ":" + _client->getNickName() + "!" + _client->getUserName() + "@127.0.0.1 PRIVMSG " + _target + " :" + _msg + "\r\r\n";
 	// std::cout << "Message to " << _target << std::endl;
 	std::cout << _msg << std::endl;
     return out;

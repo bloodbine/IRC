@@ -1,11 +1,11 @@
 #include "commands/Kick.hpp"
 #include "server.hpp"
 
-Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick(""), _reasson("")
+Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick(""), _reason("")
 {
 	(void)_client;
 	// int 
-    // if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
+    // if (!_client->getIsregistered()) ERR_NOTREGISTERED();
     if (_size < 3) ERR_NEEDMOREPARAMS("KICK");
     // More than 3 char throw invalid SYNTAX ERROR.
 
@@ -23,11 +23,11 @@ Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client)
 	// Read reasson
 	if (_size >= 4)
 	{
-		if (vec[3][0] == ':') _reasson = vec[3].substr(1);
-		else _reasson = vec[3];
-		for (size_t i = 4; i < _size; i++) _reasson += " " + vec[i];
+		if (vec[3][0] == ':') _reason = vec[3].substr(1);
+		else _reason = vec[3];
+		for (size_t i = 4; i < _size; i++) _reason += " " + vec[i];
 	}
-	else _reasson = "it's the wish of the channel operator";
+	else _reason = "it's the wish of the channel operator";
 }
 
 std::string Kick::execute() const
@@ -35,13 +35,17 @@ std::string Kick::execute() const
 	if (server::channelExists(_channel) == false) ERR_NOSUCHCHANNEL();
 	Channel *channel = server::getChannelByName(_channel);
 	if (channel->getIsMember(_nick) == false) ERR_USERNOTINCHANNEL(_channel, _nick);
-	if (_nick == _client->GetNickName()) ERR_CANTKICKYOURSELF();
-	if (channel->getIsOperator(_nick) == false) ERR_CHANOPRIVSNEEDED(_nick);
-	std::cout << "get operator : " << channel->getIsOperator(_nick) << std::endl;
-	std::string	out = ":127.0.0.1 " + _nick + " leaves the channel " + _channel + \
-		" because " + _reasson + "\r\n";
-	channel->removeUser(*_client);
-    return out;
+	if (_nick == _client->getNickName()) ERR_CANTKICKYOURSELF();
+	if (channel->getIsOperator(_client->getNickName()) == false) ERR_CHANOPRIVSNEEDED(_client->getNickName());
+	// std::cout << "get operator : " << channel->getIsOperator(_nick) << std::endl;
+	Client* client = server::getClientByFd(server::getClientFdByName(_nick));
+	std::string	out;
+	if (_channel.size() != 0)
+		out = ":" + client->getIdenClient() + " KICK " + _channel + " " + _nick + "\r\n";
+	else
+		out = ":" + client->getIdenClient() + " KICK " + _nick + "\r\n";
+	channel->removeUser(*client);
+	return out;
 }
 
 Kick::~Kick()

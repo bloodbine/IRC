@@ -3,7 +3,7 @@
 
 Topic::Topic(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _topic(""), _clearTopic(false)
 {
-    if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
+    if (!_client->getIsregistered()) ERR_NOTREGISTERED();
     if (_size < 1) ERR_NEEDMOREPARAMS("TOPIC");
 	_channelName = vec[1];
 	if (_size >= 3 && vec[2][0] == ':')
@@ -22,9 +22,9 @@ Topic::Topic(Client* client, const std::vector<std::string>& vec): _client(clien
 std::string Topic::execute() const
 {
 	std::string	out;
-    std::cout << ":" << _client->GetIdenClient() << " Channel " << _channelName << std::endl;
-    std::cout << ":" << _client->GetIdenClient() << " Topic " << _topic << std::endl;
-    std::cout << ":" << _client->GetIdenClient() << " clearTopic " << _clearTopic << std::endl;
+    std::cout << ":" << _client->getIdenClient() << " Channel " << _channelName << std::endl;
+    std::cout << ":" << _client->getIdenClient() << " Topic " << _topic << std::endl;
+    std::cout << ":" << _client->getIdenClient() << " clearTopic " << _clearTopic << std::endl;
     //check if the channel is exist
      if (!server::channelExists(_channelName)) ERR_NOSUCHCHANNEL();
     // check if channel as user

@@ -3,7 +3,7 @@
 
 Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client), _channelObj(NULL), _size(vec.size()), _channel(""), _mode(""), _parameter("")
 {
-	if (_size < 3) ERR_NEEDMOREPARAMS("MODE");
+	if (_size < 2) ERR_NEEDMOREPARAMS("MODE");
 	if (server::channelExists(vec[1]) == false) ERR_NOSUCHCHANNEL();
 	_channel = vec[1];
 	_channelObj = server::getChannelByName(_channel);
@@ -12,8 +12,8 @@ Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client
 	if (_mode.find("o") != std::string::npos && server::clientExists(vec[3]) == false) ERR_NOSUCHNICK(vec[3]);
 	if (_size > 3)
 		_parameter = vec[3];
-	if (_channelObj->getIsMember(_client->GetNickName()) == false) ERR_NOTONCHANNEL();
-	if (_channelObj->getIsOperator(_client->GetNickName()) == false) ERR_NOPRIVILEGES(_channel);
+	if (_channelObj->getIsMember(_client->getNickName()) == false) ERR_NOTONCHANNEL();
+	if (_channelObj->getIsOperator(_client->getNickName()) == false) ERR_NOPRIVILEGES(_channel);
 }
 
 std::string Mode::execute() const
@@ -56,7 +56,8 @@ std::string Mode::execute() const
 			else _channelObj->setUserLimit(0);
 			break;
 	}
-	tmp.append(_channel);
+	tmp.append(_client->getIdenClient() + ":");
+	tmp.append(" " + _channel);
 	tmp.append(" " + _mode);
 	tmp.append(" " + _parameter);
 	return tmp;

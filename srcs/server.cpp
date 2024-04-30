@@ -64,7 +64,7 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 
 	std::cout << "You called QUIT!\r\n";
 	Client *client = this->_clientList[this->_clientFDs[i].fd];
-	std::cout << "This is the name of the client " << client->GetNickName() << std::endl;
+	std::cout << "This is the name of the client " << client->getNickName() << std::endl;
 	std::vector<Channel*>	channelList = client->getChannelList();
 	std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
 	std::vector<Channel*>::iterator	end = channelList.end();
@@ -78,7 +78,7 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 			reasson = vec[1];
 			for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
 		}
-		std::string out = ":127.0.0.1 " + client->GetNickName() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
+		std::string out = client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
 		Channel *channel = server::getChannelByName((*tmpChannel)->getName());
 		std::map<std::string, Client*>	memberList = channel->getMemberList();
 		std::map<std::string, Client*>::iterator itr = memberList.begin();
@@ -89,7 +89,7 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 			send(toSendFd, out.c_str(), out.length(), 0);
 		}
 		(*tmpChannel)->removeUser(*client);
-		if ((*tmpChannel)->getIsOperator(client->GetNickName()))
+		if ((*tmpChannel)->getIsOperator(client->getNickName()))
 			(*tmpChannel)->removeOperator(*client);
 		if ((*tmpChannel)->getClientList().size() == 0)
 		{
@@ -114,7 +114,7 @@ void	server::handleShutdown(std::vector<std::string> vec)
 	std::cout << "remove the next users:\n";
 	for (; itr != end; ++itr)
 	{
-		std::cout << (*itr).second->GetNickName() << ", ";
+		std::cout << (*itr).second->getNickName() << ", ";
 		delete (*itr).second;
 	}
 	std::cout << "--------------------------\n";
@@ -179,7 +179,7 @@ int							server::getClientFdByName(const std::string& clientName)
 	std::map<int, Client*>::iterator itr = _clientList.begin();
 	std::map<int, Client*>::iterator end = _clientList.end();
 	for (; itr != end; itr++) {
-		if ((*itr).second->GetNickName() == clientName) return (*itr).first;
+		if ((*itr).second->getNickName() == clientName) return (*itr).first;
 	}
 	return -1;
 }
@@ -291,7 +291,7 @@ bool	server::clientExists(const std::string& clientName)
 	std::map<int, Client*>::iterator itr = _clientList.begin();
 	std::map<int, Client*>::iterator end = _clientList.end();
 	for (; itr != end; ++itr) {
-		if ((*itr).second->GetNickName() == clientName) return true;
+		if ((*itr).second->getNickName() == clientName) return true;
 	}
 	return (false);
 }

@@ -12,7 +12,7 @@ Pass::~Pass() {}
 
 std::string Pass::execute() const {
       if (_password != _client->getServerPassword()) return "462 :Password incorrect\r\n";
-      // _client->Register();
+      // _client->registerClient();
       _client->setIsValidatePassword();
-      return "Correct Password. Now run NICK <nickname>\r\n";
+      return "";
 }

@@ -3,7 +3,7 @@
 
 Quit::Quit(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _reasson("")
 {
-    if (!_client->GetIsRegistered()) ERR_NOTREGISTERED();
+	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
 
 	// Read reasson
 	if (_size > 1)
@@ -19,7 +19,7 @@ std::string Quit::execute() const
 	std::cout << "THX FOR CALLINNG Quit\r\n";
 	std::cout << "Reasson: " << _reasson << std::endl;
 	
-    return out;
+	return out;
 }
 
 Quit::~Quit()
