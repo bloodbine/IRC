@@ -40,9 +40,9 @@ std::string Kick::execute() const
 	Client* client = server::getClientByFd(server::getClientFdByName(_nick));
 	std::string	out;
 	if (_channel.size() != 0)
-		out = ":" + _client->getIdenClient() + " KICK " + _channel + " " + _nick + "\r\n";
+		out = ":" + _client->getIdenClient() + " KICK " + _channel + " " + _nick + " :" + _reason + "\r\n";
 	else
-		out = ":" + _client->getIdenClient() + " KICK " + _nick + "\r\n";
+		out = ":" + _client->getIdenClient() + " KICK " + _nick + " :" + _reason + "\r\n";
 	channel->removeUser(*client);
 	send(client->getFd(), out.c_str(), out.length(), 0);
 	return "";
