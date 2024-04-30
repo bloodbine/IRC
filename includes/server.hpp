@@ -50,6 +50,8 @@ class server
 		static void					addChannel(Channel *channel);
 		static void					removeChannel(std::string channelName);
 		static void					addClient(Client *client);
+		static std::map<int, Client*>	getClientList();
+		static std::map<std::string, Channel*>	getChannelList();
 		static Channel*				getChannelByName(const std::string& channelName);
 		static Client*				getClientByFd(int fd);
 		static bool					clientExists(const std::string& clientName);
