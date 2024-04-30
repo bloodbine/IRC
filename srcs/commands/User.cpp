@@ -46,7 +46,7 @@ std::string	User::execute() const
 	out += ":" + server::getServerIp() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
 	out += ":" + server::getServerIp() + " 221 " + _client->getNickName() + " :0\r\n";
 	out += ":" + server::getServerIp() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
-	return strdup(out.c_str());
+	return out;
 }
 
 User::~User() {}
