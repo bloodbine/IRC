@@ -15,15 +15,32 @@ bool	User::validUser() const
 {
 	std::string	invalid = "\x00\x0A\x0D\x20\x40";
 	if (_size < 5 || _size > 7) return false;
+	if (_vec[1].size() < 2) return false;
 	if (_vec[1].size() > 1 && _vec[1].size() <= 9)
 	{
 		std::string::const_iterator end = _vec[1].end();
 		for (std::string::const_iterator itr = _vec[1].begin(); itr != end; ++itr)
+		{
 			if (invalid.find(*itr) != std::string::npos) return false;
+			if (!isalpha(*itr)) return false;
+		}
 	}
 	if (_vec[2] != "0") return false;
 	if (_vec[3] != "*") return false;
 	if (_vec[4].size() < 2) return false;
+	std::string::const_iterator end = _vec[4].end();
+	int i = 0;
+	for (std::string::const_iterator itr = _vec[4].begin(); itr != end; ++itr)
+	{
+		if (i == 0 && *itr == ':')
+		{
+			i++;
+			continue ;
+		}
+		if (invalid.find(*itr) != std::string::npos) return false;
+		if (!isalpha(*itr)) return false;
+		i++;
+	}
 	return true;
 }
 
