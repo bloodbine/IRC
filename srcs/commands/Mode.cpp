@@ -56,7 +56,8 @@ std::string Mode::execute() const
 			else _channelObj->setUserLimit(0);
 			break;
 	}
-	tmp.append(_channel);
+	tmp.append(_client->getIdenClient() + ":");
+	tmp.append(" " + _channel);
 	tmp.append(" " + _mode);
 	tmp.append(" " + _parameter);
 	return tmp;

@@ -13,8 +13,9 @@ class server;
 class Ping	 : public Command
 {
 private:
-	size_t	_size;
+	size_t		_size;
 	std::string	_serverName;
+	Client		*_client;
 public:
 	Ping	(Client* client, const std::vector<std::string>& vec);
 	std::string execute() const;

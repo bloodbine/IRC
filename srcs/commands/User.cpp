@@ -42,9 +42,10 @@ std::string	User::execute() const
 	if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
 	else server::addClient(_client);
 	std::string out = ":" + server::getServerIp() + " 001 " + _client->getNickName() + " :Welcome to the Internet Relay Network " + _client->getIdenClient() + "\r\n";
-	out += ":" + server::getServerIp() + " 002 " + _client->getNickName() + " :Your host is ircserv, running version 1.0\r\n";
+	out += ":" + server::getServerIp() + " 002 " + _client->getNickName() + " :Your host is " + server::getHostname() + ", running version 1.0\r\n";
 	out += ":" + server::getServerIp() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
-	out += ":" + server::getServerIp() + " 004 " + _client->getNickName() + " :ircserv 1.0 oiws ositnmlvk\r\n";
+	out += ":" + server::getServerIp() + " 221 " + _client->getNickName() + " :0\r\n";
+	out += ":" + server::getServerIp() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
 	return strdup(out.c_str());
 }
 
