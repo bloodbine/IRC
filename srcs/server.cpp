@@ -69,16 +69,16 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 	std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
 	std::vector<Channel*>::iterator	end = channelList.end();
 	std::cout << "The client is member of the next channels: " << std::endl;
+	std::string reasson = "no reasson";
+	if (vec.size() > 1)
+	{
+		reasson = vec[1];
+		for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
+	}
+	std::string out = ":" + client->getIdenClient() + " QUIT " + reasson + "\r\n";
 	for (; tmpChannel != end; ++tmpChannel)
 	{
 		std::cout << (*tmpChannel)->getName() << std::endl;
-		std::string reasson = "no reasson";
-		if (vec.size() > 1)
-		{
-			reasson = vec[1];
-			for (size_t i = 2; i < vec.size(); i++) reasson += " " + vec[i];
-		}
-		std::string out = client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + reasson + "\r\n";
 		Channel *channel = server::getChannelByName((*tmpChannel)->getName());
 		std::map<std::string, Client*>	memberList = channel->getMemberList();
 		std::map<std::string, Client*>::iterator itr = memberList.begin();
@@ -97,8 +97,9 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 			delete channel;
 		}
 	}
+	out = ":" + server::getHostname() + " NOTICE :ERROR :QUIT :" + reasson + "\r\n";
+	send(client->getFd(), out.c_str(), out.length(), 0);
 	std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
-	toSendFd = this->_clientFDs[i].fd;
 	close(this->_clientFDs[i].fd);
 	this->_clientList.erase(this->_clientFDs[i].fd);
 	this->_clientFDs.erase(this->_clientFDs.begin() + i);
