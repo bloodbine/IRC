@@ -233,7 +233,7 @@ void	ERR_NICKNAMEINUSE(const std::string& nickName)
 
 void	ERR_SYNTAXPROBLEM()
 {
-	throw  std::invalid_argument(":127.0.0.1 430 : invalid syntax my friend\r\n");
+	throw  std::invalid_argument(":" + server::getHostname() + " 430 : invalid syntax my friend\r\n");
 }
 
 void	ERR_UMODEUNKNOWNFLAG()
@@ -261,7 +261,7 @@ void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason
 
 void ERR_USERONCHANNEL(const std::string& channelName)
 {
-	throw std::invalid_argument(" 443" + channelName + " :User already on channel\r\n");
+	throw std::invalid_argument(" 443 " + channelName + " :User already on channel\r\n");
 }
 
 // void ERR_USERNOTINCHANNEL(const std::string& channelName,const std::string& nickName)
