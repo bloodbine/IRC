@@ -19,6 +19,7 @@
 #include "commands/Shutdown.hpp"
 #include <sstream>
 
+void	signal_handler(int signal);
 std::string	getClientHostname(int clientFD);
 std::string	getTimestamp();
 void addrStructToString(std::string &ip_dest, std::string &hostname_dest);
