@@ -92,10 +92,7 @@ void	server::handleQuit(std::vector<std::string> vec, int i)
 		if ((*tmpChannel)->getIsOperator(client->getNickName()))
 			(*tmpChannel)->removeOperator(*client);
 		if ((*tmpChannel)->getClientList().size() == 0)
-		{
 			server::removeChannel(channel->getName());
-			delete channel;
-		}
 	}
 	std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
 	toSendFd = this->_clientFDs[i].fd;
