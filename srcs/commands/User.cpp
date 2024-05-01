@@ -27,7 +27,7 @@ bool	User::validUser() const
 	}
 	if (_vec[2] != "0") return false;
 	if (_vec[3] != "*") return false;
-	if (_vec[4].size() < 2) return false;
+	if (_vec[4].size() < 3) return false;
 	std::string::const_iterator end = _vec[4].end();
 	int i = 0;
 	for (std::string::const_iterator itr = _vec[4].begin(); itr != end; ++itr)
