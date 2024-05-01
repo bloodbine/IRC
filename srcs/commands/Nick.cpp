@@ -13,6 +13,7 @@ Nick::Nick(Client* client, const std::vector<std::string>& vec) : _client(client
 
 std::string	Nick::execute() const
 {
+	if (server::clientExists(_nickName)) ERR_ALREADYREGISTRED();
 	_client->setNickName(_nickName);
 	std::string	out = "NICK " + _nickName + "\r\n";
 	return out;
