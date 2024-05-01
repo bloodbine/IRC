@@ -19,14 +19,8 @@ int	convertPort(char* param)
 	return port;
 }
 
-// void	check()
-// {
-// 	system("leaks ircserv");
-// }
-
 int	main(int argc, char **argv)
 {
-	// atexit(&check);
 	if (argc != 3) 
 	{
 		std::cerr << "[ERROR]: You must run ./ircserv <port> <password>" << std::endl;
@@ -36,7 +30,13 @@ int	main(int argc, char **argv)
 	if (port < 0) std::cerr << "[ERROR]: Invalid port" << std::endl;
 	else std::cout << "> You want to run the server in port: " << argv[1] << std::endl;
 	std::cout << "> The password for the server is: " << argv[2] << std::endl;
-	server serv = server(atoi(argv[1]), argv[2]);
+	try
+	{server serv = server(atoi(argv[1]), argv[2]);}
+	catch (std::exception& e )
+	{
+		std::cerr << e.what() << std::endl;
+		return (1);
+	}
 	serv.handleClient();
 	return (0);
 }
