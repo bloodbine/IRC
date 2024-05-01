@@ -3,8 +3,8 @@
 
 Topic::Topic(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _topic(""), _clearTopic(false)
 {
-    if (!_client->getIsregistered()) ERR_NOTREGISTERED();
-    if (_size < 1) ERR_NEEDMOREPARAMS("TOPIC");
+	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
+	if (_size < 1) ERR_NEEDMOREPARAMS("TOPIC");
 	_channelName = vec[1];
 	if (_size >= 3 && vec[2][0] == ':')
 	{
@@ -30,13 +30,13 @@ std::string Topic::execute() const
     // check if channel as user
     Channel* channel = server::getChannelByName(_channelName);
     if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
-	if (_topic == "") out = " 331 RPL_NOTOPIC " + _channelName + " :No topic is set\r\n";
+	if (_topic == "") out = " 331 " + _channelName + ":" + channel->getTopic() + "\r\n";
 	else
 	{
 		channel->setTopic(_topic);
-		out = " 332 RPL_TOPIC " + _channelName + " :" + _topic + "\r\n";
+		out = " 332 " + _channelName + " :" + _topic + "\r\n";
 	}
-    return out;
+	return out;
 }
 
 Topic::~Topic()

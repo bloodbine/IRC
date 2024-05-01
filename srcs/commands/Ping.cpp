@@ -22,8 +22,8 @@ Ping::Ping(Client* client, const std::vector<std::string>& vec) : _size(vec.size
 
 std::string	Ping::execute() const
 {
-	std::string	out = "PONG :" + _client->getNickName() + " " + _serverName + "\r\n";
-	std::cout << out << std::endl;
+	std::string	out = "PONG " + _client->getNickName() + " " + _serverName + "\r\n";
+	std::cout << out;
 	return out;
 }
 Ping::~Ping() {}

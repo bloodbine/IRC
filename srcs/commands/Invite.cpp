@@ -34,7 +34,9 @@ std::string Invite::execute() const
 		else if (channel->getIsMember(_nick) == true)
 			ERR_USERONCHANNEL(_channel);
 	}
-	out.append(" 341 :" + _client->getNickName() + "!" + _client->getUserName() + "@127.0.0.1 INVITE " + _nick + " " + _channel + "\r\n");
+	out.append(":" + _client->getIdenClient()+ " 341 : INVITE " + _nick + " " + _channel + "\r\n");
+	Client* target = server::getClientByFd(server::getClientFdByName(_nick));
+	send(target->getFd(), out.c_str(), out.length(), 0);
 	return out;
 }
 

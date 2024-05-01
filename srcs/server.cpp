@@ -284,7 +284,11 @@ bool	server::channelExists(const std::string& channelName) { return (channelList
 
 void	server::addChannel(Channel *channel) { channelList[channel->getName()] = channel; }
 
-void	server::removeChannel(std::string channelName) { channelList.erase(channelName); }
+void	server::removeChannel(std::string channelName) 
+{
+	delete channelList[channelName];
+	channelList.erase(channelName);
+}
 
 Channel* server::getChannelByName(const std::string& channelName) { return channelList[channelName]; }
 

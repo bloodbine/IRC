@@ -7,8 +7,8 @@ Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client
 	if (server::channelExists(vec[1]) == false) ERR_NOSUCHCHANNEL();
 	_channel = vec[1];
 	_channelObj = server::getChannelByName(_channel);
-	if (isValidMode(vec[2]) == false) ERR_UMODEUNKNOWNFLAG();
-	_mode = vec[2];
+	if (_size > 2 && isValidMode(vec[2]) == false) ERR_UMODEUNKNOWNFLAG();
+	if (_size > 2) _mode = vec[2];
 	if (_mode.find("o") != std::string::npos && server::clientExists(vec[3]) == false) ERR_NOSUCHNICK(vec[3]);
 	if (_size > 3)
 		_parameter = vec[3];
@@ -18,6 +18,8 @@ Mode::Mode(Client* client, const std::vector<std::string>& vec) : _client(client
 
 std::string Mode::execute() const
 {
+	if (_size < 3)
+		return "";
 	std::string tmp = "324 :";
 	switch (_mode[1])
 	{
@@ -56,7 +58,7 @@ std::string Mode::execute() const
 			else _channelObj->setUserLimit(0);
 			break;
 	}
-	tmp.append(_client->getIdenClient() + ":");
+	tmp.append(":" + _client->getIdenClient());
 	tmp.append(" " + _channel);
 	tmp.append(" " + _mode);
 	tmp.append(" " + _parameter);
