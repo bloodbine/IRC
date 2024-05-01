@@ -159,12 +159,12 @@ bool	validNick(const std::string &nickname)
 
 void	missingPass()
 {
-	throw std::invalid_argument(" 462 : YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\r\n");
+	throw std::invalid_argument(" 462 :YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\r\n");
 }
 
 void	missingNick()
 {
-	throw std::invalid_argument("462 : You need to set NICK <nickname>!\r\n");
+	throw std::invalid_argument(" 462 :You need to set NICK <nickname>!\r\n");
 }
 
 bool	isValidMode(const std::string& mode)
@@ -261,7 +261,7 @@ void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason
 
 void ERR_USERONCHANNEL(const std::string& channelName)
 {
-	throw std::invalid_argument(" " + channelName + " :User already on channel\r\n");
+	throw std::invalid_argument(" 443" + channelName + " :User already on channel\r\n");
 }
 
 // void ERR_USERNOTINCHANNEL(const std::string& channelName,const std::string& nickName)
@@ -276,7 +276,7 @@ void ERR_BADCHANMASK(const std::string& channelName)
 
 void ERR_CANTKICKYOURSELF()
 {
-	throw std::invalid_argument("Dear friend, you can't kick yourself. Use PART instead\r\n");
+	throw std::invalid_argument(" 462 :Dear friend, you can't kick yourself. Use PART instead\r\n");
 }
 void ERR_USERNOTINCHANNEL(const std::string& channelName, const std::string& nickName)
 {
