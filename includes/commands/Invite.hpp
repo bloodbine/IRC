@@ -9,13 +9,13 @@ class server;
 class Invite: public Command
 {
 private:
-    /* data */
-    Client* _client;
-    size_t _size;
-    std::string _channel;
-    std::string _nick;
+	/* data */
+	Client* _client;
+	size_t _size;
+	std::string _channel;
+	std::string _nick;
 public:
-    Invite(Client* client, const std::vector<std::string>& vec);
-    std::string execute() const;
-    ~Invite();
+	Invite(Client* client, const std::vector<std::string>& vec);
+	std::string execute() const;
+	~Invite();
 };

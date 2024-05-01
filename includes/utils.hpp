@@ -19,27 +19,27 @@
 #include "commands/Shutdown.hpp"
 #include <sstream>
 
-void	signal_handler(int signal);
-std::string	getClientHostname(int clientFD);
-std::string	getTimestamp();
-void addrStructToString(std::string &ip_dest, std::string &hostname_dest);
-std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
-std::vector<std::string> getVector(char *in);
-Command	*getCommand(Client* client, const std::vector<std::string>& vec);
-bool	isInvalidChannelName(const std::string& str);
-bool	isSpecialChar(char c);
-bool	validNick(const std::string &nickname);
-void	missingPass();
-void	missingNick();
-bool	isValidMode(const std::string& mode);
-bool	stringIsNumeric(const char *string);
+void						signal_handler(int signal);
+std::string					getClientHostname(int clientFD);
+std::string					getTimestamp();
+void						addrStructToString(std::string &ip_dest, std::string &hostname_dest);
+std::string 				getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
+std::vector<std::string>	getVector(char *in);
+Command						*getCommand(Client* client, const std::vector<std::string>& vec);
+bool						isInvalidChannelName(const std::string& str);
+bool						isSpecialChar(char c);
+bool						validNick(const std::string &nickname);
+void						missingPass();
+void						missingNick();
+bool						isValidMode(const std::string& mode);
+bool						stringIsNumeric(const char *string);
 
 /*
 Error handling
 */
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName);
 void	ERR_ALREADYREGISTRED();
-void    ERR_NOTREGISTERED();
+void	ERR_NOTREGISTERED();
 void	ERR_NOSUCHCHANNEL();
 void	ERR_NOTONCHANNEL();
 void	ERR_NOORIGIN();
@@ -55,7 +55,7 @@ void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason
 void	ERR_USERONCHANNEL(const std::string& channelName);
 void	ERR_BADCHANMASK(const std::string& channelName);
 void	ERR_CANTKICKYOURSELF();
-void    ERR_USERNOTINCHANNEL(const std::string& channelName, const std::string& nickName);
-void    ERR_CHANOPRIVSNEEDED(const std::string& channelName);
+void	ERR_USERNOTINCHANNEL(const std::string& channelName, const std::string& nickName);
+void	ERR_CHANOPRIVSNEEDED(const std::string& channelName);
 void	ERR_NOPRIVILEGES(const std::string& channelName);
 void	ERR_TOOMANYCHANNELS(const std::string& channelName);

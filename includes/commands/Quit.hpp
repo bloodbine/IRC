@@ -9,12 +9,12 @@ class server;
 class Quit: public Command
 {
 private:
-    /* data */
-    Client* _client;
-    size_t _size;
-    std::string _reasson;
+	/* data */
+	Client* _client;
+	size_t _size;
+	std::string _reasson;
 public:
-    Quit(Client* client, const std::vector<std::string>& vec);
-    std::string execute() const;
-    ~Quit();
+	Quit(Client* client, const std::vector<std::string>& vec);
+	std::string execute() const;
+	~Quit();
 };

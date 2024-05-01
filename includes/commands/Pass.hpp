@@ -6,13 +6,13 @@
 #include "Client.hpp"
 
 class server;
-class Pass : public Command
+class Pass: public Command
 {
 private:
-    Client      *_client;
-    std::string _password;
+	Client	  *_client;
+	std::string _password;
 public:
-    Pass(Client* client, const std::vector<std::string>& vec);
-    std::string execute() const;
-    ~Pass();
+	Pass(Client* client, const std::vector<std::string>& vec);
+	std::string execute() const;
+	~Pass();
 };

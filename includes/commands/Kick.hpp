@@ -9,14 +9,14 @@ class server;
 class Kick: public Command
 {
 private:
-    /* data */
-    Client* _client;
-    size_t _size;
-    std::string _channel;
-    std::string _nick;
-    std::string _reason;
+	/* data */
+	Client* _client;
+	size_t _size;
+	std::string _channel;
+	std::string _nick;
+	std::string _reason;
 public:
-    Kick(Client* client, const std::vector<std::string>& vec);
-    std::string execute() const;
-    ~Kick();
+	Kick(Client* client, const std::vector<std::string>& vec);
+	std::string execute() const;
+	~Kick();
 };

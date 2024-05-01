@@ -86,9 +86,6 @@ public:
 
 	void addInvited(Client *client);
 
-	//	Get a list of usernames in the channel
-//   std::vector<std::string> getUserNames() const;
-
 	std::string getClientList() const;
 
 	std::map<std::string, Client*>& getMemberList();

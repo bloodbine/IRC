@@ -2,7 +2,7 @@
 
 Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _isValidatedPassword(false), _serverPassword(serverPassword), _socketFd(fd)
 {
-    _totalChannels = 0;
+	_totalChannels = 0;
 }
 
 Client::~Client()
@@ -10,12 +10,12 @@ Client::~Client()
 
 void Client::registerClient() 
 {
-    _isValidatedPassword = true;
-    _isRegistered = true;
-//     if (password.length() >= 4)
-//     {
+	_isValidatedPassword = true;
+	_isRegistered = true;
+//	 if (password.length() >= 4)
+//	 {
 //   } else {
-//     std::cerr << "Error: Password must be at least 6 characters long." << std::endl;
+//	 std::cerr << "Error: Password must be at least 6 characters long." << std::endl;
 //   }
 }  // Mark Client as registered
 bool 					Client::getIsregistered() const { return _isRegistered; }

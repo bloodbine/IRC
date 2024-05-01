@@ -49,7 +49,10 @@ std::string Join::execute() const
 	_client->addChannelToChannelList(channel);
 	_client->incrementTotalChannels();
 	out += ":" + _client->getIdenClient() +" JOIN " + _channelName + "\r\n";
-	out += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
+	if (channel->getTopic() == "")
+		out += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
+	else
+		out += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :" + channel->getTopic() + "\r\n";
 	out += ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
 	out += ":" + _client->getIdenClient() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
 

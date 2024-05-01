@@ -9,13 +9,13 @@ class server;
 class Join: public Command
 {
 private:
-    /* data */
-    Client* _client;
-    size_t _size;
-    std::string _channelName;
+	/* data */
+	Client* _client;
+	size_t _size;
+	std::string _channelName;
 	std::string _chanKey;
 public:
-    Join(Client* client, const std::vector<std::string>& vec);
-    std::string execute() const;
-    ~Join();
+	Join(Client* client, const std::vector<std::string>& vec);
+	std::string execute() const;
+	~Join();
 };

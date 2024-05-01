@@ -10,7 +10,7 @@
 
 class server;
 
-class Shutdown	 : public Command
+class Shutdown: public Command
 {
 private:
 	Client	*_client;

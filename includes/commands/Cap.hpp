@@ -8,7 +8,7 @@
 
 class server;
 
-class Cap : public Command
+class Cap: public Command
 {
 private:
 	size_t	_size;

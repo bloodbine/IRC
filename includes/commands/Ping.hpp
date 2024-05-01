@@ -10,7 +10,7 @@
 
 class server;
 
-class Ping	 : public Command
+class Ping: public Command
 {
 private:
 	size_t		_size;

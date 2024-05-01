@@ -1,7 +1,7 @@
 
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name) : _name(name), _topic("No topic is set"), _chanKey(""), _inviteFlag(false), _topicRestrictFlag(false), _userLimit(0) {}
+Channel::Channel(const std::string& name) : _name(name), _topic(""), _chanKey(""), _inviteFlag(false), _topicRestrictFlag(false), _userLimit(0) {}
 
 Channel::~Channel()
 {}
@@ -41,11 +41,6 @@ const int& Channel::getUserLimit() const { return _userLimit; };
 // Set user limit
 void Channel::setUserLimit(const int& limit) { _userLimit = limit; };
 
-// bool Channel::hasUser(const Client& client) const 
-// {
-// 	return (std::find(_memberList.begin(), _memberList.end(), client) != _memberList.end());
-// }
-
 bool Channel::hasUser(const Client& client) const
 {
 	for (std::map<std::string, Client*>::const_iterator it = _memberList.begin(); it != _memberList.end(); ++it) {
@@ -67,9 +62,6 @@ void Channel::removeUser(const Client& client)
 	// If client found remove key-value pair from the map
 	if (it != _memberList.end())
 		_memberList.erase(it);
-	// if (it == _memberList.end()) ERR_USERNOTINCHANNEL(_name, client.getNickName());
-	// else
-	// 	ERR_CHANOPRIVSNEEDED(_name);
 }
 
 void Channel::addMember(Client *client)
@@ -128,33 +120,3 @@ std::map<std::string, Client*>& Channel::getMemberList() { return _memberList; }
 std::map<std::string, Client*>& Channel::getOperatorList() { return _operatorList; }
 
 std::map<std::string, Client*>& Channel::getInvitedList() { return _invitedList; }
-
-
-// bool Channel::doKickFromChannel(int fd, int userFd, string userName){
-//     if (fd == userFd) {
-//         string err = "You can't KICK yourself\r\r\n";
-//         send(fd, err.c_str(), err.length() + 1, 0);
-//         return false;
-//     }
-// 	if (fd == _fdAdmin){
-// 		vector<int>::iterator itb = _fds.begin();
-// 		vector<int>::iterator ite = _fds.end();
-// 		vector<int>::iterator it;
-// 		for (it = itb; it != ite; it++){
-// 			if ((*it) == userFd){
-// 				_fds.erase(it);
-// 				return true;
-// 			}
-// 		}
-// 	if (it == ite) {
-// 		string err = "441 * " + userName +  _channelName + " :They aren't on that channel\r\n";
-// 		send(fd, err.c_str(), err.length() + 1, 0);
-// 		return false;
-// 	}
-// 	} else {
-// 		string err = "482 *  " + _channelName + " :You're not channel operator\r\n";
-// 		send(fd, err.c_str(), err.length() + 1, 0);
-// 		return false;
-// 	}
-// 	return false;
-// }

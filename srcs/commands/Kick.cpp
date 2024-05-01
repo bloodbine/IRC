@@ -4,10 +4,9 @@
 Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client), _size(vec.size()), _channel(""), _nick(""), _reason("")
 {
 	(void)_client;
-	// int 
-    // if (!_client->getIsregistered()) ERR_NOTREGISTERED();
-    if (_size < 3) ERR_NEEDMOREPARAMS("KICK");
-    // More than 3 char throw invalid SYNTAX ERROR.
+
+	if (_size < 3) ERR_NEEDMOREPARAMS("KICK");
+	// More than 3 char throw invalid SYNTAX ERROR.
 
 	// Check if valid _channel name
 	if (isInvalidChannelName(vec[1])) ERR_NOSUCHCHANNEL();
@@ -16,9 +15,6 @@ Kick::Kick(Client* client, const std::vector<std::string>& vec): _client(client)
 	// Check if is valid nick name
 	if (validNick(vec[2]) == false) ERR_ERRONEUSNICKNAME(vec[2]);
 	_nick = vec[2];
-
-	// check if fd is the same with the userFd
-	// if ()
 
 	// Read reasson
 	if (_size >= 4)

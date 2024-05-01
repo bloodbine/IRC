@@ -10,7 +10,7 @@
 
 class server;
 
-class User	 : public Command
+class User: public Command
 {
 private:
 	size_t	_size;
