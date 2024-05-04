@@ -337,3 +337,13 @@ void ERR_TOOMANYCHANNELS(const std::string& channelName)
 {
 	throw std::invalid_argument("405 " + channelName + " :You have joined too many channels\r\n");
 }
+
+void	ERR_INVALIDCOMMAND()
+{
+	throw std::invalid_argument(" 462 :Invalid command\r\n");
+}
+
+void	ERR_PASSWDMISMATCH()
+{
+	throw std::invalid_argument(" 462 :Password incorrect\n");
+}

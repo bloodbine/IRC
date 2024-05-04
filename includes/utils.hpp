@@ -77,3 +77,5 @@ void	ERR_USERNOTINCHANNEL(const std::string& channelName, const std::string& nic
 void	ERR_CHANOPRIVSNEEDED(const std::string& channelName);
 void	ERR_NOPRIVILEGES(const std::string& channelName);
 void	ERR_TOOMANYCHANNELS(const std::string& channelName);
+void	ERR_INVALIDCOMMAND();
+void	ERR_PASSWDMISMATCH();

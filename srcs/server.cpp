@@ -248,7 +248,15 @@ void server::handleClient()
 						break;
 					default:
 						std::vector<std::string>	vec = getVector(buffer);
-						Command	cmd(vec, client);
+						try
+						{
+							Command	cmd(vec, client);
+						}
+						catch (std::exception& e)
+						{
+							std::cerr << e.what() << std::endl;
+							// send to the client
+						}
 						break ;
 				}
 			}

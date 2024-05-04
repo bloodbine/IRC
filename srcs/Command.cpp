@@ -1,19 +1,19 @@
 #include "Command.hpp"
 #include "utils.hpp"
 
-Command::Command(const std::vector<std::string>& vec, Client *client) : _client(client), _cmdType(-1), _stringToSend("")
+Command::Command(const std::vector<std::string>& vec, Client *client) : _client(client), _vec(vec), 
+																		_size(vec.size()), _cmdType(-1),
+																		_stringToSend("")
 {
-	(void)client;
+	(void)_client;
 	_cmdType = getCmdType(vec[0]);
 	switch (_cmdType)
 	{
 	case PASS:
-		/* HANDLE PASS */
-		std::cout << "You called PASS\n";
+		handlePass();
 		break;
 	case NICK:
-		/* HANDLE NICK */
-		std::cout << "You called NICK\n";
+		handleNick();
 		break;
 	case USER:
 		/* HANDLE USER */
@@ -64,7 +64,24 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		std::cout << "You called SHUTDOWN\n";
 		break;
 	default:
+		ERR_INVALIDCOMMAND();
 		break;
 	}
 }
+
 Command::~Command() {}
+
+void	Command::handlePass()
+{
+	if (_client->getIsValidatedPassword()) ERR_ALREADYREGISTRED();
+	if (_size != 2 || _vec[1] != _client->getServerPassword()) ERR_PASSWDMISMATCH();
+	_client->setIsValidatePassword();
+	_stringToSend = "Password was setup successfully! Proceed with setting a Nickname";
+	std::cout << _stringToSend << std::endl;
+}
+
+void	Command::handleNick()
+{
+	if (_client->getIsValidatedPassword() == false) missingPass();
+	
+}
