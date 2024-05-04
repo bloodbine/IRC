@@ -40,22 +40,28 @@ std::string					getClientHostname(int clientFD);
 std::string					getTimestamp();
 void						addrStructToString(std::string &ip_dest, std::string &hostname_dest);
 // std::string 				getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
-std::vector<std::string>	getVector(char *in);
 // Command						*getCommand(Client* client, const std::vector<std::string>& vec);
+
+// Command related
+std::vector<std::string>	getVector(char *in);
+int							getCmdType(const std::string& cmd);
+
+// Validating
 bool						isInvalidChannelName(const std::string& str);
 bool						isSpecialChar(char c);
 bool						isValidUser(const std::vector<std::string> userInfo);
 bool						validNick(const std::string &nickname);
-void						missingPass();
-void						missingNick();
 bool						isValidMode(const std::string& mode);
 bool						stringIsNumeric(const char *string);
-int							getCmdType(const std::string& cmd);
 
+// Sending related
+int							selfClientSend(const std::string& stringToSend, int toSendFd);
 
 /*
 Error handling
 */
+void						missingPass();
+void						missingNick();
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName);
 void	ERR_ALREADYREGISTRED();
 void	ERR_NOTREGISTERED();

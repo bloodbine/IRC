@@ -80,7 +80,8 @@ void	Command::handlePass()
 	if (_client->getIsValidatedPassword()) ERR_ALREADYREGISTRED();
 	if (_size != 2 || _vec[1] != _client->getServerPassword()) ERR_PASSWDMISMATCH();
 	_client->setIsValidatePassword();
-	_stringToSend = "Password was setup successfully! Proceed with setting a Nickname";
+	_stringToSend = "Password was setup successfully! Proceed with setting a Nickname\n";
+	selfClientSend(_stringToSend, _client->getFd());
 }
 
 void	Command::handleNick()
@@ -92,6 +93,7 @@ void	Command::handleNick()
 	if (server::clientExists(_nickName)) ERR_ALREADYREGISTRED();
 	_client->setNickName(_nickName);
 	_stringToSend =  "NICK " + _nickName + "\r\n";
+	selfClientSend(_stringToSend, _client->getFd());
 }
 
 void	Command::handleUser()
@@ -115,6 +117,7 @@ void	Command::handleUser()
 	_stringToSend += ":" + server::getHostname() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
 	_stringToSend += ":" + server::getHostname() + " 221 " + _client->getNickName() + " :0\r\n";
 	_stringToSend += ":" + server::getHostname() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
+	selfClientSend(_stringToSend, _client->getFd());
 
 }
 

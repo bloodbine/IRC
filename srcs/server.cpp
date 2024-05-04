@@ -251,12 +251,12 @@ void server::handleClient()
 						try
 						{
 							Command	cmd(vec, client);
-							cmd.printStringToSend();
+							// cmd.printStringToSend();
 						}
 						catch (std::exception& e)
 						{
-							std::cerr << e.what() << std::endl;
-							// send to the client
+							// Needs to do something else in case it failes to send
+							if (selfClientSend(e.what(), this->_clientFDs[i].fd) < 0) std::cout << "failed to send" << std::endl;
 						}
 						break ;
 				}

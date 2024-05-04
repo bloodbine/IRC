@@ -402,3 +402,12 @@ void	ERR_NONICKNAMEGIVEN()
 {
 	throw std::invalid_argument(" 431 :No nickname given\r\n");
 }
+
+/*
+Normally used to send error message or feedback to the client that
+made the request.
+*/
+int	selfClientSend(const std::string& stringToSend, int toSendFd)
+{
+	return (send(toSendFd, stringToSend.c_str(), stringToSend.length(), 0));
+}
