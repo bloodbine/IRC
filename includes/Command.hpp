@@ -19,12 +19,14 @@ private:
 	std::string	_realName;
 	std::string	_channelName;
 	std::string	_chanKey;
+	std::string	_serverName;
 
 
 	void	handlePass();
 	void	handleNick();
 	void	handleUser();
 	void	handleJoin();
+	void	handlePing();
 public:
 	Command(const std::vector<std::string>& vec, Client *client);
 	void	printStringToSend() const;
