@@ -59,7 +59,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		break;
 	case KICK:
 		/* HANDLE KICK */
-		std::cout << "You called KICK\n";
+		handleKick();
 		break;
 	case QUIT:
 		/* HANDLE QUIT */
@@ -344,4 +344,35 @@ void	Command::handleInvite()
 	Client* target = server::getClientByFd(server::getClientFdByName(_nickName));
 	if (selfClientSend(_stringToSend, target->getFd()) < 0) std::cout << "failed to send" << std::endl;
 	// sendToChannel(_stringToSend, target->getFd());
+}
+
+void	Command::handleKick()
+{
+	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
+	if (isInvalidChannelName(_vec[1])) ERR_NOSUCHCHANNEL();
+		_channelName = _vec[1];
+		// Check if is valid nick name
+		if (validNick(_vec[2]) == false) ERR_ERRONEUSNICKNAME(_vec[2]);
+		_nickName = _vec[2];
+		// Read reasson
+		if (_size >= 4)
+		{
+			if (_vec[3][0] == ':') _reasson = _vec[3].substr(1);
+			else _reasson = _vec[3];
+			for (size_t i = 4; i < _size; i++) _reasson += " " + _vec[i];
+		}
+		else _reasson = "it's the wish of the channel operator";
+
+	if (server::channelExists(_channelName) == false) ERR_NOSUCHCHANNEL();
+	Channel *channel = server::getChannelByName(_channelName);
+	if (channel->getIsMember(_nickName) == false) ERR_USERNOTINCHANNEL(_channelName, _nickName);
+	if (_nickName == _client->getNickName()) ERR_CANTKICKYOURSELF();
+	if (channel->getIsOperator(_client->getNickName()) == false) ERR_CHANOPRIVSNEEDED(_client->getNickName());
+	Client* client = server::getClientByFd(server::getClientFdByName(_nickName));
+	if (_channelName.size() != 0)
+		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _channelName + " " + _nickName + " :" + _reasson + "\r\n";
+	else
+		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _nickName + " :" + _reasson + "\r\n";
+	channel->removeUser(*client);
+	if (selfClientSend(_stringToSend, client->getFd()) < 0) std::cout << "failed to send" << std::endl;
 }
