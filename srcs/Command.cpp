@@ -168,7 +168,8 @@ void	Command::handleJoin()
 		_stringToSend += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :" + channel->getTopic() + "\r\n";
 	_stringToSend += ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
 	_stringToSend += ":" + _client->getIdenClient() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
-	sendToChannel(_stringToSend, _channelName);
+	// check if it fails and handle it
+	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
 }
 
 void	Command::printStringToSend() const
