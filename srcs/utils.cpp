@@ -163,7 +163,7 @@ void	signal_handler(int signal)
 
 bool	isInvalidChannelName(const std::string& str)
 {
-	if (str.size() == 1) return false;
+	if (str.size() == 1) return true;
 	std::string::const_iterator	itr = str.begin();
 	std::string::const_iterator	end = str.end();
 	int							i = 0;
