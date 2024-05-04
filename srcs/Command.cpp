@@ -12,6 +12,9 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 																		_reasson("no reason was specified."),
 																		_serverName(""),
 																		_topic(""),
+																		_msg(""),
+																		_target(""),
+																		_targetIsChannel(false),
 																		_clearTopic(false)
 {
 	(void)_client;
@@ -48,7 +51,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		break;
 	case PRIVMSG:
 		/* HANDLE PRIVMSG */
-		std::cout << "You called PRIVMSG\n";
+		handlePrivmsg();
 		break;
 	case INVITE:
 		/* HANDLE INVITE */
@@ -274,4 +277,39 @@ void	Command::handleTopic()
 		ERR_CHANOPRIVSNEEDED(_channelName);
 	// check if it fails and handle it
 	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+}
+
+void	Command::handlePrivmsg()
+{
+	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
+	if (_size < 3) ERR_NEEDMOREPARAMS("PRIVMSG");
+	_target = _vec[1];
+	if (_target.find("#") != std::string::npos)
+	{
+		if (isInvalidChannelName(_vec[1])) ERR_NOSUCHCHANNEL();
+		_targetIsChannel = true;
+	}
+	else if (validNick(_vec[1]) == false) ERR_ERRONEUSNICKNAME(_vec[1]);
+	_msg += _vec[2];
+	if (_msg[0] == ':') _msg.erase(_msg.begin());
+	for (size_t i = 3; i < _size; i++) _msg += ' ' + _vec[i];
+	//check if the channel is exist
+	if (_targetIsChannel) std::cout << ">>> channel " << _target << " exists: " << server::channelExists(_target) << std::endl;
+	else std::cout << ">>> client " << _target << " exists: " << server::clientExists(_target) << std::endl;
+	if (_targetIsChannel && server::channelExists(_target) == false) ERR_NOSUCHCHANNEL();
+	else if (!_targetIsChannel && server::clientExists(_target) == false) ERR_NOSUCHNICK(_target);
+	_stringToSend = ":" + _client->getIdenClient() + " PRIVMSG " + _target + " :" + _msg + "\r\n";
+	if (_targetIsChannel)
+	{
+		_channelName = _vec[1];
+		Channel* channel = server::getChannelByName(_target);
+			// Add protection
+		if (!channel) ERR_NOSUCHCHANNEL();
+		if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+	}
+	else
+	{
+		Client* client = server::getClientByFd(server::getClientFdByName(_target));
+		if (selfClientSend(_stringToSend, client->getFd()) < 0) std::cout << "failed to send" << std::endl;
+	}
 }
