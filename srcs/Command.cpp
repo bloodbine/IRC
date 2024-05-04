@@ -90,8 +90,6 @@ void	Command::handleNick()
 	_nickName = _vec[1];
 	if (_size > 2 || (_size == 2 && !validNick(_nickName))) ERR_ERRONEUSNICKNAME(_nickName);
 	if (server::clientExists(_nickName)) ERR_ALREADYREGISTRED();
-	// The next line is not needed because if the nick is already in the server it throws the error.
-	// if (_client->getNickName() == _vec[1]) ERR_NICKNAMEINUSE(_vec[1]);
 	_client->setNickName(_nickName);
 	_stringToSend =  "NICK " + _nickName + "\r\n";
 }
@@ -118,4 +116,9 @@ void	Command::handleUser()
 	_stringToSend += ":" + server::getHostname() + " 221 " + _client->getNickName() + " :0\r\n";
 	_stringToSend += ":" + server::getHostname() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
 
+}
+
+void	Command::printStringToSend() const
+{
+	std::cout << "stringToSend: " << _stringToSend << std::endl;
 }
