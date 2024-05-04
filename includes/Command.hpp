@@ -28,6 +28,7 @@ private:
 	void	handleJoin();
 	void	handlePart();
 	void	handlePing();
+	void	handleNotice();
 
 public:
 	Command(const std::vector<std::string>& vec, Client *client);

@@ -38,7 +38,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		break;
 	case NOTICE:
 		/* HANDLE NOTICE */
-		std::cout << "You called NOTICE\n";
+		handleNotice();
 		break;
 	case TOPIC:
 		/* HANDLE TOPIC */
@@ -206,6 +206,7 @@ void	Command::printStringToSend() const
 
 void	Command::handlePing()
 {
+	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
 	if (_size == 1) ERR_NOORIGIN();
 	if ( _size == 2) _serverName = _vec[1];
 	else
@@ -219,5 +220,12 @@ void	Command::handlePing()
 		}
 	}
 	_stringToSend = "PONG " + _client->getNickName() + " " + _serverName + "\r\n";
+	selfClientSend(_stringToSend, _client->getFd());
+}
+
+void	Command::handleNotice()
+{
+	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
+	_stringToSend = "";
 	selfClientSend(_stringToSend, _client->getFd());
 }
