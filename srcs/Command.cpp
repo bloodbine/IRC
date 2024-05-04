@@ -3,7 +3,8 @@
 
 Command::Command(const std::vector<std::string>& vec, Client *client) : _client(client), _vec(vec), 
 																		_size(vec.size()), _cmdType(-1),
-																		_stringToSend("")
+																		_stringToSend(""),
+																		_nickName("")
 {
 	(void)_client;
 	_cmdType = getCmdType(vec[0]);
@@ -83,5 +84,14 @@ void	Command::handlePass()
 void	Command::handleNick()
 {
 	if (_client->getIsValidatedPassword() == false) missingPass();
+	if (_size <= 1) ERR_NONICKNAMEGIVEN();
+	_nickName = _vec[1];
+	if (_size > 2 || (_size == 2 && !validNick(_nickName))) ERR_ERRONEUSNICKNAME(_nickName);
+	if (server::clientExists(_nickName)) ERR_ALREADYREGISTRED();
+	// The next line is not needed because if the nick is already in the server it throws the error.
+	// if (_client->getNickName() == _vec[1]) ERR_NICKNAMEINUSE(_vec[1]);
+	_client->setNickName(_nickName);
+	_stringToSend =  "NICK " + _nickName + "\r\n";
+	std::cout << _stringToSend << std::endl;
 	
 }

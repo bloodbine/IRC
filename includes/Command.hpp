@@ -14,6 +14,7 @@ private:
 	size_t	_size;
 	int	_cmdType;
 	std::string	_stringToSend;
+	std::string	_nickName;
 public:
 	Command(const std::vector<std::string>& vec, Client *client);
 	void	handlePass();

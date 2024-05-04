@@ -347,3 +347,8 @@ void	ERR_PASSWDMISMATCH()
 {
 	throw std::invalid_argument(" 462 :Password incorrect\n");
 }
+
+void	ERR_NONICKNAMEGIVEN()
+{
+	throw std::invalid_argument(" 431 :No nickname given\r\n");
+}
