@@ -131,41 +131,41 @@ void	server::handleShutdown(std::vector<std::string> vec)
 	_finish = true;
 }
 
-int	server::customSend(std::string tmp, int i, bool failedToSendMsg, std::vector<std::string> vec)
-{
-	int	toSendFd;
-	int	sendStatus = 0;
-	if (failedToSendMsg)
-	{
-		toSendFd = this->_clientFDs[i].fd;
-		sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
-		return (sendStatus);
-	}
-	else if (vec[0] != "SHUTDOWN" && vec.size() > 1 && validNick(vec[1]))
-	{
-		toSendFd = server::getClientFdByName(vec[1]);
-		sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
-		return (sendStatus);
-	}
-	else if (vec[0] == "QUIT") handleQuit(vec, i);
-	else if (vec[0] == "SHUTDOWN") handleShutdown(vec);
-	else
-	{
-		if (channelExists(vec[1]) == true)
-		{
-			Channel *channel = server::getChannelByName(vec[1]);
-			std::map<std::string, Client*>	memberList = channel->getMemberList();
-			std::map<std::string, Client*>::iterator itr = memberList.begin();
-			std::map<std::string, Client*>::iterator end = memberList.end();
-			for (; itr != end; ++itr)
-			{
-				toSendFd = (*itr).second->getFd();
-				sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
-			}
-		}
-	}
-	return (sendStatus);
-}
+// int	server::customSend(std::string tmp, int i, bool failedToSendMsg, std::vector<std::string> vec)
+// {
+// 	int	toSendFd;
+// 	int	sendStatus = 0;
+// 	if (failedToSendMsg)
+// 	{
+// 		toSendFd = this->_clientFDs[i].fd;
+// 		sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
+// 		return (sendStatus);
+// 	}
+// 	else if (vec[0] != "SHUTDOWN" && vec.size() > 1 && validNick(vec[1]))
+// 	{
+// 		toSendFd = server::getClientFdByName(vec[1]);
+// 		sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
+// 		return (sendStatus);
+// 	}
+// 	else if (vec[0] == "QUIT") handleQuit(vec, i);
+// 	else if (vec[0] == "SHUTDOWN") handleShutdown(vec);
+// 	else
+// 	{
+// 		if (channelExists(vec[1]) == true)
+// 		{
+// 			Channel *channel = server::getChannelByName(vec[1]);
+// 			std::map<std::string, Client*>	memberList = channel->getMemberList();
+// 			std::map<std::string, Client*>::iterator itr = memberList.begin();
+// 			std::map<std::string, Client*>::iterator end = memberList.end();
+// 			for (; itr != end; ++itr)
+// 			{
+// 				toSendFd = (*itr).second->getFd();
+// 				sendStatus = send(toSendFd, tmp.c_str(), tmp.length(), 0);
+// 			}
+// 		}
+// 	}
+// 	return (sendStatus);
+// }
 
 // int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg)
 // {
