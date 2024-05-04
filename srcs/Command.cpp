@@ -55,7 +55,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		break;
 	case INVITE:
 		/* HANDLE INVITE */
-		std::cout << "You called INVITE\n";
+		handleInvite();
 		break;
 	case KICK:
 		/* HANDLE KICK */
@@ -312,4 +312,36 @@ void	Command::handlePrivmsg()
 		Client* client = server::getClientByFd(server::getClientFdByName(_target));
 		if (selfClientSend(_stringToSend, client->getFd()) < 0) std::cout << "failed to send" << std::endl;
 	}
+}
+
+void	Command::handleInvite()
+{
+	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
+	if (_size < 3) ERR_NEEDMOREPARAMS("INVITE");
+	// More than 3 char throw invalid SYNTAX ERROR.
+	if (_size != 3) ERR_SYNTAXPROBLEM();
+	// Check if is valid nick name
+	if (validNick(_vec[1]) == false) ERR_ERRONEUSNICKNAME(_vec[1]);
+	_nickName = _vec[1];
+	if (server::clientExists(_nickName) == false) ERR_NOSUCHNICK(_nickName);
+	// Check if valid _channel name
+	if (isInvalidChannelName(_vec[2]) == true) ERR_NOSUCHCHANNEL();
+	_channelName = _vec[2];
+	if (server::channelExists(_channelName))
+	{
+		Channel* channel = server::getChannelByName(_channelName);
+		if (channel->getInviteFlag() == 1)
+		{
+			if (channel->getIsOperator(_client->getNickName()) == true)
+				channel->addInvited(server::getClientByFd(server::getClientFdByName(_nickName)));
+			else if (channel->getIsMember(_client->getNickName()) == true)
+				ERR_CHANOPRIVSNEEDED(_channelName);
+		}
+		else if (channel->getIsMember(_nickName) == true)
+			ERR_USERONCHANNEL(_channelName);
+	}
+	_stringToSend.append(":" + _client->getIdenClient()+ " 341 : INVITE " + _nickName + " " + _channelName + "\r\n");
+	Client* target = server::getClientByFd(server::getClientFdByName(_nickName));
+	if (selfClientSend(_stringToSend, target->getFd()) < 0) std::cout << "failed to send" << std::endl;
+	// sendToChannel(_stringToSend, target->getFd());
 }

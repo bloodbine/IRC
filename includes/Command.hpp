@@ -36,6 +36,7 @@ private:
 	void	handleNotice();
 	void	handleTopic();
 	void	handlePrivmsg();
+	void	handleInvite();
 
 public:
 	Command(const std::vector<std::string>& vec, Client *client);
