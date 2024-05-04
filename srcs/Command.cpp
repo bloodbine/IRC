@@ -8,7 +8,8 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 																		_userName(""),
 																		_realName(""),
 																		_channelName(""),
-																		_chanKey("")
+																		_chanKey(""),
+																		_serverName("")
 {
 	(void)_client;
 	_cmdType = getCmdType(vec[0]);
@@ -33,7 +34,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		break;
 	case PING:
 		/* HANDLE PING */
-		std::cout << "You called PING\n";
+		handlePing();
 		break;
 	case NOTICE:
 		/* HANDLE NOTICE */
@@ -174,4 +175,22 @@ void	Command::handleJoin()
 void	Command::printStringToSend() const
 {
 	std::cout << "stringToSend: " << _stringToSend << std::endl;
+}
+
+void	Command::handlePing()
+{
+	if (_size == 1) ERR_NOORIGIN();
+	if ( _size == 2) _serverName = _vec[1];
+	else
+	{
+		for (unsigned i = 2; i < _size; ++i)
+		{
+			if (i != _size - 1)
+				_serverName += _vec[i] + " ";
+			else
+				_serverName += _vec[i];
+		}
+	}
+	_stringToSend = "PONG " + _client->getNickName() + " " + _serverName + "\r\n";
+	selfClientSend(_stringToSend, _client->getFd());
 }
