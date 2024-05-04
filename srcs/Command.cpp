@@ -8,7 +8,8 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 																		_userName(""),
 																		_realName(""),
 																		_channelName(""),
-																		_chanKey("")
+																		_chanKey(""),
+																		_reasson("no reason was specified.")
 {
 	(void)_client;
 	_cmdType = getCmdType(vec[0]);
@@ -25,8 +26,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		handleUser();
 		break;
 	case PART:
-		/* HANDLE PART */
-		std::cout << "You called PART\n";
+		handlePart();
 		break;
 	case JOIN:
 		handleJoin();
@@ -81,6 +81,7 @@ void	Command::handlePass()
 	if (_size != 2 || _vec[1] != _client->getServerPassword()) ERR_PASSWDMISMATCH();
 	_client->setIsValidatePassword();
 	_stringToSend = "Password was setup successfully! Proceed with setting a Nickname\n";
+	// MISSING TO CHECK IF IT FAILS TO SEND
 	selfClientSend(_stringToSend, _client->getFd());
 }
 
@@ -93,6 +94,7 @@ void	Command::handleNick()
 	if (server::clientExists(_nickName)) ERR_ALREADYREGISTRED();
 	_client->setNickName(_nickName);
 	_stringToSend =  "NICK " + _nickName + "\r\n";
+	// MISSING TO CHECK IF IT FAILS TO SEND
 	selfClientSend(_stringToSend, _client->getFd());
 }
 
@@ -117,6 +119,7 @@ void	Command::handleUser()
 	_stringToSend += ":" + server::getHostname() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
 	_stringToSend += ":" + server::getHostname() + " 221 " + _client->getNickName() + " :0\r\n";
 	_stringToSend += ":" + server::getHostname() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
+	// MISSING TO CHECK IF IT FAILS TO SEND
 	selfClientSend(_stringToSend, _client->getFd());
 
 }
@@ -171,6 +174,29 @@ void	Command::handleJoin()
 	// check if it fails and handle it
 	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
 }
+
+void	Command::handlePart()
+{
+	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
+	_channelName = _vec[1]; // extract channel name in index 1
+	if (server::channelExists(_channelName) == false) ERR_NOSUCHCHANNEL();
+	if (_size >= 3)
+	{
+		_reasson = _vec[2];
+		for (size_t i = 3 ; i < _size; i++) _reasson += " " + _vec[i];
+	}
+	Channel* channel = server::getChannelByName(_channelName);
+	if (!channel) ERR_NOTONCHANNEL();
+	if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
+	_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reasson + "\r\n";
+	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+	if (channel->getIsOperator(_client->getNickName()))
+		channel->removeOperator(*_client);
+	channel->removeUser(*_client);
+	if (channel->getClientList().size() == 0)
+		server::removeChannel(channel->getName());
+}
+
 
 void	Command::printStringToSend() const
 {
