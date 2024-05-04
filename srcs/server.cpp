@@ -167,12 +167,12 @@ int	server::customSend(std::string tmp, int i, bool failedToSendMsg, std::vector
 	return (sendStatus);
 }
 
-int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg)
-{
-	std::string tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
-	customSend(tmp, i, failedToSendMsg, vec);
-	return 0;
-}
+// int	server::runNormalCommand(std::vector<std::string>& vec, int i, bool failedToSendMsg)
+// {
+// 	std::string tmp = getExecuteOut(this->_clientList[this->_clientFDs[i].fd], vec, &failedToSendMsg);
+// 	customSend(tmp, i, failedToSendMsg, vec);
+// 	return 0;
+// }
 
 int							server::getClientFdByName(const std::string& clientName)
 {
@@ -247,21 +247,9 @@ void server::handleClient()
 						delete client;
 						break;
 					default:
-						std::cout << "Recieved message from Client " << this->_clientFDs[i].fd << std::endl;
-						std::cout << std::string(buffer);
-						std::vector<std::string> vec = getVector(buffer);
-						if (vec.size() > 0 && (vec[0] == "PRIVMSG" || 
-							vec[0] == "JOIN" || vec[0] == "PART" ||
-							vec[0] == "QUIT" || vec[0] == "KICK" || vec[0] == "SHUTDOWN"))
-						{
-							runNormalCommand(vec, i, false);
-							break;
-						}
-						else
-						{
-							runNormalCommand(vec, i, true);
-							break;
-						}
+						std::vector<std::string>	vec = getVector(buffer);
+						Command	cmd(vec, client);
+						break ;
 				}
 			}
 		}

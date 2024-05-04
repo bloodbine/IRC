@@ -54,34 +54,34 @@ void addrStructToString(std::string &ip_dest, std::string &hostname_dest)
 	}
 }
 
-std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
-{
-	std::string tmp;
-	try
-	{
-		Command* cmd = getCommand(client, vec);
-		if (cmd == NULL) tmp = "[ERROR]: UNSUPPORTED COMMAND\r\n";
-		else
-		{
-			try
-			{
-				tmp = cmd->execute();
-			}
-			catch(const std::exception& e)
-			{
-				tmp = e.what();
-				*failedToSendMsg = true;
-			}
-			delete cmd;
-		}
-	}
-	catch (std::exception& e)
-	{
-		tmp = e.what();
-		*failedToSendMsg = true;
-	}
-	return tmp;
-}
+// std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
+// {
+// 	std::string tmp;
+// 	try
+// 	{
+// 		Command* cmd = getCommand(client, vec);
+// 		if (cmd == NULL) tmp = "[ERROR]: UNSUPPORTED COMMAND\r\n";
+// 		else
+// 		{
+// 			try
+// 			{
+// 				tmp = cmd->execute();
+// 			}
+// 			catch(const std::exception& e)
+// 			{
+// 				tmp = e.what();
+// 				*failedToSendMsg = true;
+// 			}
+// 			delete cmd;
+// 		}
+// 	}
+// 	catch (std::exception& e)
+// 	{
+// 		tmp = e.what();
+// 		*failedToSendMsg = true;
+// 	}
+// 	return tmp;
+// }
 
 std::vector<std::string> getVector(char *in)
 {
