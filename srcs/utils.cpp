@@ -203,6 +203,56 @@ bool	validNick(const std::string &nickname)
 	return false;
 }
 
+bool	validUsernameFormat(const std::string& username)
+{
+	if (username.size() < 2) return false;
+	if (username.size() > 1 && username.size() <= 9)
+	{
+		std::string	invalid = "\x00\x0A\x0D\x20\x40";
+		std::string::const_iterator end = username.end();
+		for (std::string::const_iterator itr = username.begin(); itr != end; ++itr)
+		{
+			if (invalid.find(*itr) != std::string::npos) return false;
+			if (!isalpha(*itr)) return false;
+		}
+	}
+	return true;
+}
+
+bool	validRealUsernameFormat(const std::string& username)
+{
+	if (username.size() < 3) return false;
+	std::string::const_iterator end = username.end();
+	int i = 0;
+	for (std::string::const_iterator itr = username.begin(); itr != end; ++itr)
+	{
+		std::string	invalid = "\x00\x0A\x0D\x20\x40";
+		if (i == 0 && *itr == ':')
+		{
+			i++;
+			continue ;
+		}
+		if (invalid.find(*itr) != std::string::npos) return false;
+		if (!isalpha(*itr)) return false;
+		i++;
+	}
+	return true;
+}
+
+
+bool	isValidUser(const std::vector<std::string> userInfo)
+{
+	size_t	size = userInfo.size();
+	if (size < 5 || size > 7) return false;
+	/* check if valid username format */
+	if (!validUsernameFormat(userInfo[1])) return false;
+	if (userInfo[2] != "0") return false;
+	if (userInfo[3] != "*") return false;
+	/* check valid real username format */
+	if (!validRealUsernameFormat(userInfo[4])) return false;
+	return true;
+}
+
 void	missingPass()
 {
 	throw std::invalid_argument(" 462 :YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\r\n");

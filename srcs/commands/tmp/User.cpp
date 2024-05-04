@@ -11,13 +11,14 @@ User::User(Client* client, const std::vector<std::string>& vec) : _size(vec.size
 
 }
 
-bool	User::validUser() const
+bool	isValidUser(const std::vector<std::string> userInfo)
 {
-	std::string	invalid = "\x00\x0A\x0D\x20\x40";
 	if (_size < 5 || _size > 7) return false;
+	/* check if valid username format
 	if (_vec[1].size() < 2) return false;
 	if (_vec[1].size() > 1 && _vec[1].size() <= 9)
 	{
+		std::string	invalid = "\x00\x0A\x0D\x20\x40";
 		std::string::const_iterator end = _vec[1].end();
 		for (std::string::const_iterator itr = _vec[1].begin(); itr != end; ++itr)
 		{
@@ -25,8 +26,10 @@ bool	User::validUser() const
 			if (!isalpha(*itr)) return false;
 		}
 	}
+	*/
 	if (_vec[2] != "0") return false;
 	if (_vec[3] != "*") return false;
+	/* check valid real username format 
 	if (_vec[4].size() < 3) return false;
 	std::string::const_iterator end = _vec[4].end();
 	int i = 0;
@@ -41,6 +44,7 @@ bool	User::validUser() const
 		if (!isalpha(*itr)) return false;
 		i++;
 	}
+	*/
 	return true;
 }
 
@@ -56,7 +60,7 @@ std::string	User::execute() const
 	_client->setRealUserName(realName);
 	_client->setHostname(getClientHostname(_client->getFd()));
 	_client->setIsregistered();
-	if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
+	// if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
 	else server::addClient(_client);
 	std::string out = ":" + server::getHostname() + " 001 " + _client->getNickName() + " :Welcome to the Internet Relay Network " + _client->getIdenClient() + "\r\n";
 	out += ":" + server::getHostname() + " 002 " + _client->getNickName() + " :Your host is " + server::getHostname() + ", running version 1.0\r\n";

@@ -44,6 +44,7 @@ std::vector<std::string>	getVector(char *in);
 // Command						*getCommand(Client* client, const std::vector<std::string>& vec);
 bool						isInvalidChannelName(const std::string& str);
 bool						isSpecialChar(char c);
+bool						isValidUser(const std::vector<std::string> userInfo);
 bool						validNick(const std::string &nickname);
 void						missingPass();
 void						missingNick();

@@ -4,7 +4,9 @@
 Command::Command(const std::vector<std::string>& vec, Client *client) : _client(client), _vec(vec), 
 																		_size(vec.size()), _cmdType(-1),
 																		_stringToSend(""),
-																		_nickName("")
+																		_nickName(""),
+																		_userName(""),
+																		_realName("")
 {
 	(void)_client;
 	_cmdType = getCmdType(vec[0]);
@@ -18,6 +20,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		break;
 	case USER:
 		/* HANDLE USER */
+		handleUser();
 		std::cout << "You called USER\n";
 		break;
 	case PART:
@@ -78,7 +81,6 @@ void	Command::handlePass()
 	if (_size != 2 || _vec[1] != _client->getServerPassword()) ERR_PASSWDMISMATCH();
 	_client->setIsValidatePassword();
 	_stringToSend = "Password was setup successfully! Proceed with setting a Nickname";
-	std::cout << _stringToSend << std::endl;
 }
 
 void	Command::handleNick()
@@ -92,6 +94,28 @@ void	Command::handleNick()
 	// if (_client->getNickName() == _vec[1]) ERR_NICKNAMEINUSE(_vec[1]);
 	_client->setNickName(_nickName);
 	_stringToSend =  "NICK " + _nickName + "\r\n";
-	std::cout << _stringToSend << std::endl;
-	
+}
+
+void	Command::handleUser()
+{
+	if (_client->getIsregistered()) ERR_ALREADYREGISTRED();
+	if (_client->getNickName() == "") missingNick();
+	if (_size < 5) ERR_NEEDMOREPARAMS("USER");
+	if (isValidUser(_vec) == false) ERR_SYNTAXPROBLEM();
+	if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
+	else server::addClient(_client);
+	if (_vec[4][0] == ':') _realName = _vec[4].substr(1);
+	else _realName = _vec[4];
+	for (size_t i = 5; i < _size; i++) 
+			_realName += " " + _vec[i];
+	_client->setUserName(_vec[1]);
+	_client->setRealUserName(_realName);
+	_client->setHostname(getClientHostname(_client->getFd()));
+	_client->setIsregistered();
+	_stringToSend = ":" + server::getHostname() + " 001 " + _client->getNickName() + " :Welcome to the Internet Relay Network " + _client->getIdenClient() + "\r\n";
+	_stringToSend += ":" + server::getHostname() + " 002 " + _client->getNickName() + " :Your host is " + server::getHostname() + ", running version 1.0\r\n";
+	_stringToSend += ":" + server::getHostname() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
+	_stringToSend += ":" + server::getHostname() + " 221 " + _client->getNickName() + " :0\r\n";
+	_stringToSend += ":" + server::getHostname() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
+
 }
