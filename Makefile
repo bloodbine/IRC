@@ -5,7 +5,7 @@ OBJ		=	$(SRC:.cpp=.o)
 CFLAGS	=	-Wall -Werror -Wextra -std=c++98 -g
 INCLUDES = -I./includes
 CC		=	c++
-PORT	?=4444
+PORT	?=	4444
 
 %.o:%.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -c $^ -o $@

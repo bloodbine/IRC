@@ -19,13 +19,28 @@
 #include "commands/Shutdown.hpp"
 #include <sstream>
 
+#define PASS 0;
+#define NICK 1;
+#define USER 2;
+#define PART 3;
+#define JOIN 4;
+#define PING 5;
+#define NOTICE 6;
+#define TOPIC 7;
+#define PRIVMSG 8;
+#define INVITE 9;
+#define KICK 10;
+#define QUIT 11;
+#define MODE 12;
+#define SHUTDOWN 13;
+
 void						signal_handler(int signal);
 std::string					getClientHostname(int clientFD);
 std::string					getTimestamp();
 void						addrStructToString(std::string &ip_dest, std::string &hostname_dest);
 std::string 				getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
 std::vector<std::string>	getVector(char *in);
-Command						*getCommand(Client* client, const std::vector<std::string>& vec);
+// Command						*getCommand(Client* client, const std::vector<std::string>& vec);
 bool						isInvalidChannelName(const std::string& str);
 bool						isSpecialChar(char c);
 bool						validNick(const std::string &nickname);
@@ -33,6 +48,8 @@ void						missingPass();
 void						missingNick();
 bool						isValidMode(const std::string& mode);
 bool						stringIsNumeric(const char *string);
+int							getCmdType(const std::string& cmd);
+
 
 /*
 Error handling
