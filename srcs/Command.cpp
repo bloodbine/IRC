@@ -10,7 +10,9 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 																		_channelName(""),
 																		_chanKey(""),
 																		_reasson("no reason was specified."),
-																		_serverName("")
+																		_serverName(""),
+																		_topic(""),
+																		_clearTopic(false)
 {
 	(void)_client;
 	_cmdType = getCmdType(vec[0]);
@@ -42,7 +44,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		break;
 	case TOPIC:
 		/* HANDLE TOPIC */
-		std::cout << "You called TOPIC\n";
+		handleTopic();
 		break;
 	case PRIVMSG:
 		/* HANDLE PRIVMSG */
@@ -227,5 +229,49 @@ void	Command::handleNotice()
 {
 	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
 	_stringToSend = "";
-	selfClientSend(_stringToSend, _client->getFd());
+	// check if it fails and handle it
+	if (selfClientSend(_stringToSend, _client->getFd()) < 0) std::cout << "failed to send" << std::endl;
+}
+
+void	Command::handleTopic()
+{
+	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
+	if (_size <= 1) ERR_NEEDMOREPARAMS("TOPIC");
+	_channelName = _vec[1];
+	if (_size >= 3 && _vec[2][0] == ':')
+	{
+		if (_vec[2].size() == 1)
+		{
+			_clearTopic = true;
+			return ;
+		}
+		if (_vec[2][0] == ':') _topic += _vec[2].substr(1);
+		else _topic += _vec[2];
+		for(size_t i = 3; i < _size; i++) _topic += " " + _vec[i];
+	}
+
+	std::cout << ":" << _client->getIdenClient() << " Channel " << _channelName << std::endl;
+	std::cout << ":" << _client->getIdenClient() << " Topic " << _topic << std::endl;
+	std::cout << ":" << _client->getIdenClient() << " clearTopic " << _clearTopic << std::endl;
+
+	//Heck if the Channel exist
+	if (!server::channelExists(_channelName)) ERR_NOSUCHCHANNEL();
+	//HECK if Channel has User
+	Channel* channel = server::getChannelByName(_channelName);
+	// Add protection
+	if (!channel) ERR_NOSUCHCHANNEL();
+	if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
+	if (channel->getTopic() == "" && _topic == "")
+		_stringToSend = " 331 " + _channelName + " :No topic is set" + "\r\n";
+	else if (_topic == "")
+		_stringToSend = " 332 " + _channelName + " :" + channel->getTopic() + "\r\n";
+	else if (channel->getTopicRestrictFlag() == false || channel->getIsOperator(_client->getNickName()) == true)
+	{
+		channel->setTopic(_topic);
+		_stringToSend = " 332 " + _channelName + " :" + channel->getTopic() + "\r\n";
+	}
+	else
+		ERR_CHANOPRIVSNEEDED(_channelName);
+	// check if it fails and handle it
+	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
 }

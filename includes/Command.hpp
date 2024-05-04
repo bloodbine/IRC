@@ -21,6 +21,8 @@ private:
 	std::string	_chanKey;
 	std::string	_reasson;
 	std::string	_serverName;
+	std::string _topic;
+	bool		_clearTopic;
 
 	void	handlePass();
 	void	handleNick();
@@ -29,6 +31,7 @@ private:
 	void	handlePart();
 	void	handlePing();
 	void	handleNotice();
+	void	handleTopic();
 
 public:
 	Command(const std::vector<std::string>& vec, Client *client);
