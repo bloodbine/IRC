@@ -56,6 +56,8 @@ bool						stringIsNumeric(const char *string);
 
 // Sending related
 int							selfClientSend(const std::string& stringToSend, int toSendFd);
+int							sendToChannel(const std::string& stringToSend, const std::string& channelName);
+
 
 /*
 Error handling

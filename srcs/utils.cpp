@@ -411,3 +411,25 @@ int	selfClientSend(const std::string& stringToSend, int toSendFd)
 {
 	return (send(toSendFd, stringToSend.c_str(), stringToSend.length(), 0));
 }
+
+/*
+On failure returns -1.
+On success returns 1
+*/
+int	sendToChannel(const std::string& stringToSend, const std::string& channelName)
+{
+	if (server::channelExists(channelName) == true)
+	{
+		Channel *channel = server::getChannelByName(channelName);
+		std::map<std::string, Client*>	memberList = channel->getMemberList();
+		std::map<std::string, Client*>::iterator itr = memberList.begin();
+		std::map<std::string, Client*>::iterator end = memberList.end();
+		for (; itr != end; ++itr)
+		{
+			Client*	tmpClient = (*itr).second;
+			int	toSendFd = tmpClient->getFd();
+			if (send(toSendFd, stringToSend.c_str(), stringToSend.length(), 0) < 0) return -1;
+		}
+	}
+	return (1);
+}
