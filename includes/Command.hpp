@@ -43,8 +43,8 @@ private:
 	void	handlePrivmsg();
 	void	handleInvite();
 	void	handleKick();
-	void	handleQuit();
 	void	handleMode();
+	void	handleQuit();
 
 public:
 	Command(const std::vector<std::string>& vec, Client *client, int i);

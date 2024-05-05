@@ -58,15 +58,11 @@ Command::Command(const std::vector<std::string>& vec, Client *client, int i) : _
 	case KICK:
 		handleKick();
 		break;
-	case QUIT:
-		handleQuit();
-		break;
 	case MODE:
 		handleMode();
 		break;
-	case SHUTDOWN:
-		/* HANDLE SHUTDOWN */
-		std::cout << "You called SHUTDOWN\n";
+	case QUIT:
+		handleQuit();
 		break;
 	default:
 		ERR_INVALIDCOMMAND();
@@ -366,49 +362,6 @@ void	Command::handleKick()
 	if (selfClientSend(_stringToSend, client->getFd()) < 0) std::cout << "failed to send" << std::endl;
 }
 
-void	Command::handleQuit()
-{
-	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
-	if (_size > 1)
-	{
-		_reasson += _vec[1].substr(1);
-		for (size_t i = 2; i < _size; i++) _reasson += " " + _vec[i];
-	}
-	std::vector<Channel*>	channelList = _client->getChannelList();
-	if (channelList.size() > 0)
-	{
-		std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
-		std::vector<Channel*>::iterator	end = channelList.end();
-		std::cout << "The client is member of the next channels: " << std::endl;
-		for (; tmpChannel != end; ++tmpChannel)
-		{
-			std::cout << (*tmpChannel)->getName() << std::endl;
-			std::string _reasson = "no reasson";
-			if (_vec.size() > 1)
-			{
-				_reasson = _vec[1];
-				for (size_t i = 2; i < _vec.size(); i++) _reasson += " " + _vec[i];
-			}
-			_stringToSend = _client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + _reasson + "\r\n";
-			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
-			if (channel)
-			{
-				if (sendToChannel(_stringToSend, (*tmpChannel)->getName()) < 0 ) std::cout << "Failed to send to the channel" << std::endl;
-				(*tmpChannel)->removeUser(*_client);
-				if ((*tmpChannel)->getIsOperator(_client->getNickName()))
-					(*tmpChannel)->removeOperator(*_client);
-				if ((*tmpChannel)->getClientList().size() == 0)
-					server::removeChannel(channel->getName());
-			}
-		}
-	}
-	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
-	close(_client->getFd());
-	server::_clientList.erase(_client->getFd());
-	server::_clientFDs.erase(server::_clientFDs.begin() + _i);
-	delete _client;
-}
-
 void	Command::handleMode()
 {
 	if (_size < 2) ERR_NEEDMOREPARAMS("MODE");
@@ -470,4 +423,47 @@ void	Command::handleMode()
 		_stringToSend.append(" " + _parameter);
 	}
 	if (selfClientSend(_stringToSend, _client->getFd()) < 0) std::cout << "Failed to send msg to the client" << std::endl;
+}
+
+void	Command::handleQuit()
+{
+	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
+	if (_size > 1)
+	{
+		_reasson += _vec[1].substr(1);
+		for (size_t i = 2; i < _size; i++) _reasson += " " + _vec[i];
+	}
+	std::vector<Channel*>	channelList = _client->getChannelList();
+	if (channelList.size() > 0)
+	{
+		std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
+		std::vector<Channel*>::iterator	end = channelList.end();
+		std::cout << "The client is member of the next channels: " << std::endl;
+		for (; tmpChannel != end; ++tmpChannel)
+		{
+			std::cout << (*tmpChannel)->getName() << std::endl;
+			std::string _reasson = "no reasson";
+			if (_vec.size() > 1)
+			{
+				_reasson = _vec[1];
+				for (size_t i = 2; i < _vec.size(); i++) _reasson += " " + _vec[i];
+			}
+			_stringToSend = _client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + _reasson + "\r\n";
+			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
+			if (channel)
+			{
+				if (sendToChannel(_stringToSend, (*tmpChannel)->getName()) < 0 ) std::cout << "Failed to send to the channel" << std::endl;
+				(*tmpChannel)->removeUser(*_client);
+				if ((*tmpChannel)->getIsOperator(_client->getNickName()))
+					(*tmpChannel)->removeOperator(*_client);
+				if ((*tmpChannel)->getClientList().size() == 0)
+					server::removeChannel(channel->getName());
+			}
+		}
+	}
+	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
+	close(_client->getFd());
+	server::_clientList.erase(_client->getFd());
+	server::_clientFDs.erase(server::_clientFDs.begin() + _i);
+	delete _client;
 }
