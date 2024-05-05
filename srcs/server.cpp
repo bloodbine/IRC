@@ -168,8 +168,8 @@ void	server::removeChannel(std::string channelName)
 {
 	if (channelExists(channelName))
 	{
-		delete channelList[channelName];
 		channelList.erase(channelName);
+		delete channelList[channelName];
 	}
 }
 

@@ -183,15 +183,18 @@ void	Command::handlePart()
 		for (size_t i = 3 ; i < _size; i++) _reasson += " " + _vec[i];
 	}
 	Channel* channel = server::getChannelByName(_channelName);
-	if (!channel) ERR_NOTONCHANNEL();
-	if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
-	_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reasson + "\r\n";
-	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
-	if (channel->getIsOperator(_client->getNickName()))
-		channel->removeOperator(*_client);
-	channel->removeUser(*_client);
-	if (channel->getClientList().size() == 0)
-		server::removeChannel(channel->getName());
+	if (channel)
+	{
+		if (!channel) ERR_NOTONCHANNEL();
+		if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
+		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reasson + "\r\n";
+		if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+		if (channel->getIsOperator(_client->getNickName()))
+			channel->removeOperator(*_client);
+		channel->removeUser(*_client);
+		if (channel->getClientList().size() == 0)
+			server::removeChannel(channel->getName());
+	}
 }
 
 void	Command::handlePing()
