@@ -330,7 +330,6 @@ void	Command::handleInvite()
 	_stringToSend.append(":" + _client->getIdenClient()+ " 341 : INVITE " + _nickName + " " + _channelName + "\r\n");
 	Client* target = server::getClientByFd(server::getClientFdByName(_nickName));
 	if (selfClientSend(_stringToSend, target->getFd()) < 0) std::cout << "failed to send" << std::endl;
-	// sendToChannel(_stringToSend, target->getFd());
 }
 
 void	Command::handleKick()
@@ -443,7 +442,6 @@ void	Command::handleQuit()
 		std::cout << "The client is member of the next channels: " << std::endl;
 		for (; tmpChannel != end; ++tmpChannel)
 		{
-			// std::cout << (*tmpChannel)->getName() << std::endl;
 			std::string _reasson = "no reasson";
 			if (_vec.size() > 1)
 			{
