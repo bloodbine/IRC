@@ -160,21 +160,41 @@ void	server::setCreationTime(const std::string& timestamp) { _creationTime = tim
 
 std::string&	server::getCreationTime()  { return _creationTime; };
 
-bool	server::channelExists(const std::string& channelName) { return (channelList.find(channelName) != channelList.end()); }
+bool	server::channelExists(const std::string& channelName){ return (channelList.find(channelName) != channelList.end()); }
 
 void	server::addChannel(Channel *channel) { channelList[channel->getName()] = channel; }
 
 void	server::removeChannel(std::string channelName) 
 {
-	delete channelList[channelName];
-	channelList.erase(channelName);
+	if (channelExists(channelName))
+	{
+		delete channelList[channelName];
+		channelList.erase(channelName);
+	}
 }
 
-Channel* server::getChannelByName(const std::string& channelName) { return channelList[channelName]; }
+Channel* server::getChannelByName(const std::string& channelName) {
+	if (channelList.size() > 0)
+	{
+		std::map<std::string, Channel*>::iterator	 it = channelList.find(channelName);
+		if (it != channelList.end()) {
+			return it->second;
+		}
+	}
+	return NULL;
+}
 
 void	server::addClient(Client *client) { _clientList[client->getFd()] = client; }
 
-Client* server::getClientByFd(int fd) { return _clientList[fd]; }
+Client* server::getClientByFd(int fd)
+{
+	std::map<int, Client*>::iterator	 it = _clientList.find(fd);
+    if (it != _clientList.end()) {
+        return it->second;
+    } else {
+        return NULL;
+    }
+}
 
 bool	server::clientExists(const std::string& clientName)
 {

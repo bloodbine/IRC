@@ -451,7 +451,7 @@ void	Command::handleQuit()
 			}
 			_stringToSend = _client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + _reasson + "\r\n";
 			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
-			if (channel)
+			if (channel != NULL)
 			{
 				if (sendToChannel(_stringToSend, (*tmpChannel)->getName()) < 0 ) std::cout << "Failed to send to the channel" << std::endl;
 				(*tmpChannel)->removeUser(*_client);
