@@ -112,7 +112,7 @@ int	getCmdType(const std::string& cmd)
 	if (cmd == "INVITE") return INVITE;
 	if (cmd == "KICK") return KICK;
 	if (cmd == "QUIT") return QUIT;
-	if (cmd == "MODE") return MODE;
+	if (cmd == "MODE") return MODE;	
 	if (cmd == "SHUTDOWN") return SHUTDOWN;
 	return -1;
 }

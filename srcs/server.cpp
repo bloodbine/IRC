@@ -113,6 +113,7 @@ void server::handleClient()
 				bzero(buffer, sizeof(buffer));
 				int bytesRead = recv(this->_clientFDs[i].fd, buffer, 1024, 0);
 				this->_clientFDs[i].revents = 0;
+				std::vector<Channel*>	clientChannelList = client->getChannelList();
 				switch(bytesRead)
 				{
 					case -1:
@@ -128,6 +129,21 @@ void server::handleClient()
 						close(this->_clientFDs[i].fd);
 						this->_clientList.erase(this->_clientFDs[i].fd);
 						this->_clientFDs.erase(this->_clientFDs.begin() + i);
+						if (clientChannelList.size() > 0)
+						{
+							std::vector<Channel*>::iterator	tmpChannel = clientChannelList.begin();
+							std::vector<Channel*>::iterator	end = clientChannelList.end();
+							for (; tmpChannel != end; ++tmpChannel)
+							{
+								Channel *channel = server::getChannelByName((*tmpChannel)->getName());
+								if (channel != NULL)
+								{
+									(*tmpChannel)->removeUser(*client);
+									if ((*tmpChannel)->getIsOperator(client->getNickName()))
+										(*tmpChannel)->removeOperator(*client);
+								}
+							}
+						}
 						delete client;
 						break;
 					default:
