@@ -94,31 +94,6 @@ std::vector<std::string> getVector(char *in)
 	return out;
 }
 
-// Command	*getCommand(Client* client, const std::vector<std::string>& vec)
-// {
-// 	if (vec.size() < 1) return NULL;
-// 	if (vec[0] == "CAP") return (new Cap(client, vec));
-// 	// Switch cmd
-// 		// Validate command
-// 		// Parse the main command with the partial command
-// 		// send string to the client
-// 	if (vec[0] == "PASS") return (new Pass(client, vec));
-// 	if (vec[0] == "NICK") return (new Nick(client, vec));
-// 	if (vec[0] == "USER") return (new User(client, vec));
-// 	if (vec[0] == "PART") return (new Part(client, vec));
-// 	if (vec[0] == "JOIN") return (new Join(client, vec));
-// 	if (vec[0] == "PING") return (new Ping(client, vec));
-// 	if (vec[0] == "NOTICE") return (new Notice(client, vec));
-// 	if (vec[0] == "TOPIC") return (new Topic(client, vec));
-// 	if (vec[0] == "PRIVMSG") return (new Privmsg(client, vec));
-// 	if (vec[0] == "INVITE") return (new Invite(client, vec));
-// 	if (vec[0] == "KICK") return (new Kick(client, vec));
-// 	if (vec[0] == "QUIT") return (new Quit(client, vec));
-// 	if (vec[0] == "MODE") return (new Mode(client, vec));
-// 	if (vec[0] == "SHUTDOWN") return (new Shutdown(client, vec));
-// 	return NULL;
-// }
-
 /*
 Returns the code with the type of command of command.
 If it is not a valid command returns -1.
