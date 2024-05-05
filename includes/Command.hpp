@@ -26,6 +26,7 @@ private:
 	std::string _target;
 	bool		_targetIsChannel;
 	bool		_clearTopic;
+	int			_i;
 
 	void	handlePass();
 	void	handleNick();
@@ -41,6 +42,6 @@ private:
 	void	handleQuit();
 
 public:
-	Command(const std::vector<std::string>& vec, Client *client);
+	Command(const std::vector<std::string>& vec, Client *client, int i);
 	~Command();
 };

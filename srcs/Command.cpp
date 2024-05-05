@@ -1,7 +1,7 @@
 #include "Command.hpp"
 #include "utils.hpp"
 
-Command::Command(const std::vector<std::string>& vec, Client *client) : _client(client), _vec(vec), 
+Command::Command(const std::vector<std::string>& vec, Client *client, int i) : _client(client), _vec(vec), 
 																		_size(vec.size()), _cmdType(-1),
 																		_stringToSend(""),
 																		_nickName(""),
@@ -15,7 +15,8 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 																		_msg(""),
 																		_target(""),
 																		_targetIsChannel(false),
-																		_clearTopic(false)
+																		_clearTopic(false),
+																		_i(i)
 {
 	if (!client) throw std::invalid_argument("You can't provide a NULL Client!");
 	_cmdType = getCmdType(vec[0]);
@@ -365,5 +366,43 @@ void	Command::handleKick()
 
 void	Command::handleQuit()
 {
-	
+	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
+	if (_size > 1)
+	{
+		_reasson += _vec[1].substr(1);
+		for (size_t i = 2; i < _size; i++) _reasson += " " + _vec[i];
+	}
+	std::vector<Channel*>	channelList = _client->getChannelList();
+	if (channelList.size() > 0)
+	{
+		std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
+		std::vector<Channel*>::iterator	end = channelList.end();
+		std::cout << "The client is member of the next channels: " << std::endl;
+		for (; tmpChannel != end; ++tmpChannel)
+		{
+			std::cout << (*tmpChannel)->getName() << std::endl;
+			std::string _reasson = "no reasson";
+			if (_vec.size() > 1)
+			{
+				_reasson = _vec[1];
+				for (size_t i = 2; i < _vec.size(); i++) _reasson += " " + _vec[i];
+			}
+			_stringToSend = _client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + _reasson + "\r\n";
+			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
+			if (channel)
+			{
+				if (sendToChannel(_stringToSend, (*tmpChannel)->getName()) < 0 ) std::cout << "Failed to send to the channel" << std::endl;
+				(*tmpChannel)->removeUser(*_client);
+				if ((*tmpChannel)->getIsOperator(_client->getNickName()))
+					(*tmpChannel)->removeOperator(*_client);
+				if ((*tmpChannel)->getClientList().size() == 0)
+					server::removeChannel(channel->getName());
+			}
+		}
+	}
+	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
+	close(_client->getFd());
+	server::_clientList.erase(_client->getFd());
+	server::_clientFDs.erase(server::_clientFDs.begin() + _i);
+	delete _client;
 }

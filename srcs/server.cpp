@@ -250,7 +250,7 @@ void server::handleClient()
 						std::vector<std::string>	vec = getVector(buffer);
 						try
 						{
-							Command	cmd(vec, client);
+							Command	cmd(vec, client, i);
 						}
 						catch (std::exception& e)
 						{

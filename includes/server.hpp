@@ -24,9 +24,6 @@
 
 class server
 {
-	static	std::map<std::string, Channel*>		channelList;
-	static	std::map<int, Client*>				_clientList;
-	static	std::vector<pollfd>					_clientFDs;
 	static	std::string _hostname;
 	static	std::string	_serverIp;
 	static	std::string _creationTime;
@@ -38,6 +35,9 @@ class server
 		bool	_finish;
 
 	public:
+		static	std::map<std::string, Channel*>		channelList;
+		static	std::map<int, Client*>				_clientList;
+		static	std::vector<pollfd>					_clientFDs;
 		server(int port, std::string pass);
 		~server();
 
