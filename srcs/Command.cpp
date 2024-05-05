@@ -442,7 +442,7 @@ void	Command::handleQuit()
 		std::cout << "The client is member of the next channels: " << std::endl;
 		for (; tmpChannel != end; ++tmpChannel)
 		{
-			std::cout << (*tmpChannel)->getName() << std::endl;
+			// std::cout << (*tmpChannel)->getName() << std::endl;
 			std::string _reasson = "no reasson";
 			if (_vec.size() > 1)
 			{
