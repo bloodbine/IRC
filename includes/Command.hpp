@@ -5,6 +5,7 @@
 
 class server;
 class Client;
+class Channel;
 
 class Command
 {
@@ -27,6 +28,9 @@ private:
 	bool		_targetIsChannel;
 	bool		_clearTopic;
 	int			_i;
+	Channel*	_channelObj;
+	std::string	_mode;
+	std::string	_parameter;
 
 	void	handlePass();
 	void	handleNick();
@@ -40,6 +44,7 @@ private:
 	void	handleInvite();
 	void	handleKick();
 	void	handleQuit();
+	void	handleMode();
 
 public:
 	Command(const std::vector<std::string>& vec, Client *client, int i);

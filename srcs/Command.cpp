@@ -16,7 +16,10 @@ Command::Command(const std::vector<std::string>& vec, Client *client, int i) : _
 																		_target(""),
 																		_targetIsChannel(false),
 																		_clearTopic(false),
-																		_i(i)
+																		_i(i),
+																		_channelObj(NULL),
+																		_mode(""),
+																		_parameter("")
 {
 	if (!client) throw std::invalid_argument("You can't provide a NULL Client!");
 	_cmdType = getCmdType(vec[0]);
@@ -59,8 +62,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client, int i) : _
 		handleQuit();
 		break;
 	case MODE:
-		/* HANDLE MODE */
-		std::cout << "You called MODE\n";
+		handleMode();
 		break;
 	case SHUTDOWN:
 		/* HANDLE SHUTDOWN */
@@ -405,4 +407,67 @@ void	Command::handleQuit()
 	server::_clientList.erase(_client->getFd());
 	server::_clientFDs.erase(server::_clientFDs.begin() + _i);
 	delete _client;
+}
+
+void	Command::handleMode()
+{
+	if (_size < 2) ERR_NEEDMOREPARAMS("MODE");
+	if (_size > 3) ERR_SYNTAXPROBLEM();
+	if (server::channelExists(_vec[1]) == false) ERR_NOSUCHCHANNEL();
+	_channelName = _vec[1];
+	_channelObj = server::getChannelByName(_channelName);
+	if (_size > 2 && isValidMode(_vec[2]) == false) ERR_UMODEUNKNOWNFLAG();
+	if (_size > 2) _mode = _vec[2];
+	if (_mode.find("o") != std::string::npos && server::clientExists(_vec[3]) == false) ERR_NOSUCHNICK(_vec[3]);
+	if (_size > 3)
+		_parameter = _vec[3];
+	// Add protection
+	if (_channelObj)
+	{
+		if (_channelObj->getIsMember(_client->getNickName()) == false) ERR_NOTONCHANNEL();
+		if (_channelObj->getIsOperator(_client->getNickName()) == false) ERR_NOPRIVILEGES(_channelName);
+		_stringToSend = "324 :";
+		switch (_mode[1])
+		{
+			case 'i': // Invite
+				if (_mode[0] == '+') _channelObj->setInviteFlag(true);
+				else _channelObj->setInviteFlag(false);
+				break;
+			case 't': // Topic restriction
+				if (_mode[0] == '+') _channelObj->setTopicRestrictFlag(true);
+				else _channelObj->setTopicRestrictFlag(false);
+				break;
+			case 'k': // Channel key
+				if (_mode[0] == '+')
+				{
+					if (_parameter != "") _channelObj->setChanKey(_parameter);
+					else ERR_NEEDMOREPARAMS("MODE");
+				}
+				else _channelObj->setChanKey("");
+				break;
+			case 'o': // Operator Privilige
+				if (_mode[0] == '+')
+				{
+					if (_channelObj->getIsMember(_parameter) == true &&
+					_channelObj->getIsOperator(_parameter) == false)
+						_channelObj->addOperator(_channelObj->getMemberList()[_parameter]);
+				}
+				else _channelObj->removeOperator(*_channelObj->getOperatorList()[_parameter]);
+				break;
+			case 'l': // User Limit
+				if (_mode[0] == '+')
+				{
+					if (_parameter != "" && stringIsNumeric(_parameter.c_str()) == true) _channelObj->setUserLimit(std::atoi(_parameter.c_str()));
+					else if (_parameter == "") ERR_NEEDMOREPARAMS("MODE");
+					else if (stringIsNumeric(_parameter.c_str()) == false) ERR_SYNTAXPROBLEM();
+				}
+				else _channelObj->setUserLimit(0);
+				break;
+		}
+		_stringToSend.append(":" + _client->getIdenClient());
+		_stringToSend.append(" " + _channelName);
+		_stringToSend.append(" " + _mode);
+		_stringToSend.append(" " + _parameter);
+	}
+	if (selfClientSend(_stringToSend, _client->getFd()) < 0) std::cout << "Failed to send msg to the client" << std::endl;
 }
