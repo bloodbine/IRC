@@ -251,7 +251,6 @@ void server::handleClient()
 						try
 						{
 							Command	cmd(vec, client);
-							// cmd.printStringToSend();
 						}
 						catch (std::exception& e)
 						{

@@ -17,7 +17,7 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 																		_targetIsChannel(false),
 																		_clearTopic(false)
 {
-	(void)_client;
+	if (!client) throw std::invalid_argument("You can't provide a NULL Client!");
 	_cmdType = getCmdType(vec[0]);
 	switch (_cmdType)
 	{
@@ -28,7 +28,6 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		handleNick();
 		break;
 	case USER:
-		/* HANDLE USER */
 		handleUser();
 		break;
 	case PART:
@@ -38,32 +37,25 @@ Command::Command(const std::vector<std::string>& vec, Client *client) : _client(
 		handleJoin();
 		break;
 	case PING:
-		/* HANDLE PING */
 		handlePing();
 		break;
 	case NOTICE:
-		/* HANDLE NOTICE */
 		handleNotice();
 		break;
 	case TOPIC:
-		/* HANDLE TOPIC */
 		handleTopic();
 		break;
 	case PRIVMSG:
-		/* HANDLE PRIVMSG */
 		handlePrivmsg();
 		break;
 	case INVITE:
-		/* HANDLE INVITE */
 		handleInvite();
 		break;
 	case KICK:
-		/* HANDLE KICK */
 		handleKick();
 		break;
 	case QUIT:
-		/* HANDLE QUIT */
-		std::cout << "You called QUIT\n";
+		handleQuit();
 		break;
 	case MODE:
 		/* HANDLE MODE */
@@ -201,12 +193,6 @@ void	Command::handlePart()
 	channel->removeUser(*_client);
 	if (channel->getClientList().size() == 0)
 		server::removeChannel(channel->getName());
-}
-
-
-void	Command::printStringToSend() const
-{
-	std::cout << "stringToSend: " << _stringToSend << std::endl;
 }
 
 void	Command::handlePing()
@@ -375,4 +361,9 @@ void	Command::handleKick()
 		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _nickName + " :" + _reasson + "\r\n";
 	channel->removeUser(*client);
 	if (selfClientSend(_stringToSend, client->getFd()) < 0) std::cout << "failed to send" << std::endl;
+}
+
+void	Command::handleQuit()
+{
+	
 }
