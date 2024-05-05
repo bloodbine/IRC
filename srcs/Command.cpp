@@ -192,8 +192,6 @@ void	Command::handlePart()
 		if (channel->getIsOperator(_client->getNickName()))
 			channel->removeOperator(*_client);
 		channel->removeUser(*_client);
-		if (channel->getClientList().size() == 0)
-			server::removeChannel(channel->getName());
 	}
 }
 
@@ -460,8 +458,6 @@ void	Command::handleQuit()
 				(*tmpChannel)->removeUser(*_client);
 				if ((*tmpChannel)->getIsOperator(_client->getNickName()))
 					(*tmpChannel)->removeOperator(*_client);
-				if ((*tmpChannel)->getClientList().size() == 0)
-					server::removeChannel(channel->getName());
 			}
 		}
 	}
