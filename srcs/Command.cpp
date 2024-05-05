@@ -290,6 +290,7 @@ void	Command::handlePrivmsg()
 		Channel* channel = server::getChannelByName(_target);
 			// Add protection
 		if (!channel) ERR_NOSUCHCHANNEL();
+		if (!channel->getIsMember(_client->getNickName())) ERR_CANNOTSENDTOCHAN(_channelName);
 		if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
 	}
 	else

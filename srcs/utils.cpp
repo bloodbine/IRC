@@ -403,6 +403,11 @@ void	ERR_NONICKNAMEGIVEN()
 	throw std::invalid_argument(" 431 :No nickname given\r\n");
 }
 
+void	ERR_CANNOTSENDTOCHAN(const std::string& channelName)
+{
+	throw std::invalid_argument("405 " + channelName + " :Cannot send to channel\r\n");
+}
+
 /*
 Normally used to send error message or feedback to the client that
 made the request.

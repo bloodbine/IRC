@@ -89,3 +89,4 @@ void	ERR_TOOMANYCHANNELS(const std::string& channelName);
 void	ERR_NONICKNAMEGIVEN();
 void	ERR_INVALIDCOMMAND();
 void	ERR_PASSWDMISMATCH();
+void	ERR_CANNOTSENDTOCHAN(const std::string& channelName);
