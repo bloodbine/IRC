@@ -160,7 +160,7 @@ void server::handleClient()
 			}
 			if (this->clientFDs[i].revents & POLLOUT && messageList.size() != 0)
 			{
-				std::multimap<int, std::string>::iterator message = messageList.equal_range(i).first;
+				std::multimap<int, std::string>::iterator message = messageList.equal_range(this->clientFDs[i].fd).first;
 				if (message != server::messageList.end())
 				{
 					int senderr = send(this->clientFDs[i].fd, (message->second).c_str(), (message->second).length(), 0);
