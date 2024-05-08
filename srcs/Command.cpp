@@ -77,9 +77,8 @@ void	Command::handlePass()
 	if (_client->getIsValidatedPassword()) ERR_ALREADYREGISTRED();
 	if (_size != 2 || _vec[1] != _client->getServerPassword()) ERR_PASSWDMISMATCH();
 	_client->setIsValidatePassword();
-	_stringToSend = "Password was setup successfully! Proceed with setting a Nickname\n";
-	// MISSING TO CHECK IF IT FAILS TO SEND
-	selfClientSend(_stringToSend, _client->getFd());
+	// _stringToSend = "";
+	// selfClientSend(_stringToSend, _client->getFd());
 }
 
 void	Command::handleNick()
@@ -91,7 +90,6 @@ void	Command::handleNick()
 	if (server::clientExists(_nickName)) ERR_ALREADYREGISTRED();
 	_client->setNickName(_nickName);
 	_stringToSend =  "NICK " + _nickName + "\r\n";
-	// MISSING TO CHECK IF IT FAILS TO SEND
 	selfClientSend(_stringToSend, _client->getFd());
 }
 
@@ -169,7 +167,7 @@ void	Command::handleJoin()
 	_stringToSend += ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
 	_stringToSend += ":" + _client->getIdenClient() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
 	// check if it fails and handle it
-	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+	sendToChannel(_stringToSend, _channelName);
 }
 
 void	Command::handlePart()
@@ -188,13 +186,13 @@ void	Command::handlePart()
 		if (!channel) ERR_NOTONCHANNEL();
 		if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
 		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reason + "\r\n";
-		if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+		sendToChannel(_stringToSend, _channelName);
 		if (channel->getIsOperator(_client->getNickName()))
 			channel->removeOperator(*_client);
 		channel->removeUser(*_client);
 	}
 	// should send stuff
-	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+	sendToChannel(_stringToSend, _channelName);
 }
 
 void	Command::handlePing()
@@ -221,7 +219,7 @@ void	Command::handleNotice()
 	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
 	_stringToSend = "";
 	// check if it fails and handle it
-	if (selfClientSend(_stringToSend, _client->getFd()) < 0) std::cout << "failed to send" << std::endl;
+	selfClientSend(_stringToSend, _client->getFd());
 }
 
 void	Command::handleTopic()
@@ -264,7 +262,7 @@ void	Command::handleTopic()
 	else
 		ERR_CHANOPRIVSNEEDED(_channelName);
 	// check if it fails and handle it
-	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+	sendToChannel(_stringToSend, _channelName);
 }
 
 void	Command::handlePrivmsg()
@@ -294,12 +292,12 @@ void	Command::handlePrivmsg()
 			// Add protection
 		if (!channel) ERR_NOSUCHCHANNEL();
 		if (!channel->getIsMember(_client->getNickName())) ERR_CANNOTSENDTOCHAN(_channelName);
-		if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
+		sendToChannel(_stringToSend, _channelName);
 	}
 	else
 	{
 		Client* client = server::getClientByFd(server::getClientFdByName(_target));
-		if (selfClientSend(_stringToSend, client->getFd()) < 0) std::cout << "failed to send" << std::endl;
+		selfClientSend(_stringToSend, client->getFd());
 	}
 }
 
@@ -331,7 +329,7 @@ void	Command::handleInvite()
 	}
 	_stringToSend.append(":" + _client->getIdenClient()+ " 341 : INVITE " + _nickName + " " + _channelName + "\r\n");
 	Client* target = server::getClientByFd(server::getClientFdByName(_nickName));
-	if (selfClientSend(_stringToSend, target->getFd()) < 0) std::cout << "failed to send" << std::endl;
+	selfClientSend(_stringToSend, target->getFd());
 }
 
 void	Command::handleKick()
@@ -362,7 +360,7 @@ void	Command::handleKick()
 	else
 		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _nickName + " :" + _reason + "\r\n";
 	channel->removeUser(*client);
-	if (selfClientSend(_stringToSend, client->getFd()) < 0) std::cout << "failed to send" << std::endl;
+	selfClientSend(_stringToSend, client->getFd());
 }
 
 void	Command::handleMode()
@@ -425,7 +423,7 @@ void	Command::handleMode()
 		_stringToSend.append(" " + _mode);
 		_stringToSend.append(" " + _parameter);
 	}
-	if (selfClientSend(_stringToSend, _client->getFd()) < 0) std::cout << "Failed to send msg to the client" << std::endl;
+	selfClientSend(_stringToSend, _client->getFd());
 }
 
 void	Command::handleQuit()
@@ -454,7 +452,7 @@ void	Command::handleQuit()
 			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
 			if (channel != NULL)
 			{
-				if (sendToChannel(_stringToSend, (*tmpChannel)->getName()) < 0 ) std::cout << "Failed to send to the channel" << std::endl;
+				sendToChannel(_stringToSend, (*tmpChannel)->getName());
 				(*tmpChannel)->removeUser(*_client);
 				if ((*tmpChannel)->getIsOperator(_client->getNickName()))
 					(*tmpChannel)->removeOperator(*_client);
@@ -463,7 +461,7 @@ void	Command::handleQuit()
 	}
 	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
 	close(_client->getFd());
-	server::_clientList.erase(_client->getFd());
-	server::_clientFDs.erase(server::_clientFDs.begin() + _i);
+	server::clientList.erase(_client->getFd());
+	server::clientFDs.erase(server::clientFDs.begin() + _i);
 	delete _client;
 }

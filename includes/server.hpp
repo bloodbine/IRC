@@ -35,9 +35,10 @@ class server
 		bool				_finish;
 
 	public:
+		static	std::multimap<int, std::string>			messageList;
 		static	std::map<std::string, Channel*>		channelList;
-		static	std::map<int, Client*>				_clientList;
-		static	std::vector<pollfd>					_clientFDs;
+		static	std::map<int, Client*>				clientList;
+		static	std::vector<pollfd>					clientFDs;
 		server(int port, std::string pass);
 		~server();
 

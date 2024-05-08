@@ -4,9 +4,10 @@
 #include <fcntl.h>
 #include <utility>
 
+std::multimap<int, std::string>		server::messageList;
 std::map<std::string, Channel*>	server::channelList;
-std::map<int, Client*>			server::_clientList;
-std::vector<pollfd>				server::_clientFDs;
+std::map<int, Client*>			server::clientList;
+std::vector<pollfd>				server::clientFDs;
 std::string						server::_hostname;
 std::string						server::_serverIp;
 std::string						server::_creationTime;
@@ -46,7 +47,7 @@ server::server(int port, std::string pass) : _finish(false)
 	server.fd = this->_socketfd;
 	server.events = POLLIN;
 	server.revents = 0;
-	this->_clientFDs.push_back(server);
+	this->clientFDs.push_back(server);
 	addrStructToString(_serverIp, _hostname);
 	std::cerr << "Host and IP: " << _hostname << " " << _serverIp << std::endl;
 	_creationTime = getTimestamp();
@@ -60,8 +61,8 @@ int			server::getPort() {return this->_port;};
 
 int	server::getClientFdByName(const std::string& clientName)
 {
-	std::map<int, Client*>::iterator itr = _clientList.begin();
-	std::map<int, Client*>::iterator end = _clientList.end();
+	std::map<int, Client*>::iterator itr = clientList.begin();
+	std::map<int, Client*>::iterator end = clientList.end();
 	for (; itr != end; itr++) {
 		if ((*itr).second->getNickName() == clientName) return (*itr).first;
 	}
@@ -74,13 +75,13 @@ void server::handleClient()
 	listen(this->_socketfd, 5);
 	while (!_finish)
 	{
-		int ret = poll(&this->_clientFDs[0], this->_clientFDs.size(), -1);
+		int ret = poll(&this->clientFDs[0], this->clientFDs.size(), -1);
 		if (ret == -1)
 		{
 			perror("poll");
 			break;
 		}
-		if (this->_clientFDs[0].revents == POLLIN)
+		if (this->clientFDs[0].revents & POLLIN)
 		{
 			sockaddr_in incClientAddr;
 			socklen_t incClientAddrLen = sizeof(incClientAddr);
@@ -95,38 +96,37 @@ void server::handleClient()
 				incClientTemp.revents = 0;
 				if (fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK) == -1)
 					perror("fcntl");
-				this->_clientFDs.push_back(incClientTemp);
-				this->_clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(this->_pass, incClientTemp.fd)));
+				this->clientFDs.push_back(incClientTemp);
+				this->clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(this->_pass, incClientTemp.fd)));
 				std::cout << "New Client " << incClientTemp.fd << " connected : " << inet_ntoa(incClientAddr.sin_addr) << std::endl;
-				this->_clientFDs[0].revents = 0;
+				this->clientFDs[0].revents = 0;
 			}
 		}
 
-		for (unsigned int i = 1; i < this->_clientFDs.size(); ++i)
+		for (unsigned int i = 1; i < this->clientFDs.size(); ++i)
 		{
-			if (this->_clientFDs[i].revents & POLLIN)
+			if (this->clientFDs[i].revents & POLLIN)
 			{
-				Client *client = this->_clientList[this->_clientFDs[i].fd];
+				Client *client = this->clientList[this->clientFDs[i].fd];
 				char buffer[1024];
 				bzero(buffer, sizeof(buffer));
-				int bytesRead = recv(this->_clientFDs[i].fd, buffer, 1024, 0);
-				this->_clientFDs[i].revents = 0;
+				int bytesRead = recv(this->clientFDs[i].fd, buffer, 1024, 0);
 				std::vector<Channel*>	clientChannelList = client->getChannelList();
 				switch(bytesRead)
 				{
 					case -1:
-						std::cerr << "Client " << this->_clientFDs[i].fd << " error: ";
+						std::cerr << "Client " << this->clientFDs[i].fd << " error: ";
 						std::cerr << errno << " ";
 						perror("recv");
-						this->_clientList.erase(this->_clientFDs[i].fd);
-						this->_clientFDs.erase(this->_clientFDs.begin() + i);
+						this->clientList.erase(this->clientFDs[i].fd);
+						this->clientFDs.erase(this->clientFDs.begin() + i);
 						delete client;
 						break;
 					case 0:
-						std::cout << "Client " << this->_clientFDs[i].fd << " disconnected" << std::endl;
-						close(this->_clientFDs[i].fd);
-						this->_clientList.erase(this->_clientFDs[i].fd);
-						this->_clientFDs.erase(this->_clientFDs.begin() + i);
+						std::cout << "Client " << this->clientFDs[i].fd << " disconnected" << std::endl;
+						close(this->clientFDs[i].fd);
+						this->clientList.erase(this->clientFDs[i].fd);
+						this->clientFDs.erase(this->clientFDs.begin() + i);
 						if (clientChannelList.size() > 0)
 						{
 							std::vector<Channel*>::iterator	tmpChannel = clientChannelList.begin();
@@ -153,11 +153,24 @@ void server::handleClient()
 						catch (std::exception& e)
 						{
 							// Needs to do something else in case it failes to send
-							if (selfClientSend(e.what(), this->_clientFDs[i].fd) < 0) std::cout << "failed to send" << std::endl;
+							selfClientSend(e.what(), this->clientFDs[i].fd);
 						}
 						break ;
 				}
 			}
+			if (this->clientFDs[i].revents & POLLOUT && messageList.size() != 0)
+			{
+				std::multimap<int, std::string>::iterator message = messageList.equal_range(i).first;
+				if (message != server::messageList.end())
+				{
+					int senderr = send(this->clientFDs[i].fd, (message->second).c_str(), (message->second).length(), 0);
+					if (senderr < 0)
+						perror("send");
+					else
+						messageList.erase(message);
+				}
+			}
+			this->clientFDs[i].revents = 0;
 		}
 	}
 };
@@ -198,12 +211,12 @@ Channel* server::getChannelByName(const std::string& channelName) {
 	return NULL;
 }
 
-void	server::addClient(Client *client) { _clientList[client->getFd()] = client; }
+void	server::addClient(Client *client) { clientList[client->getFd()] = client; }
 
 Client* server::getClientByFd(int fd)
 {
-	std::map<int, Client*>::iterator	 it = _clientList.find(fd);
-	if (it != _clientList.end()) {
+	std::map<int, Client*>::iterator	 it = clientList.find(fd);
+	if (it != clientList.end()) {
 		return it->second;
 	} else {
 		return NULL;
@@ -212,13 +225,13 @@ Client* server::getClientByFd(int fd)
 
 bool	server::clientExists(const std::string& clientName)
 {
-	std::map<int, Client*>::iterator itr = _clientList.begin();
-	std::map<int, Client*>::iterator end = _clientList.end();
+	std::map<int, Client*>::iterator itr = clientList.begin();
+	std::map<int, Client*>::iterator end = clientList.end();
 	for (; itr != end; ++itr) {
 		if ((*itr).second->getNickName() == clientName) return true;
 	}
 	return (false);
 }
 
-std::map<int, Client*>	server::getClientList() { return _clientList; }
+std::map<int, Client*>	server::getClientList() { return clientList; }
 std::map<std::string, Channel*>	server::getChannelList() { return channelList; }

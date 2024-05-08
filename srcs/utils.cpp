@@ -131,7 +131,7 @@ void	signal_handler(int signal)
 	std::map<int, Client*>::iterator		end2 = clientList.end();
 	for (; itr2 != end2; ++itr2) delete (*itr2).second;
 	
-	// std::map<int, Client*>				_clientList;
+	// std::map<int, Client*>				clientList;
 	std::cout << "Signal was called!" << std::endl;
 }
 
@@ -386,16 +386,16 @@ void	ERR_CANNOTSENDTOCHAN(const std::string& channelName)
 Normally used to send error message or feedback to the client that
 made the request.
 */
-int	selfClientSend(const std::string& stringToSend, int toSendFd)
+void	selfClientSend(const std::string& stringToSend, int toSendFd)
 {
-	return (send(toSendFd, stringToSend.c_str(), stringToSend.length(), 0));
+	server::messageList.insert(std::pair<int, std::string>(toSendFd, stringToSend));
 }
 
 /*
 On failure returns -1.
 On success returns 1
 */
-int	sendToChannel(const std::string& stringToSend, const std::string& channelName)
+void	sendToChannel(const std::string& stringToSend, const std::string& channelName)
 {
 	if (server::channelExists(channelName) == true)
 	{
@@ -407,8 +407,7 @@ int	sendToChannel(const std::string& stringToSend, const std::string& channelNam
 		{
 			Client*	tmpClient = (*itr).second;
 			int	toSendFd = tmpClient->getFd();
-			if (send(toSendFd, stringToSend.c_str(), stringToSend.length(), 0) < 0) return -1;
+			server::messageList.insert(std::pair<int, std::string>(toSendFd, stringToSend));
 		}
 	}
-	return (1);
 }
