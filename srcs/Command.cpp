@@ -1,72 +1,72 @@
 #include "Command.hpp"
 #include "utils.hpp"
 
-Command::Command(const std::vector<std::string>& vec, Client *client, int i) : _client(client), _vec(vec), 
-																		_size(vec.size()), _cmdType(-1),
-																		_stringToSend(""),
-																		_nickName(""),
-																		_userName(""),
-																		_realName(""),
-																		_channelName(""),
-																		_chanKey(""),
-																		_reasson("no reason was specified."),
-																		_serverName(""),
-																		_topic(""),
-																		_msg(""),
-																		_target(""),
-																		_targetIsChannel(false),
-																		_clearTopic(false),
-																		_i(i),
-																		_channelObj(NULL),
-																		_mode(""),
-																		_parameter("")
+Command::Command(const std::vector<std::string>& vec, Client *client, int i) :	_client(client), _vec(vec), 
+																				_size(vec.size()), _cmdType(-1),
+																				_stringToSend(""),
+																				_nickName(""),
+																				_userName(""),
+																				_realName(""),
+																				_channelName(""),
+																				_chanKey(""),
+																				_reason("no reason was specified."),
+																				_serverName(""),
+																				_topic(""),
+																				_msg(""),
+																				_target(""),
+																				_targetIsChannel(false),
+																				_clearTopic(false),
+																				_i(i),
+																				_channelObj(NULL),
+																				_mode(""),
+																				_parameter("")
 {
 	if (!client) throw std::invalid_argument("You can't provide a NULL Client!");
 	_cmdType = getCmdType(vec[0]);
 	switch (_cmdType)
 	{
-	case PASS:
-		handlePass();
-		break;
-	case NICK:
-		handleNick();
-		break;
-	case USER:
-		handleUser();
-		break;
-	case PART:
-		handlePart();
-		break;
-	case JOIN:
-		handleJoin();
-		break;
-	case PING:
-		handlePing();
-		break;
-	case NOTICE:
-		handleNotice();
-		break;
-	case TOPIC:
-		handleTopic();
-		break;
-	case PRIVMSG:
-		handlePrivmsg();
-		break;
-	case INVITE:
-		handleInvite();
-		break;
-	case KICK:
-		handleKick();
-		break;
-	case MODE:
-		handleMode();
-		break;
-	case QUIT:
-		handleQuit();
-		break;
-	default:
-		ERR_INVALIDCOMMAND();
-		break;
+		case PASS:
+			handlePass();
+			break;
+		case NICK:
+			handleNick();
+			break;
+		case USER:
+			handleUser();
+			break;
+		case PART:
+			handlePart();
+			break;
+		case JOIN:
+			handleJoin();
+			break;
+		case PING:
+			handlePing();
+			break;
+		case NOTICE:
+			handleNotice();
+			break;
+		case TOPIC:
+			handleTopic();
+			break;
+		case PRIVMSG:
+			handlePrivmsg();
+			break;
+		case INVITE:
+			handleInvite();
+			break;
+		case KICK:
+			handleKick();
+			break;
+		case MODE:
+			handleMode();
+			break;
+		case QUIT:
+			handleQuit();
+			break;
+		default:
+			ERR_INVALIDCOMMAND();
+			break;
 	}
 }
 
@@ -179,15 +179,15 @@ void	Command::handlePart()
 	if (server::channelExists(_channelName) == false) ERR_NOSUCHCHANNEL();
 	if (_size >= 3)
 	{
-		_reasson = _vec[2];
-		for (size_t i = 3 ; i < _size; i++) _reasson += " " + _vec[i];
+		_reason = _vec[2];
+		for (size_t i = 3 ; i < _size; i++) _reason += " " + _vec[i];
 	}
 	Channel* channel = server::getChannelByName(_channelName);
 	if (channel)
 	{
 		if (!channel) ERR_NOTONCHANNEL();
 		if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
-		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reasson + "\r\n";
+		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reason + "\r\n";
 		if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
 		if (channel->getIsOperator(_client->getNickName()))
 			channel->removeOperator(*_client);
@@ -342,14 +342,14 @@ void	Command::handleKick()
 		// Check if is valid nick name
 		if (validNick(_vec[2]) == false) ERR_ERRONEUSNICKNAME(_vec[2]);
 		_nickName = _vec[2];
-		// Read reasson
+		// Read reason
 		if (_size >= 4)
 		{
-			if (_vec[3][0] == ':') _reasson = _vec[3].substr(1);
-			else _reasson = _vec[3];
-			for (size_t i = 4; i < _size; i++) _reasson += " " + _vec[i];
+			if (_vec[3][0] == ':') _reason = _vec[3].substr(1);
+			else _reason = _vec[3];
+			for (size_t i = 4; i < _size; i++) _reason += " " + _vec[i];
 		}
-		else _reasson = "it's the wish of the channel operator";
+		else _reason = "it's the wish of the channel operator";
 
 	if (server::channelExists(_channelName) == false) ERR_NOSUCHCHANNEL();
 	Channel *channel = server::getChannelByName(_channelName);
@@ -358,9 +358,9 @@ void	Command::handleKick()
 	if (channel->getIsOperator(_client->getNickName()) == false) ERR_CHANOPRIVSNEEDED(_client->getNickName());
 	Client* client = server::getClientByFd(server::getClientFdByName(_nickName));
 	if (_channelName.size() != 0)
-		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _channelName + " " + _nickName + " :" + _reasson + "\r\n";
+		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _channelName + " " + _nickName + " :" + _reason + "\r\n";
 	else
-		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _nickName + " :" + _reasson + "\r\n";
+		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _nickName + " :" + _reason + "\r\n";
 	channel->removeUser(*client);
 	if (selfClientSend(_stringToSend, client->getFd()) < 0) std::cout << "failed to send" << std::endl;
 }
@@ -433,8 +433,8 @@ void	Command::handleQuit()
 	if (!_client->getIsregistered()) ERR_NOTREGISTERED();
 	if (_size > 1)
 	{
-		_reasson += _vec[1].substr(1);
-		for (size_t i = 2; i < _size; i++) _reasson += " " + _vec[i];
+		_reason += _vec[1].substr(1);
+		for (size_t i = 2; i < _size; i++) _reason += " " + _vec[i];
 	}
 	std::vector<Channel*>	channelList = _client->getChannelList();
 	if (channelList.size() > 0)
@@ -444,13 +444,13 @@ void	Command::handleQuit()
 		std::cout << "The client is member of the next channels: " << std::endl;
 		for (; tmpChannel != end; ++tmpChannel)
 		{
-			std::string _reasson = "no reasson";
+			std::string _reason = "no reason";
 			if (_vec.size() > 1)
 			{
-				_reasson = _vec[1];
-				for (size_t i = 2; i < _vec.size(); i++) _reasson += " " + _vec[i];
+				_reason = _vec[1];
+				for (size_t i = 2; i < _vec.size(); i++) _reason += " " + _vec[i];
 			}
-			_stringToSend = _client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + _reasson + "\r\n";
+			_stringToSend = _client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + _reason + "\r\n";
 			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
 			if (channel != NULL)
 			{

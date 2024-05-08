@@ -100,20 +100,20 @@ If it is not a valid command returns -1.
 */
 int	getCmdType(const std::string& cmd)
 {
-	if (cmd == "PASS") return PASS;
-	if (cmd == "NICK") return NICK;
-	if (cmd == "USER") return USER;
-	if (cmd == "PART") return PART;
-	if (cmd == "JOIN") return JOIN;
-	if (cmd == "PING") return PING;
-	if (cmd == "NOTICE") return NOTICE;
-	if (cmd == "TOPIC") return TOPIC;
-	if (cmd == "PRIVMSG") return PRIVMSG;
-	if (cmd == "INVITE") return INVITE;
-	if (cmd == "KICK") return KICK;
-	if (cmd == "QUIT") return QUIT;
-	if (cmd == "MODE") return MODE;	
-	if (cmd == "SHUTDOWN") return SHUTDOWN;
+	if (cmd == "PASS")		return PASS;
+	if (cmd == "NICK")		return NICK;
+	if (cmd == "USER")		return USER;
+	if (cmd == "PART")		return PART;
+	if (cmd == "JOIN")		return JOIN;
+	if (cmd == "PING")		return PING;
+	if (cmd == "NOTICE")	return NOTICE;
+	if (cmd == "TOPIC")		return TOPIC;
+	if (cmd == "PRIVMSG")	return PRIVMSG;
+	if (cmd == "INVITE")	return INVITE;
+	if (cmd == "KICK")		return KICK;
+	if (cmd == "QUIT")		return QUIT;
+	if (cmd == "MODE")		return MODE;	
+	if (cmd == "SHUTDOWN")	return SHUTDOWN;
 	return -1;
 }
 
@@ -124,12 +124,11 @@ void	signal_handler(int signal)
 	std::map<std::string, Channel*>					channelList = server::getChannelList();
 	std::map<std::string, Channel*>::iterator		itr1 = channelList.begin();
 	std::map<std::string, Channel*>::iterator		end1 = channelList.end();
-
 	for (; itr1 != end1; ++itr1) delete (*itr1).second;
+
 	std::map<int, Client*>					clientList = server::getClientList();
 	std::map<int, Client*>::iterator		itr2 = clientList.begin();
 	std::map<int, Client*>::iterator		end2 = clientList.end();
-
 	for (; itr2 != end2; ++itr2) delete (*itr2).second;
 	
 	// std::map<int, Client*>				_clientList;

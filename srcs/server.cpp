@@ -58,7 +58,7 @@ std::string	server::getPass() {return this->_pass;};
 int			server::getSocketfd() {return this->_socketfd;};
 int			server::getPort() {return this->_port;};
 
-int							server::getClientFdByName(const std::string& clientName)
+int	server::getClientFdByName(const std::string& clientName)
 {
 	std::map<int, Client*>::iterator itr = _clientList.begin();
 	std::map<int, Client*>::iterator end = _clientList.end();
@@ -67,8 +67,6 @@ int							server::getClientFdByName(const std::string& clientName)
 	}
 	return -1;
 }
-
-
 
 void server::handleClient()
 {
@@ -93,7 +91,7 @@ void server::handleClient()
 			{
 				pollfd incClientTemp;
 				incClientTemp.fd = incClientSocket;
-				incClientTemp.events = POLLIN;
+				incClientTemp.events = POLLIN | POLLOUT;
 				incClientTemp.revents = 0;
 				if (fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK) == -1)
 					perror("fcntl");
@@ -164,19 +162,19 @@ void server::handleClient()
 	}
 };
 
-void	server::setServerIp(const std::string& ip) { _serverIp = ip; }
+void			server::setServerIp(const std::string& ip) { _serverIp = ip; }
 
 std::string&	server::getServerIp()  { return _serverIp; }
 
-void	server::setHostname(const std::string& hostname) { _hostname = hostname; }
+void			server::setHostname(const std::string& hostname) { _hostname = hostname; }
 
 std::string&	server::getHostname()  { return _hostname; }
 
-void	server::setCreationTime(const std::string& timestamp) { _creationTime = timestamp; }
+void			server::setCreationTime(const std::string& timestamp) { _creationTime = timestamp; }
 
 std::string&	server::getCreationTime()  { return _creationTime; };
 
-bool	server::channelExists(const std::string& channelName){ return (channelList.find(channelName) != channelList.end()); }
+bool			server::channelExists(const std::string& channelName){ return (channelList.find(channelName) != channelList.end()); }
 
 void	server::addChannel(Channel *channel) { channelList[channel->getName()] = channel; }
 
@@ -205,11 +203,11 @@ void	server::addClient(Client *client) { _clientList[client->getFd()] = client; 
 Client* server::getClientByFd(int fd)
 {
 	std::map<int, Client*>::iterator	 it = _clientList.find(fd);
-    if (it != _clientList.end()) {
-        return it->second;
-    } else {
-        return NULL;
-    }
+	if (it != _clientList.end()) {
+		return it->second;
+	} else {
+		return NULL;
+	}
 }
 
 bool	server::clientExists(const std::string& clientName)

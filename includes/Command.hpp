@@ -20,7 +20,7 @@ private:
 	std::string	_realName;
 	std::string	_channelName;
 	std::string	_chanKey;
-	std::string	_reasson;
+	std::string	_reason;
 	std::string	_serverName;
 	std::string _topic;
 	std::string _msg;
