@@ -193,6 +193,8 @@ void	Command::handlePart()
 			channel->removeOperator(*_client);
 		channel->removeUser(*_client);
 	}
+	// should send stuff
+	if (sendToChannel(_stringToSend, _channelName) < 0) std::cout << "failed to send" << std::endl;
 }
 
 void	Command::handlePing()
