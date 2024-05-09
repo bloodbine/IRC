@@ -145,7 +145,15 @@ void server::handleClient()
 						delete client;
 						break;
 					default:
-						std::vector<std::string>	vec = getVector(buffer);
+						std::string	tmp(buffer);
+						
+						while (tmp.find('\n') == std::string::npos)
+						{
+							bzero(buffer, sizeof(buffer));
+							bytesRead = recv(this->clientFDs[i].fd, buffer, 1024, 0);
+							tmp += buffer;
+						}
+						std::vector<std::string>	vec = getVector((char *)(tmp.c_str()));
 						try
 						{
 							if (vec.size() > 0) Command	cmd(vec, client, i);
