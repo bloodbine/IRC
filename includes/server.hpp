@@ -27,12 +27,12 @@ class server
 	static std::string		_hostname;
 	static std::string		_serverIp;
 	static std::string		_creationTime;
+	static bool				_finish;
 	private:
 		struct sockaddr_in	_address;
 		std::string			_pass;
 		int					_socketfd;
 		int					_port;
-		bool				_finish;
 
 	public:
 		static	std::multimap<int, std::string>		messageList;
@@ -59,6 +59,7 @@ class server
 		static bool								clientExists(const std::string& clientName);
 		static int								getClientFdByName(const std::string& clientName);
 		static std::string&						getServerIp();
+		static void								setFinished(bool status);
 		void									setHostname(const std::string& hostname);
 		static std::string&						getHostname();
 		void									setCreationTime(const std::string& timestamp);

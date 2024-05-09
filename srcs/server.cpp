@@ -11,53 +11,62 @@ std::vector<pollfd>				server::clientFDs;
 std::string						server::_hostname;
 std::string						server::_serverIp;
 std::string						server::_creationTime;
+bool							server::_finish;
 
-server::server(int port, std::string pass) : _finish(false)
+server::server(int port, std::string pass)
 {
-	if (!port || port <= 0)
-		throw std::logic_error("Missing or Invalid Port");
-	if (pass.empty())
-		throw std::logic_error("Missing Password");
-	this->_port = port;
-	this->_pass = pass;
-	bzero((char *)&this->_address, sizeof(this->_address));
-	this->_address.sin_family = AF_INET;
-	this->_address.sin_addr.s_addr = INADDR_ANY;
-	inet_pton(AF_INET, "0.0.0.0", &_address.sin_addr);
-	std::cout << this->_port << std::endl;
-	this->_address.sin_port = htons(this->_port);
-	this->_socketfd = socket(AF_INET, SOCK_STREAM, 0);
-	int enable = 1;
-	linger lin;
-	lin.l_onoff = 0;
-	lin.l_linger = 0;
-	if (this->_socketfd == -1)
-		throw std::logic_error("Failed to create Server socket");
-	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1)
-		throw std::logic_error(std::string((char *)("Failed to set Server socket Address option: ")) + std::string(strerror(errno)));
-	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(enable)) == -1)
-		throw std::logic_error(std::string((char *)"Failed to set Server socket Port option"));
-	if (setsockopt(this->_socketfd, SOL_SOCKET, SO_LINGER, &lin, sizeof(lin)) == -1)
-		throw std::logic_error(std::string((char *)"Failed to set Server socket Linger option"));
-	if (fcntl(this->_socketfd, F_SETFL, O_NONBLOCK) == -1)
-		throw std::logic_error("Failed to set Server socket Non-Block flag");
-	if (bind(this->_socketfd, (struct sockaddr *)&this->_address, sizeof(this->_address)) == -1)
-		throw std::logic_error("Failed to bind Socket");
-	pollfd server;
-	server.fd = this->_socketfd;
-	server.events = POLLIN;
-	server.revents = 0;
-	this->clientFDs.push_back(server);
-	addrStructToString(_serverIp, _hostname);
-	std::cerr << "Host and IP: " << _hostname << " " << _serverIp << std::endl;
-	_creationTime = getTimestamp();
+	try
+	{
+		if (!port || port <= 0)
+			throw std::logic_error("Missing or Invalid Port");
+		if (pass.empty())
+			throw std::logic_error("Missing Password");
+		_port = port;
+		_pass = pass;
+		bzero((char *)&_address, sizeof(_address));
+		_address.sin_family = AF_INET;
+		_address.sin_addr.s_addr = INADDR_ANY;
+		inet_pton(AF_INET, "0.0.0.0", &_address.sin_addr);
+		std::cout << _port << std::endl;
+		_address.sin_port = htons(_port);
+		_socketfd = socket(AF_INET, SOCK_STREAM, 0);
+		int enable = 1;
+		linger lin;
+		lin.l_onoff = 0;
+		lin.l_linger = 0;
+		if (_socketfd == -1)
+			throw std::logic_error("Failed to create Server socket");
+		if (setsockopt(_socketfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1)
+			throw std::logic_error(std::string((char *)("Failed to set Server socket Address option: ")) + std::string(strerror(errno)));
+		if (setsockopt(_socketfd, SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(enable)) == -1)
+			throw std::logic_error(std::string((char *)"Failed to set Server socket Port option"));
+		if (setsockopt(_socketfd, SOL_SOCKET, SO_LINGER, &lin, sizeof(lin)) == -1)
+			throw std::logic_error(std::string((char *)"Failed to set Server socket Linger option"));
+		if (fcntl(_socketfd, F_SETFL, O_NONBLOCK) == -1)
+			throw std::logic_error("Failed to set Server socket Non-Block flag");
+		if (bind(_socketfd, (struct sockaddr *)&_address, sizeof(_address)) == -1)
+			throw std::logic_error("Failed to bind Socket");
+		pollfd server;
+		server.fd = _socketfd;
+		server.events = POLLIN;
+		server.revents = 0;
+		clientFDs.push_back(server);
+		addrStructToString(_serverIp, _hostname);
+		std::cerr << "Host and IP: " << _hostname << " " << _serverIp << std::endl;
+		_creationTime = getTimestamp();
+	}
+	catch (std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+		exit(1);
+	}
 };
 
-server::~server() { close(this->_socketfd); }
+server::~server() { close(_socketfd); }
 
-std::string	server::getPass() {return this->_pass;};
-int			server::getSocketfd() {return this->_socketfd;};
-int			server::getPort() {return this->_port;};
+std::string	server::getPass() {return _pass;};
+int			server::getSocketfd() {return _socketfd;};
+int			server::getPort() {return _port;};
 
 int	server::getClientFdByName(const std::string& clientName)
 {
@@ -72,20 +81,20 @@ int	server::getClientFdByName(const std::string& clientName)
 void server::handleClient()
 {
 	std::signal(SIGINT, signal_handler);
-	listen(this->_socketfd, 5);
+	listen(_socketfd, 5);
 	while (!_finish)
 	{
-		int ret = poll(&this->clientFDs[0], this->clientFDs.size(), -1);
+		int ret = poll(&clientFDs[0], clientFDs.size(), -1);
 		if (ret == -1)
 		{
 			perror("poll");
 			break;
 		}
-		if (this->clientFDs[0].revents & POLLIN)
+		if (clientFDs[0].revents & POLLIN)
 		{
 			sockaddr_in incClientAddr;
 			socklen_t incClientAddrLen = sizeof(incClientAddr);
-			int incClientSocket = accept(this->_socketfd,
+			int incClientSocket = accept(_socketfd,
 			reinterpret_cast<sockaddr*>(&incClientAddr),
 			&incClientAddrLen);
 			if (incClientSocket != -1)
@@ -96,37 +105,37 @@ void server::handleClient()
 				incClientTemp.revents = 0;
 				if (fcntl(incClientTemp.fd, F_SETFL, O_NONBLOCK) == -1)
 					perror("fcntl");
-				this->clientFDs.push_back(incClientTemp);
-				this->clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(this->_pass, incClientTemp.fd)));
+				clientFDs.push_back(incClientTemp);
+				clientList.insert(std::pair<int, Client*>(incClientTemp.fd, new Client(_pass, incClientTemp.fd)));
 				std::cout << "New Client " << incClientTemp.fd << " connected : " << inet_ntoa(incClientAddr.sin_addr) << std::endl;
-				this->clientFDs[0].revents = 0;
+				clientFDs[0].revents = 0;
 			}
 		}
 
-		for (unsigned int i = 1; i < this->clientFDs.size(); ++i)
+		for (unsigned int i = 1; i < clientFDs.size(); ++i)
 		{
-			if (this->clientFDs[i].revents & POLLIN)
+			if (clientFDs[i].revents & POLLIN)
 			{
-				Client *client = this->clientList[this->clientFDs[i].fd];
+				Client *client = clientList[clientFDs[i].fd];
 				char buffer[1024];
 				bzero(buffer, sizeof(buffer));
-				int bytesRead = recv(this->clientFDs[i].fd, buffer, 1024, 0);
+				int bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
 				std::vector<Channel*>	clientChannelList = client->getChannelList();
 				switch(bytesRead)
 				{
 					case -1:
-						std::cerr << "Client " << this->clientFDs[i].fd << " error: ";
+						std::cerr << "Client " << clientFDs[i].fd << " error: ";
 						std::cerr << errno << " ";
 						perror("recv");
-						this->clientList.erase(this->clientFDs[i].fd);
-						this->clientFDs.erase(this->clientFDs.begin() + i);
+						clientList.erase(clientFDs[i].fd);
+						clientFDs.erase(clientFDs.begin() + i);
 						delete client;
 						break;
 					case 0:
-						std::cout << "Client " << this->clientFDs[i].fd << " disconnected" << std::endl;
-						close(this->clientFDs[i].fd);
-						this->clientList.erase(this->clientFDs[i].fd);
-						this->clientFDs.erase(this->clientFDs.begin() + i);
+						std::cout << "Client " << clientFDs[i].fd << " disconnected" << std::endl;
+						close(clientFDs[i].fd);
+						clientList.erase(clientFDs[i].fd);
+						clientFDs.erase(clientFDs.begin() + i);
 						if (clientChannelList.size() > 0)
 						{
 							std::vector<Channel*>::iterator	tmpChannel = clientChannelList.begin();
@@ -150,7 +159,7 @@ void server::handleClient()
 						while (tmp.find('\n') == std::string::npos)
 						{
 							bzero(buffer, sizeof(buffer));
-							bytesRead = recv(this->clientFDs[i].fd, buffer, 1024, 0);
+							bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
 							tmp += buffer;
 						}
 						std::vector<std::string>	vec = getVector((char *)(tmp.c_str()));
@@ -161,24 +170,24 @@ void server::handleClient()
 						catch (std::exception& e)
 						{
 							// Needs to do something else in case it failes to send
-							selfClientSend(e.what(), this->clientFDs[i].fd);
+							selfClientSend(e.what(), clientFDs[i].fd);
 						}
 						break ;
 				}
 			}
-			if (this->clientFDs[i].revents & POLLOUT && messageList.size() != 0)
+			if (clientFDs[i].revents & POLLOUT && messageList.size() != 0)
 			{
-				std::multimap<int, std::string>::iterator message = messageList.equal_range(this->clientFDs[i].fd).first;
+				std::multimap<int, std::string>::iterator message = messageList.equal_range(clientFDs[i].fd).first;
 				if (message != server::messageList.end())
 				{
-					int senderr = send(this->clientFDs[i].fd, (message->second).c_str(), (message->second).length(), 0);
+					int senderr = send(clientFDs[i].fd, (message->second).c_str(), (message->second).length(), 0);
 					if (senderr < 0)
 						perror("send");
 					else
 						messageList.erase(message);
 				}
 			}
-			this->clientFDs[i].revents = 0;
+			clientFDs[i].revents = 0;
 		}
 	}
 };
@@ -244,3 +253,4 @@ bool	server::clientExists(const std::string& clientName)
 std::map<int, Client*>	server::getClientList() { return clientList; }
 std::map<std::string, Channel*>	server::getChannelList() { return channelList; }
 std::multimap<int, std::string>	server::getMessageList() { return messageList; }
+void server::setFinished(bool status) { _finish = status; }

@@ -134,7 +134,7 @@ void	signal_handler(int signal)
 	server::getMessageList().clear();
 
 	std::cout << "Signal was called!" << std::endl;
-	exit(1);
+	server::setFinished(true);
 }
 
 bool	isInvalidChannelName(const std::string& str)
