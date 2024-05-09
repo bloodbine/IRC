@@ -231,12 +231,12 @@ bool	isValidUser(const std::vector<std::string> userInfo)
 
 void	missingPass()
 {
-	throw std::invalid_argument(" 462 :YOU MUST PROVIDE A PASSWORD FIRST => PASS <password>\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 462 :You must provide a password first: PASS <password>\r\n");
 }
 
 void	missingNick()
 {
-	throw std::invalid_argument(" 462 :You need to set NICK <nickname>!\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 462 :You need to set your nickname NICK <nickname>\r\n");
 }
 
 bool	isValidMode(const std::string& mode)
@@ -256,84 +256,83 @@ bool	stringIsNumeric(const char *string)
 
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName)
 {
-	std::string	text = "461 " + cmdName +  " :Not enough parameters\r\n";
-	throw std::invalid_argument(text);
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 461 " + cmdName +  " :Not enough parameters\r\n");
 }
 
 void	ERR_ALREADYREGISTRED()
 {
-	throw std::invalid_argument(" 462 :Unauthorized command (already registered)\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 462 :Unauthorized command (already registered)\r\n");
 }
 void	ERR_NOTREGISTERED()
 {
-	throw std::invalid_argument(" 451 :You have not registered\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 451 :You have not registered\r\n");
 }
 
 void	ERR_NOSUCHCHANNEL()
 {
-	throw std::invalid_argument(" 403 :No such channel\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 403 :No such channel\r\n");
 }
 void	ERR_NOTONCHANNEL()
 {
-	throw std::invalid_argument(" 442 :You're not on that channel\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 442 :You're not on that channel\r\n");
 }
 
 void	ERR_NOORIGIN()
 {
-	throw  std::invalid_argument(" 409 :No origin specified\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 409 :No origin specified\r\n");
 }
 
 void	ERR_NOSUCHSERVER(const std::string& server)
 {
-	throw  std::invalid_argument(server + " 402 :No such server\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 402 " + server + " :No such server\r\n");
 }
 
 void	ERR_NOSUCHNICK(const std::string& nickName)
 {
-	throw  std::invalid_argument(nickName + " 401 :No such nick/channel\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 401" + nickName + " :No such nick/channel\r\n");
 }
 
 void	ERR_ERRONEUSNICKNAME(const std::string& nickName)
 {
-	throw  std::invalid_argument(nickName + " 432 :Erroneous nickname\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 432" + nickName + " :Erroneous nickname\r\n");
 }
 
 void	ERR_NICKNAMEINUSE(const std::string& nickName)
 {
-	throw  std::invalid_argument(nickName + " 433 :Nickname is already in use\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 433 " + nickName + " :Nickname is already in use\r\n");
 }
 
 void	ERR_SYNTAXPROBLEM()
 {
-	throw  std::invalid_argument(":" + server::getHostname() + " 430 : invalid syntax my friend\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 430 : invalid syntax my friend\r\n");
 }
 
 void	ERR_UMODEUNKNOWNFLAG()
 {
-	throw  std::invalid_argument(" 501 :Unknown MODE flag\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 501 :Unknown MODE flag\r\n");
 }
 // Greg
 void	ERR_NOPRIVILEGES(const std::string& channelName)
 {
-	throw std::invalid_argument(" 481 " + channelName + " :Permission Denied- You're not an IRC operator\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 481 " + channelName + " :Permission Denied, You're not an IRC operator\r\n");
 }
 
 void	ERR_CHANNELISFULL(const std::string& channelName)
 {
-	throw std::invalid_argument(" 471 " + channelName + " :Channel is full\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 471 " + channelName + " :Channel is full\r\n");
 }
 void	ERR_INVITEONLYCHAN(const std::string& channelName)
 {
-	throw std::invalid_argument(" 473 " + channelName + " :Channel is invite-only\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 473 " + channelName + " :Channel is invite-only\r\n");
 }
 void	ERR_BADCHANNELKEY(const std::string& channelName, const std::string& reason)
 {
-	throw std::invalid_argument(" 475 " + channelName + " :" + reason + "\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 475 " + channelName + " :" + reason + "\r\n");
 }
 
 void ERR_USERONCHANNEL(const std::string& channelName)
 {
-	throw std::invalid_argument(" 443 " + channelName + " :User already on channel\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 443 " + channelName + " :User already on channel\r\n");
 }
 
 // void ERR_USERNOTINCHANNEL(const std::string& channelName,const std::string& nickName)
@@ -343,45 +342,45 @@ void ERR_USERONCHANNEL(const std::string& channelName)
 
 void ERR_BADCHANMASK(const std::string& channelName)
 {
-	throw std::invalid_argument(channelName + " :Bad Channel Mask\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 476" +channelName + " :Bad Channel Mask\r\n");
 }
 
 void ERR_CANTKICKYOURSELF()
 {
-	throw std::invalid_argument(" 462 :Dear friend, you can't kick yourself. Use PART instead\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 462 :You cannot kick yourself\r\n");
 }
 void ERR_USERNOTINCHANNEL(const std::string& channelName, const std::string& nickName)
 {
-	throw std::invalid_argument("441 " + nickName + channelName + "  :They aren't on that channel\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 441 " + nickName + " " + channelName + "  :They aren't on that channel\r\n");
 }
 void ERR_CHANOPRIVSNEEDED(const std::string& channelName)
 {
-	throw std::invalid_argument("482 " + channelName + " :You're not channel operator\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 482 " + channelName + " :You're not channel operator\r\n");
 }
 
 void ERR_TOOMANYCHANNELS(const std::string& channelName)
 {
-	throw std::invalid_argument("405 " + channelName + " :You have joined too many channels\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 405 " + channelName + " :You have joined too many channels\r\n");
 }
 
 void	ERR_INVALIDCOMMAND()
 {
-	throw std::invalid_argument(" 462 :Invalid command\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 462 :Invalid command\r\n");
 }
 
 void	ERR_PASSWDMISMATCH()
 {
-	throw std::invalid_argument(" 462 :Password incorrect\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 462 :Password incorrect\n");
 }
 
 void	ERR_NONICKNAMEGIVEN()
 {
-	throw std::invalid_argument(" 431 :No nickname given\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 431 :No nickname given\r\n");
 }
 
 void	ERR_CANNOTSENDTOCHAN(const std::string& channelName)
 {
-	throw std::invalid_argument("405 " + channelName + " :Cannot send to channel\r\n");
+	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 405 " + channelName + " :Cannot send to channel\r\n");
 }
 
 /*
@@ -393,10 +392,6 @@ void	selfClientSend(const std::string& stringToSend, int toSendFd)
 	server::messageList.insert(std::pair<int, std::string>(toSendFd, stringToSend));
 }
 
-/*
-On failure returns -1.
-On success returns 1
-*/
 void	sendToChannel(const std::string& stringToSend, const std::string& channelName)
 {
 	if (server::channelExists(channelName) == true)

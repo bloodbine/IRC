@@ -81,7 +81,11 @@ int	server::getClientFdByName(const std::string& clientName)
 void server::handleClient()
 {
 	std::signal(SIGINT, signal_handler);
-	listen(_socketfd, 5);
+	if (listen(_socketfd, 5) == -1)
+	{
+		perror("listen");
+		exit(1);
+	}
 	while (!_finish)
 	{
 		int ret = poll(&clientFDs[0], clientFDs.size(), -1);

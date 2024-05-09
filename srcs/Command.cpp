@@ -114,9 +114,7 @@ void	Command::handleUser()
 	_stringToSend += ":" + server::getHostname() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
 	_stringToSend += ":" + server::getHostname() + " 221 " + _client->getNickName() + " :0\r\n";
 	_stringToSend += ":" + server::getHostname() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
-	// MISSING TO CHECK IF IT FAILS TO SEND
 	selfClientSend(_stringToSend, _client->getFd());
-
 }
 
 void	Command::handleJoin()
@@ -460,7 +458,6 @@ void	Command::handleQuit()
 		}
 	}
 	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
-	close(_client->getFd());
 	server::clientList.erase(_client->getFd());
 	server::clientFDs.erase(server::clientFDs.begin() + _i);
 	delete _client;
