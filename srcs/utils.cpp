@@ -130,9 +130,11 @@ void	signal_handler(int signal)
 	std::map<int, Client*>::iterator		itr2 = clientList.begin();
 	std::map<int, Client*>::iterator		end2 = clientList.end();
 	for (; itr2 != end2; ++itr2) delete (*itr2).second;
-	
-	// std::map<int, Client*>				clientList;
+
+	server::getMessageList().clear();
+
 	std::cout << "Signal was called!" << std::endl;
+	exit(1);
 }
 
 bool	isInvalidChannelName(const std::string& str)

@@ -243,3 +243,4 @@ bool	server::clientExists(const std::string& clientName)
 
 std::map<int, Client*>	server::getClientList() { return clientList; }
 std::map<std::string, Channel*>	server::getChannelList() { return channelList; }
+std::multimap<int, std::string>	server::getMessageList() { return messageList; }

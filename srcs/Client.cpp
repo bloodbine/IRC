@@ -1,12 +1,9 @@
+#include "server.hpp"
 #include "Client.hpp"
 
-Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _isValidatedPassword(false), _serverPassword(serverPassword), _socketFd(fd)
-{
-	_totalChannels = 0;
-}
+Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _isValidatedPassword(false), _serverPassword(serverPassword), _totalChannels(0), _socketFd(fd) {}
 
-Client::~Client()
-{}
+Client::~Client() { close(_socketFd); }
 
 void Client::registerClient() 
 {

@@ -35,7 +35,7 @@ class server
 		bool				_finish;
 
 	public:
-		static	std::multimap<int, std::string>			messageList;
+		static	std::multimap<int, std::string>		messageList;
 		static	std::map<std::string, Channel*>		channelList;
 		static	std::map<int, Client*>				clientList;
 		static	std::vector<pollfd>					clientFDs;
@@ -53,6 +53,7 @@ class server
 		static void								addClient(Client *client);
 		static std::map<int, Client*>			getClientList();
 		static std::map<std::string, Channel*>	getChannelList();
+		static	std::multimap<int, std::string>	getMessageList();
 		static Channel*							getChannelByName(const std::string& channelName);
 		static Client*							getClientByFd(int fd);
 		static bool								clientExists(const std::string& clientName);
