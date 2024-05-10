@@ -121,66 +121,48 @@ void server::handleClient()
 			Client *client = clientList[clientFDs[i].fd];
 			char buffer[1024];
 			bzero(buffer, sizeof(buffer));
-			int bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
-			client->appendToMessage(buffer);
-			// std::cout << bytesRead << std::endl;
 			std::vector<Channel*>	clientChannelList = client->getChannelList();
-			int& zeroReadCount = client->getZeroReadCount();
 			if (clientFDs[i].revents & POLLIN)
 			{
-				switch(bytesRead)
+				int bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
+				std::cout << "After recv: " << buffer << " | " << bytesRead << std::endl;
+				if (bytesRead <= 0)
 				{
-					case -1:
-						std::cerr << "Client " << clientFDs[i].fd << " error: ";
-						std::cerr << errno << " ";
-						perror("recv");
-						clientList.erase(clientFDs[i].fd);
-						clientFDs.erase(clientFDs.begin() + i);
-						delete client;
-						break;
-					case 0:
-						if (zeroReadCount < 2)
+					std::cout << "Client " << clientFDs[i].fd << " disconnected" << std::endl;
+					if (clientChannelList.size() > 0)
+					{
+						std::vector<Channel*>::iterator	tmpChannel = clientChannelList.begin();
+						std::vector<Channel*>::iterator	end = clientChannelList.end();
+						for (; tmpChannel != end; ++tmpChannel)
 						{
-							zeroReadCount++;
-							break;
-						}
-						std::cout << "Client " << clientFDs[i].fd << " disconnected" << std::endl;
-						close(clientFDs[i].fd);
-						clientList.erase(clientFDs[i].fd);
-						clientFDs.erase(clientFDs.begin() + i);
-						if (clientChannelList.size() > 0)
-						{
-							std::vector<Channel*>::iterator	tmpChannel = clientChannelList.begin();
-							std::vector<Channel*>::iterator	end = clientChannelList.end();
-							for (; tmpChannel != end; ++tmpChannel)
+							Channel *channel = server::getChannelByName((*tmpChannel)->getName());
+							if (channel != NULL)
 							{
-								Channel *channel = server::getChannelByName((*tmpChannel)->getName());
-								if (channel != NULL)
-								{
-									(*tmpChannel)->removeUser(*client);
-									if ((*tmpChannel)->getIsOperator(client->getNickName()))
-										(*tmpChannel)->removeOperator(*client);
-								}
+								(*tmpChannel)->removeUser(*client);
+								if ((*tmpChannel)->getIsOperator(client->getNickName()))
+									(*tmpChannel)->removeOperator(*client);
 							}
 						}
-						delete client;
-						break;
-					default:
-						std::cout << "br: " << zeroReadCount << std::endl;
-						if (zeroReadCount >= 2) break;
-						if (zeroReadCount > 0) zeroReadCount = 0;
-						std::string& tmp = client->getMessage();
-						if (tmp.find("\n") != std::string::npos)
-						{
-							std::cout << "[DEBUG] Message In " << clientFDs[i].fd <<  ": " << tmp << "|";
-							std::vector<std::string> vec = getVector((char *)(tmp.c_str()));
-							tmp.clear();
-							try
-								{if (vec.size() > 0) Command cmd(vec, client);}
-							catch (std::exception& e)
-								{selfClientSend(e.what(), clientFDs[i].fd);}
-						}
-						break ;
+					}
+					close(clientFDs[i].fd);
+					clientList.erase(clientFDs[i].fd);
+					clientFDs.erase(clientFDs.begin() + i);
+					delete client;
+				}
+				else
+				{
+					std::string& tmp = client->getMessage();
+					tmp += buffer;
+					if (tmp.find("\n") != std::string::npos || tmp.find("\r\n") != std::string::npos)
+					{
+						std::cout << "[DEBUG] Message In " << clientFDs[i].fd <<  ": " << tmp;
+						std::vector<std::string> vec = getVector((char *)(tmp.c_str()));
+						tmp.clear();
+						try
+							{if (vec.size() > 0) Command cmd(vec, client);}
+						catch (std::exception& e)
+							{selfClientSend(e.what(), clientFDs[i].fd);}
+					}
 				}
 			}
 			if (clientFDs[i].revents & POLLOUT && messageList.size() != 0)
