@@ -1,7 +1,7 @@
 #include "server.hpp"
 #include "Client.hpp"
 
-Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _isValidatedPassword(false), _serverPassword(serverPassword), _totalChannels(0), _socketFd(fd) {}
+Client::Client(std::string& serverPassword, int fd): _nickName(""),_userName(""), _isRegistered(false), _isValidatedPassword(false), _serverPassword(serverPassword), _totalChannels(0), _socketFd(fd), _zeroReadCount(0) {}
 
 Client::~Client() { close(_socketFd); }
 
@@ -35,3 +35,6 @@ int						Client::getFd() const { return _socketFd; }
 int						Client::getTotalChannels() const { return _totalChannels; }
 std::vector<Channel*>	Client::getChannelList() const { return _channelList; }
 void					Client::addChannelToChannelList(Channel *channel) { _channelList.push_back(channel); }
+void					Client::appendToMessage(char *buff) { _message += buff; }
+std::string&			Client::getMessage() { return _message; }
+int&					Client::getZeroReadCount() { return _zeroReadCount; }

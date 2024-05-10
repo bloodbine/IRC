@@ -118,13 +118,16 @@ void server::handleClient()
 
 		for (unsigned int i = 1; i < clientFDs.size(); ++i)
 		{
+			Client *client = clientList[clientFDs[i].fd];
+			char buffer[1024];
+			bzero(buffer, sizeof(buffer));
+			int bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
+			client->appendToMessage(buffer);
+			// std::cout << bytesRead << std::endl;
+			std::vector<Channel*>	clientChannelList = client->getChannelList();
+			int& zeroReadCount = client->getZeroReadCount();
 			if (clientFDs[i].revents & POLLIN)
 			{
-				Client *client = clientList[clientFDs[i].fd];
-				char buffer[1024];
-				bzero(buffer, sizeof(buffer));
-				int bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
-				std::vector<Channel*>	clientChannelList = client->getChannelList();
 				switch(bytesRead)
 				{
 					case -1:
@@ -136,6 +139,11 @@ void server::handleClient()
 						delete client;
 						break;
 					case 0:
+						if (zeroReadCount < 2)
+						{
+							zeroReadCount++;
+							break;
+						}
 						std::cout << "Client " << clientFDs[i].fd << " disconnected" << std::endl;
 						close(clientFDs[i].fd);
 						clientList.erase(clientFDs[i].fd);
@@ -158,20 +166,20 @@ void server::handleClient()
 						delete client;
 						break;
 					default:
-						std::string	tmp(buffer);
-						
-						while (tmp.find('\n') == std::string::npos)
+						std::cout << "br: " << zeroReadCount << std::endl;
+						if (zeroReadCount >= 2) break;
+						if (zeroReadCount > 0) zeroReadCount = 0;
+						std::string& tmp = client->getMessage();
+						if (tmp.find("\n") != std::string::npos)
 						{
-							bzero(buffer, sizeof(buffer));
-							bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
-							tmp += buffer;
+							std::cout << "[DEBUG] Message In " << clientFDs[i].fd <<  ": " << tmp << "|";
+							std::vector<std::string> vec = getVector((char *)(tmp.c_str()));
+							tmp.clear();
+							try
+								{if (vec.size() > 0) Command cmd(vec, client);}
+							catch (std::exception& e)
+								{selfClientSend(e.what(), clientFDs[i].fd);}
 						}
-						std::cout << "[DEBUG] Message In " << clientFDs[i].fd <<  ": " << tmp;
-						std::vector<std::string>	vec = getVector((char *)(tmp.c_str()));
-						try
-							{if (vec.size() > 0) Command cmd(vec, client);}
-						catch (std::exception& e)
-							{selfClientSend(e.what(), clientFDs[i].fd);}
 						break ;
 				}
 			}
@@ -182,16 +190,16 @@ void server::handleClient()
 				{
 					std::cout << "[DEBUG] Message Out " << clientFDs[i].fd << ": " << message->second;
 					int senderr = send(clientFDs[i].fd, (message->second).c_str(), (message->second).length(), 0);
-					if (senderr < 0)
-						perror("send");
-					else
-						messageList.erase(message);
 					if (message->second.find("QUIT") != std::string::npos)
 					{
 						delete getClientByFd(message->first);
 						clientList.erase(message->first);
 						clientFDs.erase(clientFDs.begin() + i);
 					}
+					if (senderr < 0)
+						perror("send");
+					else
+						messageList.erase(message);
 				}
 			}
 			clientFDs[i].revents = 0;

@@ -20,6 +20,8 @@ class Client
 		std::vector<Channel*>	_channelList;
 		int						_totalChannels;
 		int 					_socketFd;
+		int						_zeroReadCount;
+		std::string				_message;
 	public:
 		Client(std::string& serverPassword, int fd);
 		~Client();
@@ -42,8 +44,10 @@ void							setHostname(const std::string& newHostname);
 		int						getTotalChannels() const;
 		std::string				getIdenClient() const;
 		int						getFd() const;
-		// to implement
+		int&					getZeroReadCount();
 		std::vector<Channel*>	getChannelList() const;
 		void					addChannelToChannelList(Channel *channel);
+		void					appendToMessage(char *buff);
+		std::string&			getMessage();
 };
 
