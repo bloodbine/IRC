@@ -66,6 +66,8 @@ Command::Command(const std::vector<std::string>& vec, Client *client) :	_client(
 		case WHO:
 			handleWho();
 			break;
+		case CAP:
+			break;
 		default:
 			ERR_INVALIDCOMMAND();
 			break;

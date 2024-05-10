@@ -114,6 +114,7 @@ int	getCmdType(const std::string& cmd)
 	if (cmd == "QUIT")		return QUIT;
 	if (cmd == "MODE")		return MODE;	
 	if (cmd == "WHO")		return WHO;
+	if (cmd == "CAP")		return CAP;
 	return -1;
 }
 

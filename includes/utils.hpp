@@ -34,6 +34,7 @@
 #define QUIT 11
 #define MODE 12
 #define WHO 13
+#define CAP 14
 
 void						signal_handler(int signal);
 std::string					getClientHostname(int clientFD);
