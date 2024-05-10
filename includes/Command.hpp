@@ -44,6 +44,7 @@ class Command
 		void	handleKick();
 		void	handleMode();
 		void	handleQuit();
+		void	handleWho();
 
 	public:
 		Command(const std::vector<std::string>& vec, Client *client);

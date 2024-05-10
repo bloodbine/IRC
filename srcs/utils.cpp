@@ -113,14 +113,13 @@ int	getCmdType(const std::string& cmd)
 	if (cmd == "KICK")		return KICK;
 	if (cmd == "QUIT")		return QUIT;
 	if (cmd == "MODE")		return MODE;	
-	if (cmd == "SHUTDOWN")	return SHUTDOWN;
+	if (cmd == "WHO")		return WHO;
 	return -1;
 }
 
 void	signal_handler(int signal)
 {
 	(void)signal;
-	// implement channelList and clientList getters 
 	std::map<std::string, Channel*>					channelList = server::getChannelList();
 	std::map<std::string, Channel*>::iterator		itr1 = channelList.begin();
 	std::map<std::string, Channel*>::iterator		end1 = channelList.end();

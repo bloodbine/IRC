@@ -33,7 +33,7 @@
 #define KICK 10
 #define QUIT 11
 #define MODE 12
-#define SHUTDOWN 13
+#define WHO 13
 
 void						signal_handler(int signal);
 std::string					getClientHostname(int clientFD);

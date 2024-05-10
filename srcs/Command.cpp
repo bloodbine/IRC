@@ -63,6 +63,9 @@ Command::Command(const std::vector<std::string>& vec, Client *client) :	_client(
 		case QUIT:
 			handleQuit();
 			break;
+		case WHO:
+			handleWho();
+			break;
 		default:
 			ERR_INVALIDCOMMAND();
 			break;
@@ -163,7 +166,6 @@ void	Command::handleJoin()
 		_stringToSend += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :" + channel->getTopic() + "\r\n";
 	_stringToSend += ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
 	_stringToSend += ":" + _client->getIdenClient() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
-	// check if it fails and handle it
 	sendToChannel(_stringToSend, _channelName);
 }
 
@@ -367,6 +369,7 @@ void	Command::handleMode()
 	if (server::channelExists(_vec[1]) == false) ERR_NOSUCHCHANNEL();
 	_channelName = _vec[1];
 	_channelObj = server::getChannelByName(_channelName);
+	if (_size > 2 && _vec[2][0] == 'b') return ;
 	if (_size > 2 && isValidMode(_vec[2]) == false) ERR_UMODEUNKNOWNFLAG();
 	if (_size > 2) _mode = _vec[2];
 	if (_mode.find("o") != std::string::npos && server::clientExists(_vec[3]) == false) ERR_NOSUCHNICK(_vec[3]);
@@ -446,7 +449,7 @@ void	Command::handleQuit()
 				for (size_t i = 2; i < _vec.size(); i++) _reason += " " + _vec[i];
 			}
 			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
-			if (_reason.find(":") != std::string::npos)
+			if (_reason.find(":") == std::string::npos)
 				_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " " + _reason + "\r\n";
 			else
 				_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " :" + _reason + "\r\n";
@@ -463,3 +466,8 @@ void	Command::handleQuit()
 	selfClientSend(_stringToSend, _client->getFd());
 	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
 }
+
+void	Command::handleWho()
+{
+	return ;
+};

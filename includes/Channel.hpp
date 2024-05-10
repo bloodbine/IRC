@@ -88,6 +88,8 @@ public:
 
 	std::string getClientList() const;
 
+	std::string getOperatorList() const;
+
 	std::map<std::string, Client*>& getMemberList();
 
 	std::map<std::string, Client*>& getOperatorList();

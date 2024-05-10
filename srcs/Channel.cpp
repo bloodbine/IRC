@@ -115,6 +115,24 @@ std::string Channel::getClientList() const
 	return out;
 }
 
+std::string Channel::getOperatorList() const
+{
+	std::string out;
+	std::pair<std::string, Client*>  tmp;
+	std::map<std::string, Client*>::const_iterator itr = _operatorList.begin();
+	std::map<std::string, Client*>::const_iterator end = _operatorList.end();
+	int i = 0;
+	for (; itr != end; ++itr)
+	{
+		tmp = *itr;
+		if (i > 0)
+			out += " @" + tmp.second->getNickName();
+		else out += "@" + tmp.second->getNickName();
+		i++;
+	}
+	return out;
+}
+
 std::map<std::string, Client*>& Channel::getMemberList() { return _memberList; }
 
 std::map<std::string, Client*>& Channel::getOperatorList() { return _operatorList; }
