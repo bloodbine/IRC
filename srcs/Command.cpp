@@ -1,7 +1,7 @@
 #include "Command.hpp"
 #include "utils.hpp"
 
-Command::Command(const std::vector<std::string>& vec, Client *client, int i) :	_client(client), _vec(vec), 
+Command::Command(const std::vector<std::string>& vec, Client *client) :	_client(client), _vec(vec), 
 																				_size(vec.size()), _cmdType(-1),
 																				_stringToSend(""),
 																				_nickName(""),
@@ -9,14 +9,13 @@ Command::Command(const std::vector<std::string>& vec, Client *client, int i) :	_
 																				_realName(""),
 																				_channelName(""),
 																				_chanKey(""),
-																				_reason("no reason was specified."),
+																				_reason(""),
 																				_serverName(""),
 																				_topic(""),
 																				_msg(""),
 																				_target(""),
 																				_targetIsChannel(false),
 																				_clearTopic(false),
-																				_i(i),
 																				_channelObj(NULL),
 																				_mode(""),
 																				_parameter("")
@@ -446,8 +445,11 @@ void	Command::handleQuit()
 				_reason = _vec[1];
 				for (size_t i = 2; i < _vec.size(); i++) _reason += " " + _vec[i];
 			}
-			_stringToSend = _client->getIdenClient() + " leaves the channel [" + (*tmpChannel)->getName() + "] because " + _reason + "\r\n";
 			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
+			if (_reason.find(":") != std::string::npos)
+				_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " " + _reason + "\r\n";
+			else
+				_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " :" + _reason + "\r\n";
 			if (channel != NULL)
 			{
 				sendToChannel(_stringToSend, (*tmpChannel)->getName());
@@ -457,8 +459,7 @@ void	Command::handleQuit()
 			}
 		}
 	}
+	_stringToSend = ":" + _client->getIdenClient() + " QUIT :" + _reason + "\r\n";
+	selfClientSend(_stringToSend, _client->getFd());
 	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
-	server::clientList.erase(_client->getFd());
-	server::clientFDs.erase(server::clientFDs.begin() + _i);
-	delete _client;
 }

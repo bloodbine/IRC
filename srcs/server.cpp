@@ -166,16 +166,12 @@ void server::handleClient()
 							bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
 							tmp += buffer;
 						}
+						std::cout << "[DEBUG] Message In " << clientFDs[i].fd <<  ": " << tmp;
 						std::vector<std::string>	vec = getVector((char *)(tmp.c_str()));
 						try
-						{
-							if (vec.size() > 0) Command	cmd(vec, client, i);
-						}
+							{if (vec.size() > 0) Command cmd(vec, client);}
 						catch (std::exception& e)
-						{
-							// Needs to do something else in case it failes to send
-							selfClientSend(e.what(), clientFDs[i].fd);
-						}
+							{selfClientSend(e.what(), clientFDs[i].fd);}
 						break ;
 				}
 			}
@@ -184,11 +180,18 @@ void server::handleClient()
 				std::multimap<int, std::string>::iterator message = messageList.equal_range(clientFDs[i].fd).first;
 				if (message != server::messageList.end())
 				{
+					std::cout << "[DEBUG] Message Out " << clientFDs[i].fd << ": " << message->second;
 					int senderr = send(clientFDs[i].fd, (message->second).c_str(), (message->second).length(), 0);
 					if (senderr < 0)
 						perror("send");
 					else
 						messageList.erase(message);
+					if (message->second.find("QUIT") != std::string::npos)
+					{
+						delete getClientByFd(message->first);
+						clientList.erase(message->first);
+						clientFDs.erase(clientFDs.begin() + i);
+					}
 				}
 			}
 			clientFDs[i].revents = 0;
