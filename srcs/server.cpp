@@ -121,11 +121,10 @@ void server::handleClient()
 			Client *client = clientList[clientFDs[i].fd];
 			char buffer[1024];
 			bzero(buffer, sizeof(buffer));
-			std::vector<Channel*>	clientChannelList = client->getChannelList();
+			std::vector<Channel*> clientChannelList = client->getChannelList();
 			if (clientFDs[i].revents & POLLIN)
 			{
 				int bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
-				std::cout << "After recv: " << buffer << " | " << bytesRead << std::endl;
 				if (bytesRead <= 0)
 				{
 					std::cout << "Client " << clientFDs[i].fd << " disconnected" << std::endl;
@@ -171,14 +170,14 @@ void server::handleClient()
 				if (message != server::messageList.end())
 				{
 					std::cout << "[DEBUG] Message Out " << clientFDs[i].fd << ": " << message->second;
-					int senderr = send(clientFDs[i].fd, (message->second).c_str(), (message->second).length(), 0);
+					int senderr = send(message->first, (message->second).c_str(), (message->second).length(), 0);
 					if (message->second.find("QUIT") != std::string::npos)
 					{
 						delete getClientByFd(message->first);
 						clientList.erase(message->first);
 						clientFDs.erase(clientFDs.begin() + i);
 					}
-					if (senderr < 0)
+					if (senderr == -1)
 						perror("send");
 					else
 						messageList.erase(message);
@@ -247,7 +246,7 @@ bool	server::clientExists(const std::string& clientName)
 	return (false);
 }
 
-std::map<int, Client*>	server::getClientList() { return clientList; }
-std::map<std::string, Channel*>	server::getChannelList() { return channelList; }
-std::multimap<int, std::string>	server::getMessageList() { return messageList; }
+std::map<int, Client*>&				server::getClientList() { return clientList; }
+std::map<std::string, Channel*>&	server::getChannelList() { return channelList; }
+std::multimap<int, std::string>&	server::getMessageList() { return messageList; }
 void server::setFinished(bool status) { _finish = status; }

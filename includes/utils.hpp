@@ -56,8 +56,8 @@ bool						isValidMode(const std::string& mode);
 bool						stringIsNumeric(const char *string);
 
 // Sending related
-void						selfClientSend(const std::string& stringToSend, int toSendFd);
-void						sendToChannel(const std::string& stringToSend, const std::string& channelName);
+void						selfClientSend(const std::string stringToSend, int toSendFd);
+void						sendToChannel(const std::string stringToSend, const std::string& channelName, const std::string& sender);
 
 /*
 Error handling

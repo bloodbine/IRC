@@ -311,7 +311,7 @@ void	ERR_UMODEUNKNOWNFLAG()
 {
 	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 501 :Unknown MODE flag\r\n");
 }
-// Greg
+
 void	ERR_NOPRIVILEGES(const std::string& channelName)
 {
 	throw std::invalid_argument( ":" + server::getHostname() + " ERROR 481 " + channelName + " :Permission Denied, You're not an IRC operator\r\n");
@@ -387,12 +387,12 @@ void	ERR_CANNOTSENDTOCHAN(const std::string& channelName)
 Normally used to send error message or feedback to the client that
 made the request.
 */
-void	selfClientSend(const std::string& stringToSend, int toSendFd)
+void	selfClientSend(const std::string stringToSend, int toSendFd)
 {
 	server::messageList.insert(std::pair<int, std::string>(toSendFd, stringToSend));
 }
 
-void	sendToChannel(const std::string& stringToSend, const std::string& channelName)
+void	sendToChannel(const std::string stringToSend, const std::string& channelName, const std::string& sender)
 {
 	if (server::channelExists(channelName) == true)
 	{
@@ -404,7 +404,8 @@ void	sendToChannel(const std::string& stringToSend, const std::string& channelNa
 		{
 			Client*	tmpClient = (*itr).second;
 			int	toSendFd = tmpClient->getFd();
-			server::messageList.insert(std::pair<int, std::string>(toSendFd, stringToSend));
+			if ((*itr).first != sender)
+				server::messageList.insert(std::pair<int, std::string>(toSendFd, stringToSend));
 		}
 	}
 }

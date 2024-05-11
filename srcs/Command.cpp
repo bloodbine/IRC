@@ -146,7 +146,7 @@ void	Command::handleJoin()
 			if (_chanKey == "") ERR_BADCHANNELKEY(_channelName, "No key given");
 			else if (_chanKey != channel->getChanKey()) ERR_BADCHANNELKEY(_channelName, ": Cannot join channel (+k)");
 		}
-		if (channel->getInviteFlag() == 1)
+		if (channel->getInviteFlag() == true)
 		{
 			if (channel->getInvitedList().find(_client->getNickName()) == channel->getInvitedList().end())
 				ERR_INVITEONLYCHAN(_channelName);
@@ -162,13 +162,14 @@ void	Command::handleJoin()
 	_client->addChannelToChannelList(channel);
 	_client->incrementTotalChannels();
 	_stringToSend += ":" + _client->getIdenClient() +" JOIN " + _channelName + "\r\n";
+	sendToChannel(_stringToSend, _channelName, _client->getNickName());
 	if (channel->getTopic() == "")
 		_stringToSend += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
 	else
 		_stringToSend += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :" + channel->getTopic() + "\r\n";
 	_stringToSend += ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
 	_stringToSend += ":" + _client->getIdenClient() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
-	sendToChannel(_stringToSend, _channelName);
+	selfClientSend(_stringToSend, _client->getFd());
 }
 
 void	Command::handlePart()
@@ -182,18 +183,13 @@ void	Command::handlePart()
 		for (size_t i = 3 ; i < _size; i++) _reason += " " + _vec[i];
 	}
 	Channel* channel = server::getChannelByName(_channelName);
-	if (channel)
-	{
-		if (!channel) ERR_NOTONCHANNEL();
-		if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
-		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reason + "\r\n";
-		sendToChannel(_stringToSend, _channelName);
-		if (channel->getIsOperator(_client->getNickName()))
-			channel->removeOperator(*_client);
-		channel->removeUser(*_client);
-	}
-	// should send stuff
-	sendToChannel(_stringToSend, _channelName);
+	if (!channel) ERR_NOTONCHANNEL();
+	if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
+	_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reason + "\r\n";
+	sendToChannel(_stringToSend, _channelName, "");
+	if (channel->getIsOperator(_client->getNickName()))
+		channel->removeOperator(*_client);
+	channel->removeUser(*_client);
 }
 
 void	Command::handlePing()
@@ -219,7 +215,6 @@ void	Command::handleNotice()
 {
 	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
 	_stringToSend = "";
-	// check if it fails and handle it
 	selfClientSend(_stringToSend, _client->getFd());
 }
 
@@ -244,11 +239,8 @@ void	Command::handleTopic()
 	std::cout << ":" << _client->getIdenClient() << " Topic " << _topic << std::endl;
 	std::cout << ":" << _client->getIdenClient() << " clearTopic " << _clearTopic << std::endl;
 
-	//Heck if the Channel exist
 	if (!server::channelExists(_channelName)) ERR_NOSUCHCHANNEL();
-	//HECK if Channel has User
 	Channel* channel = server::getChannelByName(_channelName);
-	// Add protection
 	if (!channel) ERR_NOSUCHCHANNEL();
 	if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
 	if (channel->getTopic() == "" && _topic == "")
@@ -262,8 +254,7 @@ void	Command::handleTopic()
 	}
 	else
 		ERR_CHANOPRIVSNEEDED(_channelName);
-	// check if it fails and handle it
-	sendToChannel(_stringToSend, _channelName);
+	selfClientSend(_stringToSend, _client->getFd());
 }
 
 void	Command::handlePrivmsg()
@@ -280,9 +271,6 @@ void	Command::handlePrivmsg()
 	_msg += _vec[2];
 	if (_msg[0] == ':') _msg.erase(_msg.begin());
 	for (size_t i = 3; i < _size; i++) _msg += ' ' + _vec[i];
-	//check if the channel is exist
-	if (_targetIsChannel) std::cout << ">>> channel " << _target << " exists: " << server::channelExists(_target) << std::endl;
-	else std::cout << ">>> client " << _target << " exists: " << server::clientExists(_target) << std::endl;
 	if (_targetIsChannel && server::channelExists(_target) == false) ERR_NOSUCHCHANNEL();
 	else if (!_targetIsChannel && server::clientExists(_target) == false) ERR_NOSUCHNICK(_target);
 	_stringToSend = ":" + _client->getIdenClient() + " PRIVMSG " + _target + " :" + _msg + "\r\n";
@@ -290,10 +278,9 @@ void	Command::handlePrivmsg()
 	{
 		_channelName = _vec[1];
 		Channel* channel = server::getChannelByName(_target);
-			// Add protection
 		if (!channel) ERR_NOSUCHCHANNEL();
 		if (!channel->getIsMember(_client->getNickName())) ERR_CANNOTSENDTOCHAN(_channelName);
-		sendToChannel(_stringToSend, _channelName);
+		sendToChannel(_stringToSend, _channelName, _client->getNickName());
 	}
 	else
 	{
@@ -377,11 +364,10 @@ void	Command::handleMode()
 	if (_mode.find("o") != std::string::npos && server::clientExists(_vec[3]) == false) ERR_NOSUCHNICK(_vec[3]);
 	if (_size > 3)
 		_parameter = _vec[3];
-	// Add protection
 	if (_channelObj)
 	{
 		if (_channelObj->getIsMember(_client->getNickName()) == false) ERR_NOTONCHANNEL();
-		if (_channelObj->getIsOperator(_client->getNickName()) == false) ERR_NOPRIVILEGES(_channelName);
+		if (_channelObj->getIsOperator(_client->getNickName()) == false ) ERR_NOPRIVILEGES(_channelName);
 		_stringToSend = "324 :";
 		switch (_mode[1])
 		{
@@ -457,7 +443,7 @@ void	Command::handleQuit()
 				_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " :" + _reason + "\r\n";
 			if (channel != NULL)
 			{
-				sendToChannel(_stringToSend, (*tmpChannel)->getName());
+				sendToChannel(_stringToSend, (*tmpChannel)->getName(), "");
 				(*tmpChannel)->removeUser(*_client);
 				if ((*tmpChannel)->getIsOperator(_client->getNickName()))
 					(*tmpChannel)->removeOperator(*_client);

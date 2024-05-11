@@ -9,12 +9,7 @@ void Client::registerClient()
 {
 	_isValidatedPassword = true;
 	_isRegistered = true;
-//	 if (password.length() >= 4)
-//	 {
-//   } else {
-//	 std::cerr << "Error: Password must be at least 6 characters long." << std::endl;
-//   }
-}  // Mark Client as registered
+}
 bool 					Client::getIsregistered() const { return _isRegistered; }
 void					Client::setIsregistered() { _isRegistered = true; }
 const std::string&		Client::getNickName() const{ return Client::_nickName;}
