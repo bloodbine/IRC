@@ -166,7 +166,7 @@ void	Command::handleJoin()
 	if (channel->getTopic() == "")
 		_stringToSend = ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
 	else
-		_stringToSend = ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :" + channel->getTopic() + "\r\n";
+		_stringToSend = ":" + _client->getIdenClient() +" 332 " + _client->getNickName() + " " + _channelName + " :" + channel->getTopic() + "\r\n";
 	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 	_stringToSend = ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
 	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
