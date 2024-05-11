@@ -289,12 +289,12 @@ void	ERR_NOSUCHSERVER(const std::string& server)
 
 void	ERR_NOSUCHNICK(const std::string& nickName)
 {
-	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 401" + nickName + " :No such nick/channel\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 401 " + nickName + " :No such nick/channel\r\n");
 }
 
 void	ERR_ERRONEUSNICKNAME(const std::string& nickName)
 {
-	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 432" + nickName + " :Erroneous nickname\r\n");
+	throw  std::invalid_argument( ":" + server::getHostname() + " ERROR 432 " + nickName + " :Erroneous nickname\r\n");
 }
 
 void	ERR_NICKNAMEINUSE(const std::string& nickName)
