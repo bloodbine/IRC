@@ -121,16 +121,6 @@ int	getCmdType(const std::string& cmd)
 void	signal_handler(int signal)
 {
 	(void)signal;
-	std::map<std::string, Channel*>					channelList = server::getChannelList();
-	std::map<std::string, Channel*>::iterator		itr1 = channelList.begin();
-	std::map<std::string, Channel*>::iterator		end1 = channelList.end();
-	for (; itr1 != end1; ++itr1) delete (*itr1).second;
-
-	std::map<int, Client*>					clientList = server::getClientList();
-	std::map<int, Client*>::iterator		itr2 = clientList.begin();
-	std::map<int, Client*>::iterator		end2 = clientList.end();
-	for (; itr2 != end2; ++itr2) delete (*itr2).second;
-
 	server::getMessageList().clear();
 
 	std::cout << "Signal was called!" << std::endl;
