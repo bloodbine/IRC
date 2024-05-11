@@ -352,6 +352,7 @@ void	Command::handleKick()
 	else
 		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _nickName + " :" + _reason + "\r\n";
 	channel->removeUser(*client);
+	client->dicrementTotalChannels();
 	selfClientSend(_stringToSend, client->getFd(), NOFLAG);
 }
 
