@@ -413,7 +413,7 @@ void	Command::handleMode()
 		_stringToSend.append(":" + _client->getIdenClient());
 		_stringToSend.append(" " + _channelName);
 		_stringToSend.append(" " + _mode);
-		_stringToSend.append(" " + _parameter);
+		_stringToSend.append(" " + _parameter + "\r\n");
 	}
 	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }

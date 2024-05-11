@@ -178,9 +178,17 @@ void server::handleClient()
 						std::string channelName = message->second.data.substr(chanNameStart, chanNameEnd - chanNameStart);
 						Channel* channel = getChannelByName(channelName);
 						Client* client = getClientByFd(clientFDs[i].fd);
-						if (channel->getIsOperator(client->getNickName()) == true)
-							channel->removeOperator(*client);
 						channel->removeUser(*client);
+						if (channel->getIsOperator(client->getNickName()) == true)
+						{
+							channel->removeOperator(*client);
+							if (channel->getOperatorList().size() == 0 && channel->getMemberList().size() != 0)
+							{
+								std::string stringToSend = ":" + server::getHostname() + " MODE " + channel->getName() + " +o " + (*channel->getMemberList().begin()).second->getNickName() + "\r\n";
+								selfClientSend(stringToSend, (*channel->getMemberList().begin()).second->getFd(), NOFLAG);
+								channel->addOperator((*channel->getMemberList().begin()).second);
+							}
+						}
 						if (channel->getMemberList().size() == 0)
 						{
 							delete channel;
