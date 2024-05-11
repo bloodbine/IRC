@@ -387,9 +387,12 @@ void	ERR_CANNOTSENDTOCHAN(const std::string& channelName)
 Normally used to send error message or feedback to the client that
 made the request.
 */
-void	selfClientSend(const std::string stringToSend, int toSendFd)
+void	selfClientSend(const std::string stringToSend, int toSendFd, int flag)
 {
-	server::messageList.insert(std::pair<int, std::string>(toSendFd, stringToSend));
+	struct message tmpmessage;
+	tmpmessage.data = stringToSend;
+	tmpmessage.flag = flag;
+	server::messageList.insert(std::pair<int, struct message>(toSendFd, tmpmessage));
 }
 
 void	sendToChannel(const std::string stringToSend, const std::string& channelName, const std::string& sender)
@@ -400,12 +403,15 @@ void	sendToChannel(const std::string stringToSend, const std::string& channelNam
 		std::map<std::string, Client*>	memberList = channel->getMemberList();
 		std::map<std::string, Client*>::iterator itr = memberList.begin();
 		std::map<std::string, Client*>::iterator end = memberList.end();
+		struct message tmpmessage;
+		tmpmessage.data = stringToSend;
+		tmpmessage.flag = NOFLAG;
 		for (; itr != end; ++itr)
 		{
 			Client*	tmpClient = (*itr).second;
 			int	toSendFd = tmpClient->getFd();
 			if ((*itr).first != sender)
-				server::messageList.insert(std::pair<int, std::string>(toSendFd, stringToSend));
+				server::messageList.insert(std::pair<int, struct message>(toSendFd, tmpmessage));
 		}
 	}
 }

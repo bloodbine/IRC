@@ -94,7 +94,7 @@ void	Command::handleNick()
 	if (server::clientExists(_nickName)) ERR_ALREADYREGISTRED();
 	_client->setNickName(_nickName);
 	_stringToSend =  "NICK " + _nickName + "\r\n";
-	selfClientSend(_stringToSend, _client->getFd());
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }
 
 void	Command::handleUser()
@@ -118,7 +118,7 @@ void	Command::handleUser()
 	_stringToSend += ":" + server::getHostname() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
 	_stringToSend += ":" + server::getHostname() + " 221 " + _client->getNickName() + " :0\r\n";
 	_stringToSend += ":" + server::getHostname() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
-	selfClientSend(_stringToSend, _client->getFd());
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }
 
 void	Command::handleJoin()
@@ -161,15 +161,17 @@ void	Command::handleJoin()
 		ERR_USERONCHANNEL(_channelName);
 	_client->addChannelToChannelList(channel);
 	_client->incrementTotalChannels();
-	_stringToSend += ":" + _client->getIdenClient() +" JOIN " + _channelName + "\r\n";
-	sendToChannel(_stringToSend, _channelName, _client->getNickName());
+	_stringToSend = ":" + _client->getIdenClient() +" JOIN " + _channelName + "\r\n";
+	sendToChannel(_stringToSend, _channelName, "");
 	if (channel->getTopic() == "")
-		_stringToSend += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
+		_stringToSend = ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
 	else
-		_stringToSend += ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :" + channel->getTopic() + "\r\n";
-	_stringToSend += ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
-	_stringToSend += ":" + _client->getIdenClient() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
-	selfClientSend(_stringToSend, _client->getFd());
+		_stringToSend = ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :" + channel->getTopic() + "\r\n";
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
+	_stringToSend = ":" + _client->getIdenClient() +" 353 " + _client->getNickName() + " = " + _channelName + " :" + channel->getClientList() + "\r\n";
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
+	_stringToSend = ":" + _client->getIdenClient() +" 366 " + _client->getNickName() + " " + _channelName + " :End of /NAMES list.\r\n";
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }
 
 void	Command::handlePart()
@@ -185,11 +187,12 @@ void	Command::handlePart()
 	Channel* channel = server::getChannelByName(_channelName);
 	if (!channel) ERR_NOTONCHANNEL();
 	if (!channel->hasUser(*_client)) ERR_NOTONCHANNEL();
-	_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reason + "\r\n";
-	sendToChannel(_stringToSend, _channelName, "");
-	if (channel->getIsOperator(_client->getNickName()))
-		channel->removeOperator(*_client);
-	channel->removeUser(*_client);
+	if (_reason.find(":") != std::string::npos)
+		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " " + _reason + "\r\n";
+	else
+		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reason + "\r\n";
+	selfClientSend(_stringToSend, _client->getFd(), PARTING);
+	sendToChannel(_stringToSend, _channelName, _client->getNickName());
 }
 
 void	Command::handlePing()
@@ -208,14 +211,14 @@ void	Command::handlePing()
 		}
 	}
 	_stringToSend = "PONG " + _client->getNickName() + " " + _serverName + "\r\n";
-	selfClientSend(_stringToSend, _client->getFd());
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }
 
 void	Command::handleNotice()
 {
 	if (_client->getIsregistered() == false) ERR_NOTREGISTERED();
 	_stringToSend = "";
-	selfClientSend(_stringToSend, _client->getFd());
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }
 
 void	Command::handleTopic()
@@ -254,7 +257,7 @@ void	Command::handleTopic()
 	}
 	else
 		ERR_CHANOPRIVSNEEDED(_channelName);
-	selfClientSend(_stringToSend, _client->getFd());
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }
 
 void	Command::handlePrivmsg()
@@ -285,7 +288,7 @@ void	Command::handlePrivmsg()
 	else
 	{
 		Client* client = server::getClientByFd(server::getClientFdByName(_target));
-		selfClientSend(_stringToSend, client->getFd());
+		selfClientSend(_stringToSend, client->getFd(), NOFLAG);
 	}
 }
 
@@ -317,7 +320,7 @@ void	Command::handleInvite()
 	}
 	_stringToSend.append(":" + _client->getIdenClient()+ " 341 : INVITE " + _nickName + " " + _channelName + "\r\n");
 	Client* target = server::getClientByFd(server::getClientFdByName(_nickName));
-	selfClientSend(_stringToSend, target->getFd());
+	selfClientSend(_stringToSend, target->getFd(), NOFLAG);
 }
 
 void	Command::handleKick()
@@ -348,11 +351,12 @@ void	Command::handleKick()
 	else
 		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _nickName + " :" + _reason + "\r\n";
 	channel->removeUser(*client);
-	selfClientSend(_stringToSend, client->getFd());
+	selfClientSend(_stringToSend, client->getFd(), NOFLAG);
 }
 
 void	Command::handleMode()
 {
+	if (_size == 2) return ;
 	if (_size < 2) ERR_NEEDMOREPARAMS("MODE");
 	if (_size > 3) ERR_SYNTAXPROBLEM();
 	if (server::channelExists(_vec[1]) == false) ERR_NOSUCHCHANNEL();
@@ -411,7 +415,7 @@ void	Command::handleMode()
 		_stringToSend.append(" " + _mode);
 		_stringToSend.append(" " + _parameter);
 	}
-	selfClientSend(_stringToSend, _client->getFd());
+	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }
 
 void	Command::handleQuit()
@@ -427,7 +431,6 @@ void	Command::handleQuit()
 	{
 		std::vector<Channel*>::iterator	tmpChannel = channelList.begin();
 		std::vector<Channel*>::iterator	end = channelList.end();
-		std::cout << "The client is member of the next channels: " << std::endl;
 		for (; tmpChannel != end; ++tmpChannel)
 		{
 			std::string _reason = "no reason";
@@ -437,21 +440,19 @@ void	Command::handleQuit()
 				for (size_t i = 2; i < _vec.size(); i++) _reason += " " + _vec[i];
 			}
 			Channel *channel = server::getChannelByName((*tmpChannel)->getName());
-			if (_reason.find(":") == std::string::npos)
-				_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " " + _reason + "\r\n";
-			else
-				_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " :" + _reason + "\r\n";
 			if (channel != NULL)
 			{
-				sendToChannel(_stringToSend, (*tmpChannel)->getName(), "");
-				(*tmpChannel)->removeUser(*_client);
-				if ((*tmpChannel)->getIsOperator(_client->getNickName()))
-					(*tmpChannel)->removeOperator(*_client);
+				if (_reason.find(":") == std::string::npos)
+					_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " " + _reason + "\r\n";
+				else
+					_stringToSend = ":" + _client->getIdenClient() + " PART " + channel->getName() + " :" + _reason + "\r\n";
+				selfClientSend(_stringToSend, _client->getFd(), PARTING);
+				sendToChannel(_stringToSend, (*tmpChannel)->getName(), _client->getNickName());
 			}
 		}
 	}
 	_stringToSend = ":" + _client->getIdenClient() + " QUIT :" + _reason + "\r\n";
-	selfClientSend(_stringToSend, _client->getFd());
+	selfClientSend(_stringToSend, _client->getFd(), QUITING);
 	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
 }
 

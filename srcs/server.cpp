@@ -4,14 +4,14 @@
 #include <fcntl.h>
 #include <utility>
 
-std::multimap<int, std::string>		server::messageList;
-std::map<std::string, Channel*>	server::channelList;
-std::map<int, Client*>			server::clientList;
-std::vector<pollfd>				server::clientFDs;
-std::string						server::_hostname;
-std::string						server::_serverIp;
-std::string						server::_creationTime;
-bool							server::_finish;
+std::multimap<int, struct message>		server::messageList;
+std::map<std::string, Channel*>			server::channelList;
+std::map<int, Client*>					server::clientList;
+std::vector<pollfd>						server::clientFDs;
+std::string								server::_hostname;
+std::string								server::_serverIp;
+std::string								server::_creationTime;
+bool									server::_finish;
 
 server::server(int port, std::string pass)
 {
@@ -160,18 +160,34 @@ void server::handleClient()
 						try
 							{if (vec.size() > 0) Command cmd(vec, client);}
 						catch (std::exception& e)
-							{selfClientSend(e.what(), clientFDs[i].fd);}
+							{selfClientSend(e.what(), clientFDs[i].fd, NOFLAG);}
 					}
 				}
 			}
 			if (clientFDs[i].revents & POLLOUT && messageList.size() != 0)
 			{
-				std::multimap<int, std::string>::iterator message = messageList.equal_range(clientFDs[i].fd).first;
+				std::multimap<int, struct message>::iterator message = messageList.equal_range(clientFDs[i].fd).first;
 				if (message != server::messageList.end())
 				{
-					std::cout << "[DEBUG] Message Out " << clientFDs[i].fd << ": " << message->second;
-					int senderr = send(message->first, (message->second).c_str(), (message->second).length(), 0);
-					if (message->second.find("QUIT") != std::string::npos)
+					std::cout << "[DEBUG] Message Out " << clientFDs[i].fd << ": "  << message->second.flag << " " << message->second.data;
+					int senderr = send(message->first, (message->second.data).c_str(), (message->second.data).length(), 0);
+					if (message->second.flag == PARTING)
+					{
+						size_t chanNameStart = message->second.data.find("#");
+						size_t chanNameEnd = message->second.data.find(" ", chanNameStart);
+						std::string channelName = message->second.data.substr(chanNameStart, chanNameEnd - chanNameStart);
+						Channel* channel = getChannelByName(channelName);
+						Client* client = getClientByFd(clientFDs[i].fd);
+						if (channel->getIsOperator(client->getNickName()) == true)
+							channel->removeOperator(*client);
+						channel->removeUser(*client);
+						if (channel->getMemberList().size() == 0)
+						{
+							delete channel;
+							channelList.erase(channelName);
+						}
+					}
+					if (message->second.flag == QUITING)
 					{
 						delete getClientByFd(message->first);
 						clientList.erase(message->first);
@@ -216,7 +232,7 @@ void	server::removeChannel(std::string channelName)
 Channel* server::getChannelByName(const std::string& channelName) {
 	if (channelList.size() > 0)
 	{
-		std::map<std::string, Channel*>::iterator	 it = channelList.find(channelName);
+		std::map<std::string, Channel*>::iterator it = channelList.find(channelName);
 		if (it != channelList.end()) {
 			return it->second;
 		}
@@ -248,5 +264,5 @@ bool	server::clientExists(const std::string& clientName)
 
 std::map<int, Client*>&				server::getClientList() { return clientList; }
 std::map<std::string, Channel*>&	server::getChannelList() { return channelList; }
-std::multimap<int, std::string>&	server::getMessageList() { return messageList; }
+std::multimap<int, struct message>&	server::getMessageList() { return messageList; }
 void server::setFinished(bool status) { _finish = status; }

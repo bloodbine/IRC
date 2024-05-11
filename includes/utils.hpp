@@ -3,21 +3,7 @@
 #include "Command.hpp"
 #include "Channel.hpp"
 #include "server.hpp"
-// #include "commands/Cap.hpp"
-// #include "commands/Pass.hpp"
-// #include "commands/Nick.hpp"
-// #include "commands/User.hpp"
-// #include "commands/Part.hpp"
-// #include "commands/Join.hpp"
-// #include "commands/Ping.hpp"
-// #include "commands/Notice.hpp"
-// #include "commands/Topic.hpp"
-// #include "commands/Privmsg.hpp"
-// #include "commands/Invite.hpp"
-// #include "commands/Kick.hpp"
-// #include "commands/Quit.hpp"
-// #include "commands/Mode.hpp"
-// #include "commands/Shutdown.hpp"
+
 #include <sstream>
 
 #define PASS 0
@@ -40,8 +26,6 @@ void						signal_handler(int signal);
 std::string					getClientHostname(int clientFD);
 std::string					getTimestamp();
 void						addrStructToString(std::string &ip_dest, std::string &hostname_dest);
-// std::string 				getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg);
-// Command						*getCommand(Client* client, const std::vector<std::string>& vec);
 
 // Command related
 std::vector<std::string>	getVector(char *in);
@@ -56,12 +40,11 @@ bool						isValidMode(const std::string& mode);
 bool						stringIsNumeric(const char *string);
 
 // Sending related
-void						selfClientSend(const std::string stringToSend, int toSendFd);
+void						selfClientSend(const std::string stringToSend, int toSendFd, int flag);
 void						sendToChannel(const std::string stringToSend, const std::string& channelName, const std::string& sender);
 
-/*
-Error handling
-*/
+
+// Error handling
 void						missingPass();
 void						missingNick();
 void	ERR_NEEDMOREPARAMS(const std::string& cmdName);
