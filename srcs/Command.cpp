@@ -191,6 +191,7 @@ void	Command::handlePart()
 		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " " + _reason + "\r\n";
 	else
 		_stringToSend = ":" + _client->getIdenClient() + " PART " + _channelName + " :" + _reason + "\r\n";
+	_client->dicrementTotalChannels();
 	selfClientSend(_stringToSend, _client->getFd(), PARTING);
 	sendToChannel(_stringToSend, _channelName, _client->getNickName());
 }

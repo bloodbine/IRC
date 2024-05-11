@@ -26,6 +26,7 @@ std::string				Client::getIdenClient() const{return (_nickName + "!" + _userName
 int						Client::getSocketFd() const {return _socketFd; }
 const std::string&		Client::getServerPassword() const { return _serverPassword; }
 void					Client::incrementTotalChannels() { _totalChannels++; }
+void					Client::dicrementTotalChannels() { _totalChannels--; }
 int						Client::getFd() const { return _socketFd; }
 int						Client::getTotalChannels() const { return _totalChannels; }
 std::vector<Channel*>	Client::getChannelList() const { return _channelList; }

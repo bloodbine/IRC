@@ -40,6 +40,7 @@ void							setHostname(const std::string& newHostname);
 		bool					getIsValidatedPassword() const;
 		void					setIsValidatePassword();
 		void					incrementTotalChannels();
+		void					dicrementTotalChannels();
 		int						getTotalChannels() const;
 		std::string				getIdenClient() const;
 		int						getFd() const;
