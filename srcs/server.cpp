@@ -216,6 +216,7 @@ void server::handleClient()
 							}
 							if (message->second.flag == QUITING)
 							{
+								std::cout << "Client " << message->first << " disconnected" << std::endl;
 								delete getClientByFd(message->first);
 								clientList.erase(message->first);
 								clientFDs.erase(clientFDs.begin() + i);

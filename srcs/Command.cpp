@@ -112,10 +112,9 @@ void	Command::handleUser()
 	_client->setRealUserName(_realName);
 	_client->setHostname(getClientHostname(_client->getFd()));
 	_client->setIsregistered();
-	_stringToSend = ":" + server::getHostname() + " 001 " + _client->getNickName() + " :Welcome to the Internet Relay Network " + _client->getIdenClient() + "\r\n";
+	_stringToSend += ":" + server::getHostname() + " 001 " + _client->getNickName() + " :Welcome to the Internet Relay Network " + _client->getIdenClient() + "\r\n";
 	_stringToSend += ":" + server::getHostname() + " 002 " + _client->getNickName() + " :Your host is " + server::getHostname() + ", running version 1.0\r\n";
 	_stringToSend += ":" + server::getHostname() + " 003 " + _client->getNickName() + " :This server was created " + server::getCreationTime() + "\r\n";
-	_stringToSend += ":" + server::getHostname() + " 221 " + _client->getNickName() + " :0\r\n";
 	_stringToSend += ":" + server::getHostname() + " 004 " + _client->getNickName() + " :" + server::getHostname() + " 1.0 oiws obtkmlvsn\r\n";
 	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
 }
@@ -160,7 +159,7 @@ void	Command::handleJoin()
 		ERR_USERONCHANNEL(_channelName);
 	_client->addChannelToChannelList(channel);
 	_client->incrementTotalChannels();
-	_stringToSend = ":" + _client->getIdenClient() +" JOIN " + _channelName + "\r\n";
+	_stringToSend = ":" + _client->getIdenClient() + " JOIN " + _channelName + "\r\n";
 	sendToChannel(_stringToSend, _channelName, "");
 	if (channel->getTopic() == "")
 		_stringToSend = ":" + _client->getIdenClient() +" 331 " + _client->getNickName() + " " + _channelName + " :No topic is set\r\n";
@@ -314,7 +313,7 @@ void	Command::handleInvite()
 		else if (channel->getIsMember(_nickName) == true)
 			ERR_USERONCHANNEL(_channelName);
 	}
-	_stringToSend.append(":" + _client->getIdenClient()+ " 341 : INVITE " + _nickName + " " + _channelName + "\r\n");
+	_stringToSend.append(":" + _client->getIdenClient()+ " INVITE " + _nickName + " " + _channelName + "\r\n");
 	Client* target = server::getClientByFd(server::getClientFdByName(_nickName));
 	selfClientSend(_stringToSend, target->getFd(), NOFLAG);
 }
@@ -391,8 +390,7 @@ void	Command::handleMode()
 			case 'o': // Operator Privilige
 				if (_mode[0] == '+')
 				{
-					if (_channelObj->getIsMember(_parameter) == true &&
-					_channelObj->getIsOperator(_parameter) == false)
+					if (_channelObj->getIsMember(_parameter) == true && _channelObj->getIsOperator(_parameter) == false)
 						_channelObj->addOperator(_channelObj->getMemberList()[_parameter]);
 				}
 				else
@@ -454,7 +452,6 @@ void	Command::handleQuit()
 	}
 	_stringToSend = ":" + _client->getIdenClient() + " QUIT :" + _reason + "\r\n";
 	selfClientSend(_stringToSend, _client->getFd(), QUITING);
-	std::cout << "Client " << _client->getFd() << " disconnected" << std::endl;
 }
 
 void	Command::handleWho()
