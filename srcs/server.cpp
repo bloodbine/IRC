@@ -27,7 +27,6 @@ server::server(int port, std::string pass)
 		_address.sin_family = AF_INET;
 		_address.sin_addr.s_addr = INADDR_ANY;
 		inet_pton(AF_INET, "0.0.0.0", &_address.sin_addr);
-		std::cout << _port << std::endl;
 		_address.sin_port = htons(_port);
 		_socketfd = socket(AF_INET, SOCK_STREAM, 0);
 		int enable = 1;
@@ -52,7 +51,7 @@ server::server(int port, std::string pass)
 		server.revents = 0;
 		clientFDs.push_back(server);
 		addrStructToString(_serverIp, _hostname);
-		std::cerr << "Host and IP: " << _hostname << " " << _serverIp << std::endl;
+		displayInstructions();
 		_creationTime = getTimestamp();
 	}
 	catch (std::exception &e)
@@ -298,7 +297,40 @@ bool	server::clientExists(const std::string& clientName)
 	return (false);
 }
 
+void server::displayInstructions()
+{
+	std::cout << "Server Information:" << std::endl;
+	std::cout << "Host: " << _hostname << std::endl;
+	std::cout << "IP: " << _serverIp << std::endl;
+	std::cout << "Port: " << _port << std::endl;
+	std::cout << "Pass: " << _pass << std::endl << std::endl;
+
+	std::cout << "Login Process: (ignore \"/\" if on netcat)" << std::endl;
+	std::cout << "\t/PASS <pass>" << std::endl;
+	std::cout << "\t/NICK <nickname>" << std::endl;
+	std::cout << "\t/USER <username> 0 * :<real username>" << std::endl << std::endl;
+
+	std::cout << "Commands: (ignore \"/\" if on netcat)" << std::endl;
+	std::cout << "\t/JOIN #<channel>" << std::endl;
+	std::cout << "\t\t-Join or Create channel" << std::endl << std::endl;
+	std::cout << "\t/PART #<channel>" << std::endl;
+	std::cout << "\t\t-Leave Channel" << std::endl << std::endl;
+	std::cout << "\t/TOPIC #<channel> (<topic>)" << std::endl;
+	std::cout << "\t\t-Display or Change Channel topic" << std::endl << std::endl;
+	std::cout << "\t/PRIVMSG <targetuser>/#<channel> <message>" << std::endl;
+	std::cout << "\t\t-Send message to User or Channel" << std::endl << std::endl;
+	std::cout << "\t/INVITE <targetuser> #<channel>" << std::endl;
+	std::cout << "\t\t-Invite user to join Channel" << std::endl << std::endl;
+	std::cout << "\t/KICK #<channel> <targetuser>" << std::endl;
+	std::cout << "\t\t-Remove user from channel" << std::endl << std::endl;
+	std::cout << "\t/MODE #<channel> +/-<mode> (<parameter>)" << std::endl;
+	std::cout << "\t\t-Change Channel Mode (i/k/t/o/l)" << std::endl << std::endl;
+	std::cout << "\t/QUIT (<reason>)" << std::endl;
+	std::cout << "\t\t-Leave Server" << std::endl;
+}
+
+void server::setFinished(bool status) { _finish = status; }
+
 std::map<int, Client*>&				server::getClientList() { return clientList; }
 std::map<std::string, Channel*>&	server::getChannelList() { return channelList; }
 std::multimap<int, struct message>&	server::getMessageList() { return messageList; }
-void server::setFinished(bool status) { _finish = status; }

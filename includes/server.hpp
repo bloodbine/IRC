@@ -74,4 +74,5 @@ class server
 		static std::string&							getHostname();
 		void										setCreationTime(const std::string& timestamp);
 		static std::string&							getCreationTime();
+		void										displayInstructions();
 };

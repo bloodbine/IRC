@@ -49,7 +49,6 @@ void addrStructToString(std::string &ip_dest, std::string &hostname_dest)
 	else
 	{
 		ip_dest = inet_ntoa(*((struct in_addr*) hostEntry->h_addr_list[0]));
-		std::cout << ">> Hostname: " << hostEntry->h_name << std::endl;
 		hostname_dest = std::string(hostEntry->h_name);
 	}
 }
