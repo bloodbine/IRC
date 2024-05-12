@@ -170,41 +170,53 @@ void server::handleClient()
 				if (message != server::messageList.end())
 				{
 					std::cout << "[DEBUG] Message Out " << clientFDs[i].fd << ": "  << message->second.flag << " " << message->second.data;
-					int senderr = send(message->first, (message->second.data).c_str(), (message->second.data).length(), 0);
-					if (message->second.flag == PARTING)
+					int senderr = 0;
+					std::vector<pollfd>::iterator fdStart = clientFDs.begin();
+					std::vector<pollfd>::iterator fdEnd = clientFDs.end();
+					for (; fdStart != fdEnd; fdStart++)
 					{
-						size_t chanNameStart = message->second.data.find("#");
-						size_t chanNameEnd = message->second.data.find(" ", chanNameStart);
-						std::string channelName = message->second.data.substr(chanNameStart, chanNameEnd - chanNameStart);
-						Channel* channel = getChannelByName(channelName);
-						Client* client = getClientByFd(clientFDs[i].fd);
-						channel->removeUser(*client);
-						if (channel->getIsOperator(client->getNickName()) == true)
+						if ((*fdStart).fd == message->first)
 						{
-							channel->removeOperator(*client);
-							if (channel->getOperatorList().size() == 0 && channel->getMemberList().size() != 0)
-							{
-								std::string stringToSend = ":" + server::getHostname() + " MODE " + channel->getName() + " +o " + (*channel->getMemberList().begin()).second->getNickName() + "\r\n";
-								selfClientSend(stringToSend, (*channel->getMemberList().begin()).second->getFd(), NOFLAG);
-								channel->addOperator((*channel->getMemberList().begin()).second);
-							}
+							senderr = send(message->first, (message->second.data).c_str(), (message->second.data).length(), 0);
+							break;
 						}
-						if (channel->getMemberList().size() == 0)
-						{
-							delete channel;
-							channelList.erase(channelName);
-						}
-					}
-					if (message->second.flag == QUITING)
-					{
-						delete getClientByFd(message->first);
-						clientList.erase(message->first);
-						clientFDs.erase(clientFDs.begin() + i);
 					}
 					if (senderr == -1)
 						perror("send");
 					else
+					{
+						if (message->second.flag == PARTING)
+						{
+							size_t chanNameStart = message->second.data.find("#");
+							size_t chanNameEnd = message->second.data.find(" ", chanNameStart);
+							std::string channelName = message->second.data.substr(chanNameStart, chanNameEnd - chanNameStart);
+							Channel* channel = getChannelByName(channelName);
+							Client* client = getClientByFd(clientFDs[i].fd);
+							channel->removeUser(*client);
+							if (channel->getIsOperator(client->getNickName()) == true)
+							{
+								channel->removeOperator(*client);
+								if (channel->getOperatorList().size() == 0 && channel->getMemberList().size() != 0)
+								{
+									std::string stringToSend = ":" + server::getHostname() + " MODE " + channel->getName() + " +o " + (*channel->getMemberList().begin()).second->getNickName() + "\r\n";
+									selfClientSend(stringToSend, (*channel->getMemberList().begin()).second->getFd(), NOFLAG);
+									channel->addOperator((*channel->getMemberList().begin()).second);
+								}
+							}
+							if (channel->getMemberList().size() == 0)
+							{
+								delete channel;
+								channelList.erase(channelName);
+							}
+						}
+						if (message->second.flag == QUITING)
+						{
+							delete getClientByFd(message->first);
+							clientList.erase(message->first);
+							clientFDs.erase(clientFDs.begin() + i);
+						}
 						messageList.erase(message);
+					}
 				}
 			}
 			clientFDs[i].revents = 0;
