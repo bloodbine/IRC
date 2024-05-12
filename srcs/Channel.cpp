@@ -114,9 +114,18 @@ std::string Channel::getClientList() const
 	for (; itr != end; ++itr)
 	{
 		tmp = *itr;
-		if (i > 0)
-			out += " @" + tmp.second->getNickName();
-		else out += "@" + tmp.second->getNickName();
+		if (getIsOperator(tmp.second->getNickName()) == true)
+		{
+			if (i > 0)
+				out += " @" + tmp.second->getNickName();
+			else out += "@" + tmp.second->getNickName();
+		}
+		else
+		{
+			if (i > 0)
+				out += " " + tmp.second->getNickName();
+			else out += tmp.second->getNickName();
+		}
 		i++;
 	}
 	return out;
