@@ -183,7 +183,7 @@ void server::handleClient()
 						}
 						if (senderr == -1)
 							perror("send");
-						else
+						else if (senderr > 0)
 						{
 							if (message->second.flag == PARTING)
 							{
@@ -211,17 +211,16 @@ void server::handleClient()
 											channel->addOperator((*channel->getMemberList().begin()).second);
 										}
 									}
-
 								}
 							}
+							if (message->second.flag == QUITING)
+							{
+								delete getClientByFd(message->first);
+								clientList.erase(message->first);
+								clientFDs.erase(clientFDs.begin() + i);
+							}
+							messageList.erase(message);
 						}
-						if (message->second.flag == QUITING)
-						{
-							delete getClientByFd(message->first);
-							clientList.erase(message->first);
-							clientFDs.erase(clientFDs.begin() + i);
-						}
-						messageList.erase(message);
 					}
 				}
 				clientFDs[i].revents = 0;
