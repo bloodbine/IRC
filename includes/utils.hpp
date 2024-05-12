@@ -26,6 +26,7 @@ void						signal_handler(int signal);
 std::string					getClientHostname(int clientFD);
 std::string					getTimestamp();
 void						addrStructToString(std::string &ip_dest, std::string &hostname_dest);
+void						clearClientMessages(int clientFD);
 
 // Command related
 std::vector<std::string>	getVector(char *in);

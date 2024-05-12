@@ -143,6 +143,7 @@ void server::handleClient()
 								}
 							}
 						}
+						clearClientMessages(clientFDs[i].fd);
 						close(clientFDs[i].fd);
 						clientList.erase(clientFDs[i].fd);
 						clientFDs.erase(clientFDs.begin() + i);

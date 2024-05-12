@@ -54,6 +54,19 @@ void addrStructToString(std::string &ip_dest, std::string &hostname_dest)
 	}
 }
 
+void	clearClientMessages(int clientFD)
+{
+	bool end = false;
+	while (end != true)
+	{
+		std::multimap<int, struct message>::iterator message = server::messageList.find(clientFD);
+		if (message != server::messageList.end())
+			server::messageList.erase(message);
+		else
+			end = true;
+	}
+}
+
 // std::string getExecuteOut(Client *client, std::vector<std::string>& vec, bool *failedToSendMsg)
 // {
 // 	std::string tmp;
