@@ -238,10 +238,6 @@ void	Command::handleTopic()
 		for(size_t i = 3; i < _size; i++) _topic += " " + _vec[i];
 	}
 
-	std::cout << ":" << _client->getIdenClient() << " Channel " << _channelName << std::endl;
-	std::cout << ":" << _client->getIdenClient() << " Topic " << _topic << std::endl;
-	std::cout << ":" << _client->getIdenClient() << " clearTopic " << _clearTopic << std::endl;
-
 	if (!server::channelExists(_channelName)) ERR_NOSUCHCHANNEL();
 	Channel* channel = server::getChannelByName(_channelName);
 	if (!channel) ERR_NOSUCHCHANNEL();
@@ -374,7 +370,6 @@ void	Command::handleMode()
 	{
 		if (_channelObj->getIsMember(_client->getNickName()) == false) ERR_NOTONCHANNEL();
 		if (_channelObj->getIsOperator(_client->getNickName()) == false ) ERR_NOPRIVILEGES(_channelName);
-		_stringToSend = "324 :";
 		switch (_mode[1])
 		{
 			case 'i': // Invite
@@ -400,7 +395,11 @@ void	Command::handleMode()
 					_channelObj->getIsOperator(_parameter) == false)
 						_channelObj->addOperator(_channelObj->getMemberList()[_parameter]);
 				}
-				else _channelObj->removeOperator(*_channelObj->getOperatorList()[_parameter]);
+				else
+				{
+					if (_channelObj->getIsOperator(_parameter) == true)
+						_channelObj->removeOperator(*_channelObj->getOperatorList()[_parameter]);
+				}
 				break;
 			case 'l': // User Limit
 				if (_mode[0] == '+')
@@ -412,12 +411,12 @@ void	Command::handleMode()
 				else _channelObj->setUserLimit(0);
 				break;
 		}
-		_stringToSend.append(":" + _client->getIdenClient());
-		_stringToSend.append(" " + _channelName);
-		_stringToSend.append(" " + _mode);
-		_stringToSend.append(" " + _parameter + "\r\n");
+		if (_parameter.size() > 0)
+			_stringToSend = ":" + _client->getIdenClient() + " MODE " + _channelName + " " + _mode + " " + _parameter + "\r\n";
+		else
+			_stringToSend = ":" + _client->getIdenClient() + " MODE " + _channelName + " " + _mode + "\r\n";
 	}
-	selfClientSend(_stringToSend, _client->getFd(), NOFLAG);
+	sendToChannel(_stringToSend, _channelName, "");
 }
 
 void	Command::handleQuit()
