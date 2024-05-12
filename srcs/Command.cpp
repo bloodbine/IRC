@@ -103,7 +103,6 @@ void	Command::handleUser()
 	if (_client->getNickName() == "") missingNick();
 	if (_size < 5) ERR_NEEDMOREPARAMS("USER");
 	if (isValidUser(_vec) == false) ERR_SYNTAXPROBLEM();
-	if (server::clientExists(_vec[1])) ERR_ALREADYREGISTRED();
 	else server::addClient(_client);
 	if (_vec[4][0] == ':') _realName = _vec[4].substr(1);
 	else _realName = _vec[4];
@@ -351,22 +350,23 @@ void	Command::handleKick()
 		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _channelName + " " + _nickName + " :" + _reason + "\r\n";
 	else
 		_stringToSend = ":" + _client->getIdenClient() + " KICK " + _nickName + " :" + _reason + "\r\n";
+	sendToChannel(_stringToSend, _channelName, "");
 	channel->removeUser(*client);
 	client->dicrementTotalChannels();
-	sendToChannel(_stringToSend, _channelName, "");
 }
 
 void	Command::handleMode()
 {
-	if (_size == 2) return ;
-	if (_size < 2) ERR_NEEDMOREPARAMS("MODE");
-	if (_size > 3) ERR_SYNTAXPROBLEM();
+	if (_size == 2 && isInvalidChannelName(_vec[1])) ERR_NEEDMOREPARAMS("MODE");
+	else if (_size == 2) return ;
+	if (_size < 3) ERR_NEEDMOREPARAMS("MODE");
+	if (_size > 4) ERR_SYNTAXPROBLEM();
 	if (server::channelExists(_vec[1]) == false) ERR_NOSUCHCHANNEL();
 	_channelName = _vec[1];
 	_channelObj = server::getChannelByName(_channelName);
-	if (_size > 2 && _vec[2][0] == 'b') return ;
-	if (_size > 2 && isValidMode(_vec[2]) == false) ERR_UMODEUNKNOWNFLAG();
-	if (_size > 2) _mode = _vec[2];
+	if (_vec[2][0] == 'b') return ;
+	if (isValidMode(_vec[2]) == false) ERR_UMODEUNKNOWNFLAG();
+	_mode = _vec[2];
 	if (_mode.find("o") != std::string::npos && server::clientExists(_vec[3]) == false) ERR_NOSUCHNICK(_vec[3]);
 	if (_size > 3)
 		_parameter = _vec[3];
