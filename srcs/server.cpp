@@ -119,94 +119,100 @@ void server::handleClient()
 		for (unsigned int i = 1; i < clientFDs.size(); ++i)
 		{
 			Client *client = clientList[clientFDs[i].fd];
-			char buffer[1024];
-			bzero(buffer, sizeof(buffer));
-			std::vector<Channel*> clientChannelList = client->getChannelList();
-			if (clientFDs[i].revents & POLLIN)
+			if (client != NULL)
 			{
-				int bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
-				if (bytesRead <= 0)
+				char buffer[1024];
+				bzero(buffer, sizeof(buffer));
+				std::vector<Channel*> clientChannelList = client->getChannelList();
+				if (clientFDs[i].revents & POLLIN)
 				{
-					std::cout << "Client " << clientFDs[i].fd << " disconnected" << std::endl;
-					if (clientChannelList.size() > 0)
+					int bytesRead = recv(clientFDs[i].fd, buffer, 1024, 0);
+					if (bytesRead <= 0)
 					{
-						std::vector<Channel*>::iterator	tmpChannel = clientChannelList.begin();
-						std::vector<Channel*>::iterator	end = clientChannelList.end();
-						for (; tmpChannel != end; ++tmpChannel)
+						std::cout << "Client " << clientFDs[i].fd << " disconnected" << std::endl;
+						if (clientChannelList.size() > 0)
 						{
-							Channel *channel = server::getChannelByName((*tmpChannel)->getName());
-							if (channel != NULL)
+							std::vector<Channel*>::iterator	tmpChannel = clientChannelList.begin();
+							std::vector<Channel*>::iterator	end = clientChannelList.end();
+							for (; tmpChannel != end; ++tmpChannel)
 							{
-								(*tmpChannel)->removeUser(*client);
-								if ((*tmpChannel)->getIsOperator(client->getNickName()))
-									(*tmpChannel)->removeOperator(*client);
-							}
-						}
-					}
-					close(clientFDs[i].fd);
-					clientList.erase(clientFDs[i].fd);
-					clientFDs.erase(clientFDs.begin() + i);
-					delete client;
-				}
-				else
-				{
-					std::string& tmp = client->getMessage();
-					tmp += buffer;
-					if (tmp.find("\n") != std::string::npos || tmp.find("\r\n") != std::string::npos)
-					{
-						std::cout << "[DEBUG] Message In " << clientFDs[i].fd <<  ": " << tmp;
-						std::vector<std::string> vec = getVector((char *)(tmp.c_str()));
-						tmp.clear();
-						try
-							{if (vec.size() > 0) Command cmd(vec, client);}
-						catch (std::exception& e)
-							{selfClientSend(e.what(), clientFDs[i].fd, NOFLAG);}
-					}
-				}
-			}
-			if (clientFDs[i].revents & POLLOUT && messageList.size() != 0)
-			{
-				std::multimap<int, struct message>::iterator message = messageList.equal_range(clientFDs[i].fd).first;
-				if (message != server::messageList.end())
-				{
-					std::cout << "[DEBUG] Message Out " << clientFDs[i].fd << ": "  << message->second.flag << " " << message->second.data;
-					int senderr = 0;
-					std::vector<pollfd>::iterator fdStart = clientFDs.begin();
-					std::vector<pollfd>::iterator fdEnd = clientFDs.end();
-					for (; fdStart != fdEnd; fdStart++)
-					{
-						if ((*fdStart).fd == message->first)
-						{
-							senderr = send(message->first, (message->second.data).c_str(), (message->second.data).length(), 0);
-							break;
-						}
-					}
-					if (senderr == -1)
-						perror("send");
-					else
-					{
-						if (message->second.flag == PARTING)
-						{
-							size_t chanNameStart = message->second.data.find("#");
-							size_t chanNameEnd = message->second.data.find(" ", chanNameStart);
-							std::string channelName = message->second.data.substr(chanNameStart, chanNameEnd - chanNameStart);
-							Channel* channel = getChannelByName(channelName);
-							Client* client = getClientByFd(clientFDs[i].fd);
-							channel->removeUser(*client);
-							if (channel->getIsOperator(client->getNickName()) == true)
-							{
-								channel->removeOperator(*client);
-								if (channel->getOperatorList().size() == 0 && channel->getMemberList().size() != 0)
+								if((*tmpChannel) != NULL)
 								{
-									std::string stringToSend = ":" + server::getHostname() + " MODE " + channel->getName() + " +o " + (*channel->getMemberList().begin()).second->getNickName() + "\r\n";
-									selfClientSend(stringToSend, (*channel->getMemberList().begin()).second->getFd(), NOFLAG);
-									channel->addOperator((*channel->getMemberList().begin()).second);
+									(*tmpChannel)->removeOperator(*client);
+									(*tmpChannel)->removeUser(*client);
 								}
 							}
-							if (channel->getMemberList().size() == 0)
+						}
+						close(clientFDs[i].fd);
+						clientList.erase(clientFDs[i].fd);
+						clientFDs.erase(clientFDs.begin() + i);
+						delete client;
+					}
+					else
+					{
+						std::string& tmp = client->getMessage();
+						tmp += buffer;
+						if (tmp.find("\n") != std::string::npos || tmp.find("\r\n") != std::string::npos)
+						{
+							std::cout << "[DEBUG] Message In " << clientFDs[i].fd <<  ": " << tmp;
+							std::vector<std::string> vec = getVector((char *)(tmp.c_str()));
+							tmp.clear();
+							try
+								{if (vec.size() > 0) Command cmd(vec, client);}
+							catch (std::exception& e)
+								{selfClientSend(e.what(), clientFDs[i].fd, NOFLAG);}
+						}
+					}
+				}
+				if (clientFDs[i].revents & POLLOUT && messageList.size() != 0)
+				{
+					std::multimap<int, struct message>::iterator message = messageList.equal_range(clientFDs[i].fd).first;
+					if (message != server::messageList.end())
+					{
+						std::cout << "[DEBUG] Message Out " << clientFDs[i].fd << ": "  << message->second.flag << " " << message->second.data;
+						int senderr = 0;
+						std::vector<pollfd>::iterator fdStart = clientFDs.begin();
+						std::vector<pollfd>::iterator fdEnd = clientFDs.end();
+						for (; fdStart != fdEnd; fdStart++)
+						{
+							if ((*fdStart).fd == message->first)
 							{
-								delete channel;
-								channelList.erase(channelName);
+								senderr = send(message->first, (message->second.data).c_str(), (message->second.data).length(), 0);
+								break;
+							}
+						}
+						if (senderr == -1)
+							perror("send");
+						else
+						{
+							if (message->second.flag == PARTING)
+							{
+								size_t chanNameStart = message->second.data.find("#");
+								size_t chanNameEnd = message->second.data.find(" ", chanNameStart);
+								std::string channelName = message->second.data.substr(chanNameStart, chanNameEnd - chanNameStart);
+								Channel* channel = getChannelByName(channelName);
+								if (channel != NULL)
+								{
+									Client* client = getClientByFd(clientFDs[i].fd);
+									if (channel->getMemberList().size() == 0)
+									{
+										delete channel;
+										channel = NULL;
+										channelList.erase(channelName);
+									}
+									else
+									{
+										channel->removeUser(*client);
+										channel->removeOperator(*client);
+										if (channel->getOperatorList().size() == 0 && channel->getMemberList().size() != 0)
+										{
+											std::string stringToSend = ":" + server::getHostname() + " MODE " + channel->getName() + " +o " + (*channel->getMemberList().begin()).second->getNickName() + "\r\n";
+											selfClientSend(stringToSend, (*channel->getMemberList().begin()).second->getFd(), NOFLAG);
+											channel->addOperator((*channel->getMemberList().begin()).second);
+										}
+									}
+
+								}
 							}
 						}
 						if (message->second.flag == QUITING)
@@ -218,8 +224,8 @@ void server::handleClient()
 						messageList.erase(message);
 					}
 				}
+				clientFDs[i].revents = 0;
 			}
-			clientFDs[i].revents = 0;
 		}
 	}
 	std::map<std::string, Channel*>					channelList = server::getChannelList();
@@ -262,7 +268,7 @@ Channel* server::getChannelByName(const std::string& channelName) {
 	if (channelList.size() > 0)
 	{
 		std::map<std::string, Channel*>::iterator it = channelList.find(channelName);
-		if (it != channelList.end()) {
+		if ((*it).second != NULL && it != channelList.end()) {
 			return it->second;
 		}
 	}
