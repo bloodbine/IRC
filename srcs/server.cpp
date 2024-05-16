@@ -137,6 +137,8 @@ void server::handleClient()
 							{
 								if((*tmpChannel) != NULL)
 								{
+									std::string stringToSend = ":" + client->getIdenClient() + " PART " + (*tmpChannel)->getName() + " :Client disconnected\r\n";
+									sendToChannel(stringToSend, (*tmpChannel)->getName(), client->getNickName());
 									(*tmpChannel)->removeOperator(*client);
 									(*tmpChannel)->removeUser(*client);
 								}
@@ -194,22 +196,19 @@ void server::handleClient()
 								if (channel != NULL)
 								{
 									Client* client = getClientByFd(clientFDs[i].fd);
+									channel->removeUser(*client);
+									channel->removeOperator(*client);
+									if (channel->getOperatorList().size() == 0 && channel->getMemberList().size() != 0)
+									{
+										std::string stringToSend = ":" + server::getHostname() + " MODE " + channel->getName() + " +o " + (*channel->getMemberList().begin()).second->getNickName() + "\r\n";
+										selfClientSend(stringToSend, (*channel->getMemberList().begin()).second->getFd(), NOFLAG);
+										channel->addOperator((*channel->getMemberList().begin()).second);
+									}
 									if (channel->getMemberList().size() == 0)
 									{
 										delete channel;
 										channel = NULL;
 										channelList.erase(channelName);
-									}
-									else
-									{
-										channel->removeUser(*client);
-										channel->removeOperator(*client);
-										if (channel->getOperatorList().size() == 0 && channel->getMemberList().size() != 0)
-										{
-											std::string stringToSend = ":" + server::getHostname() + " MODE " + channel->getName() + " +o " + (*channel->getMemberList().begin()).second->getNickName() + "\r\n";
-											selfClientSend(stringToSend, (*channel->getMemberList().begin()).second->getFd(), NOFLAG);
-											channel->addOperator((*channel->getMemberList().begin()).second);
-										}
 									}
 								}
 							}

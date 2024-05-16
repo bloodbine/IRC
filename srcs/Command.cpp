@@ -151,7 +151,7 @@ void	Command::handleJoin()
 			else
 				channel->getInvitedList().erase(_client->getNickName());
 		}
-		if (channel->getUserLimit() != 0 && channel->getUserLimit() == static_cast<int>(channel->getClientList().size()))
+		if (channel->getUserLimit() != 0 && channel->getUserLimit() == static_cast<int>(channel->getMemberList().size()))
 			ERR_CHANNELISFULL(_channelName);
 		channel->addMember(_client);
 	}
